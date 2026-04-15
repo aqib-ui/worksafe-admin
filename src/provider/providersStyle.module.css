@@ -1,0 +1,29 @@
+
+.DownloadNotTime {
+    background-color: #c7d7ff;
+    width: calc(100% - 20px);
+    height: 30px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    padding-inline: 10px;
+    color: #5e5e5e;
+}
+.DownloadData{
+    padding-top: 8px;
+    display: flex;
+    align-items: center;
+}
+.DownloadData p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+}
+
+.DownloadData span {
+    color: #878787;
+}
+
+
+/* download Items end */

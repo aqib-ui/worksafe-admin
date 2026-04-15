@@ -1,0 +1,44 @@
+.container{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 24px;
+}
+.LayoutLogo {
+    height: 66px;
+}
+.Title{
+    font-size: 2.5rem;
+    margin-top: 1rem;
+}
+.SpaceT{
+    margin-top: 1rem;
+    font-size: 1rem;
+    color: rgb(65, 65, 65);
+}
+
+.backBtn{
+    background-color: white;
+    border: 1px solid rgb(221, 221, 221);
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    border-radius: 40px;
+    cursor: pointer;
+    transition: 0.3s all;
+}
+
+.backBtn:hover{
+    background-color: white;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    border-radius: 40px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    cursor: pointer;
+}

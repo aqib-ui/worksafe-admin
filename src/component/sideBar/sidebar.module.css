@@ -1,0 +1,342 @@
+.MainSidecontainer {
+    width: 255px;
+    min-height: calc(100svh - 59px);
+    border-right: 1px solid rgb(224, 224, 224);
+    padding: 24px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.MainSidecontainer::-webkit-scrollbar {
+    width: 3px !important;
+}
+
+.MainSidecontainer::-webkit-scrollbar-track {
+    background: #f1f1f1 !important;
+}
+
+.MainSidecontainer::-webkit-scrollbar-thumb {
+    background: var(--gray-20) !important;
+    border-radius: 100px;
+}
+
+.MainSidecontainer::-webkit-scrollbar-thumb:hover {
+    background: #555 !important;
+}
+
+.MainSidecontainer hr {
+    background-color: var(--gray-20);
+    margin-block: 16px;
+    border: none;
+    height: 1px;
+}
+
+.SidebarBody {
+    width: 79px;
+    min-height: calc(100svh - 59px);
+    background-color: white;
+    transition: all 0.4s ease-in-out;
+}
+
+.sideBarScroller {
+    height: calc(100svh - 79px);
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.sideBarScroller::-webkit-scrollbar {
+    width: 3px;
+}
+
+/* Track */
+.sideBarScroller::-webkit-scrollbar-track {
+    background: #ffffff;
+}
+
+/* Handle */
+.sideBarScroller::-webkit-scrollbar-thumb {
+    background: #c2c2c2;
+}
+
+.LoginIcon {
+    height: 79px;
+    background-color: #214CBC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.NavigationIcon {
+    height: 70px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #f0f0f0;
+    justify-content: center;
+    position: relative;
+}
+
+.SidebarBody button {
+    background-color: transparent;
+    border: none;
+    width: 100%;
+    outline: none;
+    text-decoration: none;
+}
+
+
+
+
+.NotificationBell {
+    position: absolute;
+    top: 15px;
+    right: 16px;
+    height: 20px;
+    width: 20px;
+    background-color: red;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    overflow: visible;
+}
+
+.NotificationBell::after {
+    content: "";
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    border-radius: 50%;
+    background-color: rgba(255, 0, 0, 0.4);
+    animation: ripple 1.5s infinite ease-out;
+}
+
+
+
+
+
+
+/* Notification */
+
+
+.HeaderHeading {
+    text-transform: uppercase;
+}
+
+.SideIconLine {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    margin-top: 16px;
+    cursor: pointer;
+    transition: 0.3s all;
+}
+
+.SideIconLine img {
+    height: 24px;
+    width: 24px;
+}
+
+.SideIconLine p {
+    margin-left: 8px;
+    color: var(--gray-80);
+}
+
+.SideIconLine:hover {
+    background-color: var(--gray-20);
+    border-radius: 6px;
+}
+
+.SideIconLine:hover p {
+    color: var(--gray-100);
+}
+
+
+
+
+.SideIconStorageLine {
+    display: flex;
+    align-items: center;
+    padding: 0px 12px;
+    margin-top: 16px;
+    cursor: pointer;
+    transition: 0.3s all;
+}
+
+.filledStorage {
+    height: 8px;
+    background-color: var(--primary);
+    border-radius: 100px;
+}
+
+.leftStorage {
+    height: 8px;
+    background-color: var(--gray-20);
+    flex: 1;
+    margin-left: 4px;
+    border-radius: 100px;
+}
+
+.SideIconStorageLine p {
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.getMoreStorage {
+    background-color: var(--light-blue);
+    padding: 8px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    border-radius: 6px;
+    color: var(--primary);
+    cursor: pointer;
+}
+
+@media (min-width: 100px) and (max-width: 1025px) {
+    .MainSidecontainer {
+        display: none;
+    }
+}
+
+.HeaderHeading {
+    display: block;
+}
+
+
+/* .MainSidecontainer {
+    width: 255px;
+    min-height: calc(100svh - 59px);
+    border-right: 1px solid rgb(224, 224, 224);
+    padding: 24px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+} */
+@media (min-width: 1200px) and (max-width: 1500px) {
+    .MainSidecontainer {
+        width: 200px;
+        min-height: calc(100svh - 59px);
+        border-right: 1px solid rgb(224, 224, 224);
+        padding: 16px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+    .SideIconLine {
+        display: flex;
+        align-items: center;
+        padding: 8px 8px;
+        margin-top: 10px;
+        cursor: pointer;
+        transition: 0.3s all;
+    }
+}
+
+@media (min-width: 100px) and (max-width: 1200px) {
+    .MainSidecontainer {
+        width: 70px;
+        min-height: calc(100svh - 59px);
+        padding: 12px;
+        overflow-y: hidden !important;
+    }
+
+    .HeaderHeading {
+        display: none;
+    }
+
+    .SideIconStorageLine {
+        display: none !important;
+    }
+
+    .SideIconStorageLine {
+        display: none !important;
+    }
+
+    .getMoreStorage {
+        display: none !important;
+    }
+
+    .MainSidecontainer hr {
+        background-color: var(--gray-20);
+        margin-block: 0 !important;
+        border: none;
+        height: 0 !important;
+    }
+
+    .SideIconLine {
+        display: flex;
+        align-items: center;
+        margin-block: 0px !important;
+        padding-block: 16px !important;
+        cursor: pointer;
+        transition: 0.3s all;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-bottom: 1px solid rgb(224, 224, 224) !important;
+    }
+
+    .SideIconLine img {
+        height: 27px !important;
+        width: 27px !important;
+    }
+
+    .SideIconLine p {
+        margin-left: 8px;
+        color: var(--gray-80);
+        display: none;
+    }
+
+    .SideIconLine:hover {
+        background-color: transparent !important;
+        border-radius: 6px;
+    }
+
+    .SideIconLine:hover p {
+        color: var(--gray-100);
+    }
+
+    .SidebarBody {
+        width: 59px;
+        height: 100svh;
+        background-color: white;
+        transition: all 0.4s ease-in-out;
+    }
+
+    .sideBarScroller {
+        height: calc(100svh - 59px);
+        overflow-x: hidden;
+        overflow-y: scroll;
+    }
+
+    .LoginIcon {
+        height: 59px;
+        background-color: #214CBC;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+.NotificationBell p {
+    font-size: 12px;
+    color: white;
+    font-weight: 600;
+}

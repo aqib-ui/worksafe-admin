@@ -1,0 +1,255 @@
+.MainContainer {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.SecondaryHeader {
+    padding: 2rem 4rem;
+    background-color: white;
+}
+
+.ActionHeader {
+    padding: 2rem 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.SecondaryHeader h1 {
+    margin: 0;
+}
+
+.ActionHeader .InputWrapper input {
+    background-color: white;
+    outline: none;
+    border: none;
+}
+
+.InputWrapper {
+    border: 1px solid rgb(224, 224, 224);
+    background-color: rgb(255, 255, 255);
+    border-radius: 7px;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    padding: 9px 10px;
+}
+
+.TableSection {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    overflow: auto;
+    margin: 0px 4rem 40px;
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid rgb(224, 224, 224);
+    position: relative;
+}
+
+.TableSection::-webkit-scrollbar {
+    width: 5px;
+}
+
+.TableSection::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: rgb(247, 247, 247);
+}
+
+.TableSection::-webkit-scrollbar-thumb {
+    background: #214CBC;
+    border-radius: 10px;
+}
+
+
+.AddTeamBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+    outline: none;
+}
+
+
+.FooterContainer {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    padding-block: 10px;
+}
+
+.FooterContainer :nth-child(2) {
+    background-color: #214CBC;
+    color: white;
+    border: 1px solid #214CBC;
+    padding-inline: 15px;
+    padding-block: 5px;
+    margin-left: 3px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.FooterContainer :nth-child(3) {
+    background-color: #214CBC;
+    color: white;
+    border: 1px solid #214CBC;
+    padding-inline: 15px;
+    padding-block: 5px;
+    margin-left: 3px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.FooterContainer :nth-child(1) {
+    background-color: transparent;
+    color: #3d3d3d;
+    border: 1px solid #3d3d3d;
+    padding-inline: 15px;
+    padding-block: 5px;
+    margin-left: 3px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.MemContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.FirstMemCont {
+    height: 30px;
+    width: 30px;
+    background-color: tomato;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: "Poppins", sans-serif;
+    text-transform: uppercase;
+}
+
+.SecondMemCont {
+    height: 30px;
+    width: 30px;
+    background-color: teal;
+    border-radius: 50%;
+    position: absolute;
+    left: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: "Poppins", sans-serif;
+    text-transform: uppercase;
+}
+
+.ThirdMemCont {
+    height: 30px;
+    width: 30px;
+    background-color: orange;
+    border-radius: 50%;
+    position: absolute;
+    left: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: "Poppins", sans-serif;
+    text-transform: uppercase;
+}
+
+.MemContainer div {
+    cursor: pointer;
+}
+
+.MemContainer p {
+    font-size: 13px;
+}
+
+.MemContainer .paraMore {
+    position: absolute;
+    left: 65px;
+    margin: 0;
+    padding: 0;
+    align-self: center;
+    justify-self: center;
+}
+
+
+
+
+@media (max-width: 479px) {}
+
+@media (min-width: 480px) and (max-width: 767px) {}
+
+@media (min-width: 100px) and (max-width: 1023px) {
+    .SecondaryHeader {
+        padding: 1rem 1rem;
+    }
+
+    .ActionHeader {
+        padding: 2rem 1rem;
+    }
+
+    .TableSection {
+        margin: 0px 1rem 40px;
+    }
+
+    .SecondaryHeader h1 {
+        margin: 0;
+        font-size: 25px;
+    }
+}
+
+@media (min-width: 1023px) and (max-width: 1500px) {
+    .SecondaryHeader {
+        padding: 2rem 2rem;
+    }
+
+    .ActionHeader {
+        padding: 2rem 2rem;
+    }
+
+    .TableSection {
+        margin: 0px 1rem 20px;
+    }
+}
+
+
+@media (min-width: 100px) and (max-width: 1500px) {
+    .InputWrapper {
+        border: 1px solid rgb(224, 224, 224);
+        background-color: rgb(255, 255, 255);
+        border-radius: 7px;
+        display: flex;
+        -webkit-box-align: center;
+        align-items: center;
+        -webkit-box-pack: justify;
+        justify-content: space-between;
+        padding: 4px 8px;
+    }
+
+    .SecondaryHeader {
+        padding: 1rem 1rem;
+        background-color: white;
+    }
+
+    .ActionHeader {
+        padding: 1rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .SecondaryHeader h1 {
+        margin: 0;
+    }
+
+}

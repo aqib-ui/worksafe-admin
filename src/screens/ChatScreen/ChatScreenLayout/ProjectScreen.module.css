@@ -1,0 +1,48 @@
+.MainContainer {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.TableSectionLayout {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    overflow: auto;
+    position: relative;
+}
+
+
+
+.TableSection {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    overflow: auto;
+    background-color: white;
+    border:none;
+    position: relative;
+}
+
+.TableSection::-webkit-scrollbar {
+    width: 5px;
+}
+
+.TableSection::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: rgb(247, 247, 247);
+}
+
+.TableSection::-webkit-scrollbar-thumb {
+    background: #214CBC;
+    border-radius: 10px;
+}
+
+.ChatListing{
+    width: 23%;
+    height: 100%;
+    background-color: red;
+}

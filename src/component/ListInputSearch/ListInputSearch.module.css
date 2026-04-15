@@ -1,0 +1,86 @@
+.InputContain {
+    height: 48px;
+    border: 1px solid var(--gray-20);
+    outline: none;
+    text-decoration: none;
+    border-radius: 8px;
+    padding-inline: 1rem;
+    padding-block: 11px;
+    width: 100%;
+}
+
+.InputContain::placeholder {
+    color: rgba(0, 0, 0, 0.25);
+}
+
+.InputContainer {
+    position: relative;
+    width: 100%;
+}
+
+.SearchIconContain {
+    position: absolute;
+    right: 0;
+    height: 48px;
+    width: 55px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.SearchIconContain img {
+    height: 24px;
+}
+
+
+@media (min-width: 100px) and (max-width: 1439px) {
+    .InputContain {
+        height: 40px;
+        border: 1px solid var(--gray-20);
+        outline: none;
+        text-decoration: none;
+        border-radius: 8px;
+        padding-inline: 1rem;
+        padding-block: 11px;
+        width: 100%;
+    }
+
+    .SearchIconContain {
+        position: absolute;
+        right: 0;
+        height: 40px;
+        width: 55px;
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .SearchIconContain img {
+    height: 20px;
+}
+
+    /* .InputContain {
+        height: 31px;
+        border: 1px solid rgb(216, 216, 216);
+        outline: none;
+        text-decoration: none;
+        border-radius: 30px;
+        box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+        padding-right: 1rem;
+        padding-left: 3rem;
+        width: 250px;
+    }
+
+    .SearchIconContain {
+        position: absolute;
+        left: 0;
+        height: 35px;
+        width: 55px;
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    } */
+}

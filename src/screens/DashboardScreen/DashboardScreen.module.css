@@ -1,0 +1,803 @@
+.MainContainer {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.SecondaryHeader {
+    padding: 24px 24px;
+    background-color: transparent;
+}
+
+.DashBoardMap {
+    padding: 24px;
+    height: 500px;
+    width: auto;
+}
+
+.DashBoardBody {
+    padding: 0px 24px 24px 24px;
+}
+
+
+.SecondaryHeader p {
+    color: #626D6F;
+    font-size: 16px;
+    letter-spacing: 0.08px;
+    margin: 0;
+    line-height: 19px;
+    font-weight: 500;
+}
+
+.SecondaryHeader h1 {
+    margin: 0;
+    font-weight: 500;
+    line-height: 38px;
+    margin-top: 4px;
+}
+
+.DashBoardCol {
+    background-color: white;
+    border-radius: 8px;
+    height: 160px;
+}
+
+.DashBoardMark {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background-color: #DBE5FF;
+    /* padding: 8px; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dynamicImageIconDash {
+    height: 24px;
+    width: 24px;
+}
+
+.MainCount {
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0;
+    margin-top: 8px;
+    line-height: 38px;
+    color: #25292A;
+}
+
+.TopAlign {
+    display: flex;
+    align-self: center;
+    justify-content: space-between;
+}
+
+.MainCountName {
+    font-size: 16px;
+    color: #626D6F;
+    font-weight: 500;
+    margin-inline: 0px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    line-height: 19px;
+}
+
+.percentageConsole {
+    display: flex;
+    align-items: start;
+    justify-content: center;
+}
+
+.PercentageIndicator {
+    color: #1C8F5D;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.CardList {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgb(224, 224, 224);
+    transition: 0.3s all;
+    padding-inline: 10px;
+    padding-block: 8px;
+    cursor: pointer;
+}
+
+.CardList h6 {
+    font-weight: 500;
+    font-size: 13px;
+    margin: 0;
+    color: #181818;
+    width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.CardList p {
+    font-weight: 500;
+    font-size: 12px;
+    color: #727272;
+}
+
+.CardList:first-of-type {
+    margin-top: 10px;
+    border-block: 1px solid rgb(224, 224, 224) !important;
+}
+
+.CardList:last-of-type {
+    border-block: unset;
+}
+
+
+.CardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.CardHeader p {
+    margin: 0;
+    color: blue;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+
+.OverMapFalse {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.88);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+.OverMapFalse p {
+    color: white !important;
+}
+
+.PolySearch {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30%;
+    background-color: white;
+    z-index: 999;
+    border-radius: 20px;
+}
+
+.PolySearch input {
+    width: 100%;
+    height: 40px;
+    outline: none;
+    border: 1px solid rgb(197, 197, 197);
+    margin: 0;
+    border-radius: 20px;
+    padding-inline: 20px;
+}
+
+.PolyCenter {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.PolyCenter1 {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    bottom: 60px;
+    left: 10px;
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.PolyDot1 {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.PolyDot {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.BannerContainer {
+    width: calc(100% - 40px);
+    /* height: 296px; */
+    padding: 20px;
+}
+
+.BannerContainer h2 {
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+    font-family: "Montserrat", sans-serif;
+    line-height: 150%;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+.BannerImage {
+    height: 100%;
+    width: calc(100% - 100px);
+    overflow: hidden;
+    border-radius: 16px;
+    padding: 32px 48px;
+}
+
+
+
+.LocationSection {
+    padding: 5px 0px 12px 0px;
+    display: flex;
+    align-items: center
+}
+
+.LocationSection img {
+    height: 24px;
+    width: 24px;
+}
+
+.LocationSection p {
+    margin: 0px 0px 0px 5px;
+    color: white;
+    font-size: 16px;
+}
+
+
+
+
+.LocationSection2 {
+    padding: 15px 0px 12px 0px;
+    display: flex;
+    align-items: center
+}
+
+.LocationSection2 img {
+    height: 24px;
+    width: 24px;
+}
+
+.LocationSection2 p {
+    margin: 0px 0px 0px 5px;
+    color: white;
+    font-size: 16px;
+}
+
+
+
+
+.CalenderSection img {
+    height: 24px;
+    width: 24px;
+}
+
+.CalenderSection p {
+    margin: 0px 0px 0px 5px;
+    color: white;
+    font-size: 16px;
+}
+
+.CalenderSection {
+    padding: 12px 0px;
+    display: flex;
+    align-items: center;
+}
+
+@media (max-width:660px) {
+    .BannerContainer h2 {
+        font-size: 24px;
+        font-weight: bold;
+        color: white;
+        font-family: "Montserrat", sans-serif;
+        line-height: 150%;
+        letter-spacing: 1px;
+        margin: 0;
+    }
+
+    .BannerImage {
+        height: 100%;
+        width: calc(100% - 60px);
+        overflow: hidden;
+        border-radius: 16px;
+        padding: 22px 28px;
+    }
+}
+
+
+
+
+
+@media (max-width:460px) {
+    .BannerContainer h2 {
+        font-size: 20px;
+        font-weight: bold;
+        color: white;
+        font-family: "Montserrat", sans-serif;
+        line-height: 150%;
+        letter-spacing: 1px;
+        margin: 0;
+    }
+
+    .BannerImage {
+        height: 100%;
+        width: calc(100% - 25px);
+        overflow: hidden;
+        border-radius: 16px;
+        padding: 15px 10px;
+    }
+
+    .LocationSection {
+        padding: 5px 0px 12px 0px;
+        display: flex;
+        align-items: center
+    }
+
+    .LocationSection2 {
+        padding: 10px 0px 12px 0px;
+        display: flex;
+        align-items: center
+    }
+}
+
+
+
+.MemContainer div {
+    cursor: pointer;
+    /* background-color: red; */
+}
+
+.MemContainer p {
+    font-size: 13px;
+}
+
+.MemContainer .paraMore {
+    position: absolute;
+    left: 65px;
+    margin: 0;
+    padding: 0;
+    align-self: center;
+    justify-self: center;
+}
+
+.MemContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+
+.FirstMemCont {
+    height: 30px;
+    width: 30px;
+    background-color: tomato;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: "Poppins", sans-serif;
+    text-transform: uppercase;
+}
+
+.SecondMemCont {
+    height: 30px;
+    width: 30px;
+    background-color: teal;
+    border-radius: 50%;
+    position: absolute;
+    left: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: "Poppins", sans-serif;
+    text-transform: uppercase;
+}
+
+.ThirdMemCont {
+    height: 30px;
+    width: 30px;
+    background-color: orange;
+    border-radius: 50%;
+    position: absolute;
+    left: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: "Poppins", sans-serif;
+    text-transform: uppercase;
+}
+
+.NameContainer {
+    /* padding: 20px; */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.TypeIconList {
+    height: 50px;
+    width: 50px;
+    border-radius: 50px;
+    border: none;
+}
+
+.ControllerContainer {
+    margin-top: 20px;
+    height: 400px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.ControllerContainer::-webkit-scrollbar {
+    width: 5px;
+}
+
+.ControllerContainer::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: rgb(247, 247, 247);
+}
+
+.ControllerContainer::-webkit-scrollbar-thumb {
+    background: #214CBC;
+    border-radius: 10px;
+}
+
+.ContainIcon {
+    height: 55px;
+    width: 55px;
+    border-radius: 55px;
+    border: none;
+    background-color: #214CBC;
+    margin-right: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ContainIcon img {
+    height: 30px;
+    width: 30px;
+}
+
+.TootTopName {
+    margin: 0;
+}
+
+.Dashbaord_Top_Icon {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    padding-inline: 16px;
+    padding-top: 16px;
+    padding-bottom: 8px;
+}
+
+.Icon_Inner {
+    background-color: #DBE5FF;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+
+.Icon_Inner img {
+    height: 28px;
+    width: 28px;
+}
+
+.GoArrowRightSection {
+    display: flex;
+    align-items: center;
+}
+
+.GoArrowRightSection P {
+    font-size: 18px;
+    color: var(--green-70);
+}
+
+.mainContentBody {
+    padding-inline: 16px;
+    padding-bottom: 16px;
+    padding-top: 8px;
+}
+
+.mainContentBody h1 {
+    font-size: 38px;
+    line-height: 38px;
+}
+
+.mainContentBody h2 {
+    color: var(--gray-70);
+    font-weight: 500;
+    font-size: 18px;
+}
+
+.BarStyleChart21 {
+    background-color: var(--white);
+    padding: 16px 24px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.BarStyleChart {
+    background-color: var(--white);
+    padding: 16px 16px;
+    border-radius: 12px;
+}
+
+.BarFilterSide {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 24px;
+    width: 100%;
+}
+
+.BarFilterSide h2 {
+    font-weight: 500;
+}
+
+.FilterFile {
+    display: flex;
+    align-items: center;
+}
+
+.FilterFile .SpaceSpan {
+    margin-left: 12px;
+}
+
+.DoughnutWrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding-left: 30px;
+}
+
+.DoughNutRightWrap {
+    width: 100%;
+    padding-inline: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.rowNewMap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 25px;
+}
+
+.ColoredIcon {
+    height: 15px;
+    width: 15px;
+    border-radius: 20px;
+    margin-right: 10px;
+    background-color: #1C8F5D;
+}
+
+.rowFlex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rowFlex p {
+    color: rgba(98, 109, 111, 1);
+    font-size: 16px;
+}
+
+.SkeltonLoader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background-color: white;
+    border-radius: 8px;
+    height: 160px;
+}
+
+
+
+
+.NoWorksiteContainer {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.7);
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 1;
+}
+
+
+.NoWorksiteContainer h2 {
+    font-weight: 600;
+    font-size: 24px;
+    color: var(--white);
+}
+
+.NoWorksiteContainer h6 {
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--gray-10);
+}
+
+.LoadingSlide {
+    width: 300px;
+    height: 8px;
+    border-radius: 10px;
+    background-color: rgb(221, 221, 221, 0.3);
+    margin-top: 10px;
+    position: relative;
+    margin-right: 5px;
+}
+
+.loadinInSlide {
+    /* width: 17%; */
+    height: 8px;
+    border-radius: 10px;
+    background-color: rgb(255, 255, 255);
+    transition: 0.3s all;
+}
+
+.spinner {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    /* background: rgb(221, 221, 221, 0.3); */
+    border: 2px solid rgb(255, 255, 255);
+    border-top-color: transparent;
+    animation: spin 0.6s linear infinite;
+    margin-top: 10px;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.DoughnutWrapLoad {
+    background-color: var(--white);
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    padding-inline: 100px;
+    /* padding-left: 30px; */
+    text-align: center;
+}
+
+.DoughnutWrapLoad img {
+    height: 60px;
+}
+
+.DoughnutWrapLoad h4 {
+    font-weight: 400;
+    font-size: 16px;
+    margin-top: 12px;
+}
+
+.SectionTopDropDown {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 24px;
+}
+
+@media (min-width: 800px) and (max-width: 1400px) {
+    .DoughnutWrapLoad {
+        background-color: var(--white);
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        width: 100%;
+        padding-inline: 50px;
+        /* padding-left: 30px; */
+        text-align: center;
+    }
+}
+
+@media (min-width: 100px) and (max-width: 800px) {
+    .DoughnutWrapLoad {
+        background-color: var(--white);
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        width: 100%;
+        padding-inline: 20px;
+        /* padding-left: 30px; */
+        text-align: center;
+    }
+}
+
+
+@media (min-width: 100px) and (max-width: 1500px) {
+    .DoughnutWrap {
+        flex-direction: column !important;
+        padding-left: 0px;
+        padding-bottom: 30px;
+    }
+}
+
+
+@media (min-width: 100px) and (max-width: 1300px) {
+    .BarFilterSide {
+        flex-direction: column !important;
+    }
+
+    .BarFilterSide h2 {
+        margin-bottom: 10px;
+    }
+
+    .FilterFile {
+        flex-direction: column;
+    }
+
+    .FilterFile .ant-select {
+        margin-left: 0px !important;
+    }
+
+    .FilterFile .SpaceSpan {
+        margin-left: 0px;
+        margin-top: 12px;
+    }
+
+}
+
+@media (min-width: 100px) and (max-width: 1800px) {
+    .DoughNutRightWrap {
+        padding-inline: 0px !important;
+    }
+}

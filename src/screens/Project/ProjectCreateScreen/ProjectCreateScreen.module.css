@@ -1,0 +1,809 @@
+.MainContainer {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.SecondaryHeader {
+    padding: 2rem 4rem;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ActionHeader {
+    padding: 2rem 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.SecondaryHeader h1 {
+    margin: 0;
+}
+
+.SecondaryHeader button {
+    background-color: #214CBC;
+    color: white;
+    padding-inline: 20px;
+    padding-block: 8px;
+    border: none;
+    outline: none;
+    border-radius: 30px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    cursor: pointer;
+}
+
+.ActionHeader .InputWrapper input {
+    background-color: white;
+    outline: none;
+    border: none;
+}
+
+.InputWrapper {
+    border: 1px solid rgb(224, 224, 224);
+    background-color: rgb(255, 255, 255);
+    border-radius: 7px;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    padding: 9px 10px;
+}
+
+.TableSection {
+    flex-grow: 1;
+    display: flex;
+    max-width: 100%;
+    overflow: hidden;
+    margin: 0px 4rem 40px;
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid rgb(224, 224, 224);
+    position: relative;
+}
+
+
+.CheckBtn {
+    margin: 0;
+    padding-block: 4px;
+    padding-inline: 4px;
+    border: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #00ce8d;
+    border-radius: 40px;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.CloseBtn {
+    margin: 0;
+    cursor: pointer;
+    padding-block: 4px;
+    padding-inline: 4px;
+    border: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: red;
+    border-radius: 40px;
+    margin-left: 10px;
+}
+
+.YesTag {
+    background-color: #a8ffe3;
+    width: fit-content;
+    padding-inline: 15px;
+    padding-block: 2px;
+    border-radius: 30px;
+    color: rgb(0, 0, 0);
+    border: 1px solid#01ca8a;
+}
+
+.NoTag {
+    background-color: rgb(253, 191, 191);
+    width: fit-content;
+    padding-inline: 15px;
+    padding-block: 2px;
+    border-radius: 30px;
+    color: rgb(0, 0, 0);
+    border: 1px solid red;
+}
+
+.packageCard {
+    display: flex;
+    align-items: center;
+}
+
+.packageCard h3 {
+    margin-block: 5px !important;
+}
+
+.packageCard p {
+    margin-left: 10px;
+    font-size: 12px;
+    background-color: gainsboro;
+    padding-inline: 10px;
+    padding-block: 2px;
+    border-radius: 20px;
+    margin-block: 0px;
+}
+
+.CardMainPackage {
+    cursor: pointer;
+}
+
+.CardMainPackage .CardDescription {
+    font-size: 13px;
+    margin-block: 5px;
+    color: rgb(150, 150, 150);
+}
+
+.CardMainPackage .CardAmount {
+    margin-block: 5px;
+}
+
+.packageHr {
+    border: 1px solid rgb(235, 235, 235);
+}
+
+.CardMainPackage {
+    border-bottom: 1px solid rgb(224, 224, 224);
+    padding-block: 10px;
+}
+
+.FooterContainer {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    padding-block: 10px;
+}
+
+.FooterContainer :nth-child(2) {
+    background-color: #214CBC;
+    color: white;
+    border: 1px solid #214CBC;
+    padding-inline: 15px;
+    padding-block: 5px;
+    margin-left: 3px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.FooterContainer :nth-child(1) {
+    background-color: transparent;
+    color: #3d3d3d;
+    border: 1px solid #3d3d3d;
+    padding-inline: 15px;
+    padding-block: 5px;
+    margin-left: 3px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.FeildSide {
+    flex: 1;
+    overflow: auto;
+    padding: 0px 20px 20px 20px;
+}
+
+
+
+.FeildSide::-webkit-scrollbar {
+    width: 5px;
+}
+
+.FeildSide::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: rgb(247, 247, 247);
+}
+
+.FeildSide::-webkit-scrollbar-thumb {
+    background: #214CBC;
+    border-radius: 10px;
+}
+
+.FeildRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.MapSide {
+    flex: 1.5;
+    border-left: 1px solid #ececec;
+    /* position: relative; */
+}
+
+.FeildColLeft {
+    width: 49.5%;
+    padding-top: 20px;
+    /* padding-left: 20px; 
+    margin-right: 10px;*/
+    display: flex;
+    flex-direction: column;
+}
+
+.FeildColLeftMODAL {
+    width: 100%;
+    padding-top: 20px;
+    /* padding-left: 20px; 
+    margin-right: 10px;*/
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+.FeildSide label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.FeildColRight {
+    width: 49.5%;
+    padding-top: 20px;
+    /* padding-right: 20px;
+    padding-left: 10px; */
+    display: flex;
+    flex-direction: column;
+}
+
+.PolyCard {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.PolyCenter {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.PolyCardSetting {
+    position: absolute;
+    bottom: 150px;
+    height: 40px;
+    width: 40px;
+    right: 10px;
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.PolyDot {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.PolyDotSelect {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.PlaceHolderGoogleInput {
+    border: 1px solid #d9d9d9;
+    background: #ffffff;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    color: rgba(0, 0, 0, 0.88);
+    font-size: 14px;
+    line-height: 1.5714285714285714;
+    list-style: none;
+    font-family: inherit;
+    display: flex;
+    border-radius: 6px;
+    flex: 1 1 auto;
+    height: 45px;
+    transition: 0.3s all;
+    cursor: pointer;
+    padding-inline: 10px;
+    outline: none;
+    text-decoration: none;
+}
+
+.PlaceHolderGoogleInput:hover {
+    border-color: #446fc9;
+    outline: none;
+    text-decoration: none;
+}
+
+.PlaceHolderGoogleInput:focus {
+    border-color: #446fc9;
+    outline: none;
+    text-decoration: none;
+}
+
+
+.PlaceHolderGoogleInput::placeholder {
+    color: rgb(182, 182, 182);
+}
+
+
+.AddExtraDataFeild {
+    border: 1px solid #d9d9d9;
+    background: #ffffff;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    color: rgba(0, 0, 0, 0.88);
+    font-size: 14px;
+    line-height: 1.5714285714285714;
+    list-style: none;
+    font-family: inherit;
+    display: flex;
+    border-radius: 6px;
+    flex: 1 1 auto;
+    height: 45px;
+    transition: 0.3s all;
+    cursor: pointer;
+    padding-inline: 10px;
+    outline: none;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+
+.AddExtraDataFeild:hover {
+    border-color: #446fc9;
+    outline: none;
+    text-decoration: none;
+}
+
+.AddExtraDataFeild:focus {
+    border-color: #446fc9;
+    outline: none;
+    text-decoration: none;
+}
+
+.AddExtraDataFeild span {
+    color: rgb(182, 182, 182);
+}
+
+.AddExtraDataFeild button {
+    color: #446fc9;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+}
+
+.AddWorkBtn {
+    width: 100%;
+    padding-block: 10px;
+    border-radius: 5px;
+    outline: none;
+    border: 1px solid #214CBC;
+    background-color: #214CBC;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.MainListingHourWork {
+    border: 1px solid #d9d9d9;
+    padding-inline: 10px;
+    padding-block: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.HoursWorkListTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+.HoursWorkListTop button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* background-color: transparent; */
+    border: none;
+    outline: none;
+}
+
+.HoursWorkListTop h6 {
+    font-size: 18px;
+    margin: 0;
+    font-weight: 500;
+}
+
+.HoursWorkListBottom {
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.HoursWorkListBottom p {
+    margin: 0;
+}
+
+.AddEmailBtn {
+    color: #214CBC;
+    font-size: large;
+    height: 45px;
+    background-color: transparent;
+    padding-inline: 10px;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+
+.DeleteEmailBtn {
+    padding-inline: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+@media (max-width: 425px) {
+    .SecondaryHeader {
+        display: block !important;
+    }
+}
+
+@media (min-width: 100px) and (max-width: 500px) {
+    .FeildRow {
+        display: block !important;
+        align-items: center;
+    }
+
+    .FeildColLeft {
+        width: 100%;
+        padding-top: 10px;
+        /* padding-left: 10px;
+        padding-right: 10px !important; */
+        display: flex;
+        flex-direction: column;
+    }
+
+    .FeildColRight {
+        width: 100%;
+        padding-top: 10px;
+        /* padding-right: 10px;
+        padding-left: 10px !important; */
+        display: flex;
+        flex-direction: column;
+    }
+
+    .AddExtraDataFeild {
+        border: 1px solid #d9d9d9;
+        background: #ffffff;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        color: rgba(0, 0, 0, 0.88);
+        font-size: 14px;
+        line-height: 1.5714285714285714;
+        list-style: none;
+        font-family: inherit;
+        display: flex;
+        border-radius: 6px;
+        flex: 1 1 auto;
+        height: 40px;
+        transition: 0.3s all;
+        cursor: pointer;
+        padding-inline: 10px;
+        outline: none;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .InputWrapper {
+        border: 1px solid rgb(224, 224, 224);
+        background-color: rgb(255, 255, 255);
+        border-radius: 7px;
+        display: flex;
+        -webkit-box-align: center;
+        align-items: center;
+        -webkit-box-pack: justify;
+        justify-content: space-between;
+        padding: 4px 8px;
+    }
+
+    .SecondaryHeader {
+        padding: 1rem 1rem;
+        background-color: white;
+    }
+
+    .ActionHeader {
+        padding: 15px !important;
+    }
+
+    .SecondaryHeader h1 {
+        margin: 0;
+    }
+ 
+}
+
+@media (min-width: 100px) and (max-width:1300px) {
+    .MapSide {
+        flex: 1.2;
+        border-left: 1px solid #ececec;
+        /* position: relative; */
+    }
+}
+
+@media (min-width: 100px) and (max-width: 1124px) {
+    .SecondaryHeader {
+        padding: 2rem 1rem;
+    }
+
+    .ActionHeader {
+        padding: 2rem 1rem;
+    }
+
+    .TableSection {
+        margin: 0px 1rem 40px;
+        display: flex !important;
+        flex-direction: column-reverse !important;
+        background-color: white;
+        border-radius: 8px;
+        border: 1px solid rgb(224, 224, 224);
+        position: relative;
+        overflow: visible !important;
+    }
+
+    .FeildSide {
+        flex: 1;
+        overflow: visible !important;
+        padding: 0px 20px 20px 20px;
+    }
+
+    .MapSide {
+        height: 400px !important;
+        border-left: 1px solid #ececec;
+        padding: 20px !important;
+        flex: unset !important;
+    }
+
+    .SecondaryHeader h1 {
+        margin: 0;
+        font-size: 25px;
+    }
+}
+
+@media (min-width: 1023px) and (max-width: 1500px) {
+    .SecondaryHeader {
+        padding: 2rem 2rem;
+    }
+
+    .ActionHeader {
+        padding: 2rem 2rem;
+    }
+
+    .TableSection {
+        margin: 0px 1rem 20px;
+    }
+}
+
+@media (min-width: 500px) and (max-width: 1500px) {
+    .AddExtraDataFeild {
+        border: 1px solid #d9d9d9;
+        background: #ffffff;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        color: rgba(0, 0, 0, 0.88);
+        font-size: 14px;
+        line-height: 1.5714285714285714;
+        list-style: none;
+        font-family: inherit;
+        display: flex;
+        border-radius: 6px;
+        flex: 1 1 auto;
+        height: 40px;
+        transition: 0.3s all;
+        cursor: pointer;
+        padding-inline: 10px;
+        outline: none;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .FeildColLeft {
+        width: 49.5%;
+        padding-top: 10px;
+        /* padding-left: 10px;
+        padding-right: 5px; */
+        display: flex;
+        flex-direction: column;
+    }
+
+    .FeildColRight {
+        width: 49.5%;
+        padding-top: 10px;
+        /* padding-right: 10px;
+        padding-left: 5px; */
+        display: flex;
+        flex-direction: column;
+    }
+
+    .InputWrapper {
+        border: 1px solid rgb(224, 224, 224);
+        background-color: rgb(255, 255, 255);
+        border-radius: 7px;
+        display: flex;
+        -webkit-box-align: center;
+        align-items: center;
+        -webkit-box-pack: justify;
+        justify-content: space-between;
+        padding: 4px 8px;
+    }
+
+    .SecondaryHeader {
+        padding: 1rem 1rem;
+        background-color: white;
+    }
+
+    .ActionHeader {
+        padding: 1rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .SecondaryHeader h1 {
+        margin: 0;
+    }
+
+}
+
+.PolySearch {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 50%;
+    background-color: white;
+    z-index: 999;
+    border-radius: 20px;
+}
+
+.PolySearch input {
+    width: 100%;
+    height: 40px;
+    outline: none;
+    border: 1px solid rgb(197, 197, 197);
+    margin: 0;
+    border-radius: 20px;
+    padding-inline: 20px;
+}
+
+.LocationIcon {
+    position: absolute;
+    right: -30px;
+    height: 42px;
+    top: 0px;
+    display: flex;
+    align-items: center;
+}
+
+.OverMapFalse {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.88);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+.OverMapFalse p {
+    color: white !important;
+}
+
+.NoFoundWorkOrder {
+    background-color: #214CBC;
+    border: none;
+    outline: none;
+    color: white;
+    border-radius: 5px;
+    height: 45px;
+    cursor: pointer;
+}
+.AddNewContentInDepart{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.AddNewContentInDepart p{
+    font-size: 12px;
+    color: black;
+}
+.AddNewContentInDepartBtn{
+    background-color: transparent;
+    color: #214CBC;
+    border:none;
+    cursor: pointer;
+}
+.ContractorViewContainer{
+    padding: 10px;
+    width:"100%";
+    background-color:rgb(247, 247, 247);
+    margin-top: 10px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding-right: 20px;
+}
+.ContractorViewContainer p{
+    margin: 0;
+}
+.ContractorViewContainer h4{
+    margin: 0;
+}
+.IconContractor{
+    height: 60px;
+    width: 60px;
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.ViewHeaderConstructor{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ViewHeaderConstructor button{
+    background-color: transparent;
+    border: none;
+    font-size: 25px;
+    cursor: pointer;
+}

@@ -1,0 +1,9 @@
+{
+    "baseUrl4": "https://worksafe-production.up.railway.app",
+    "baseUrl9": "http://WSCoreServiceLo-ncfovhnf-696369347.us-east-1.elb.amazonaws.com",
+    "baseUrl3": "https://glqm9bmq-8080.euw.devtunnels.ms",
+    "baseUrl2": "https://ws-staging.kkit.dev",
+    "baseUrl": "https://ws-production.kkit.dev",
+    "baseUrl12": "https://worksafe-staging.up.railway.app",
+    "apiKey": "TwillioAPI"
+}

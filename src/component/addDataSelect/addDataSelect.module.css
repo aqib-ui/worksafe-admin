@@ -1,0 +1,138 @@
+.wrapper {
+    width: 100%;
+}
+
+/* Select Box */
+.AddDataSelectWrap {
+    border: 1px solid var(--gray-10);
+    height: 46px;
+    border-radius: 8px;
+    padding: 0 21px 0 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 999;
+    user-select: none;
+}
+
+/* Text */
+.SelectOn {
+    color: var(--gray-100);
+    font-size: 14px;
+}
+
+.SelectOff {
+    color: var(--gray-70);
+    font-size: 14px;
+}
+
+/* Icon animation */
+.icon {
+    color: #626d6f;
+    transition: transform 0.3s ease;
+}
+
+.rotate {
+    transform: rotate(180deg);
+}
+
+/* Dropdown */
+.ListingItem {
+    border: 1px solid var(--gray-10);
+    border-radius: 8px;
+    margin-top: 4px;
+    max-height: 0;
+    opacity: 0;
+    overflow-y: scroll;
+    transition:
+        max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.25s ease,
+        padding 0.35s ease;
+    background: #fff;
+}
+
+
+/* width */
+.ListingItem::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Track */
+.ListingItem::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+ 
+/* Handle */
+.ListingItem::-webkit-scrollbar-thumb {
+  background: var(--gray-20); 
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+.ListingItem::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-40); 
+}
+
+.ListingItem.open {
+    max-height: 300px;
+    opacity: 1;
+    padding-bottom: 55px;
+    /* padding: 12px 16px; */
+}
+
+/* Options */
+.option {
+    font-size: 14px;
+    cursor: pointer;
+    padding: 16px;
+    border-bottom: 1px solid var(--gray-10);
+}
+
+.option:hover {
+    background: var(--gray-10);
+}
+
+.optionSelected{
+    background: var(--gray-10);
+    font-size: 14px;
+    cursor: pointer;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.optionAdding {
+    font-size: 14px;
+    cursor: pointer;
+    padding-inline: 10px;
+    padding-block: 6px;
+    position: absolute;
+    bottom: 0;
+    width: calc(100% - 18px);
+    background-color: white;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-block: 1px solid var(--gray-10);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.optionAddingInput{
+    border: 1px solid var(--gray-10);
+    height: 48px;
+    border-radius: 8px;
+    width: 100%;
+    outline: none;
+    padding-inline: 20px;
+}
+.optionAddingButton{
+    background-color: var(--primary);
+    padding: 14px 26px;
+    border: none;
+    border-radius: 8px;
+    color: var(--white);
+    margin-left: 10px;
+    cursor: pointer;
+}

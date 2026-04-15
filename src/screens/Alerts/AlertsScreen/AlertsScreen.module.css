@@ -1,0 +1,467 @@
+.MainContainer {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.SecondaryHeader {
+    padding: 24px 24px 0px 24px;
+    /* background-color: white; */
+}
+
+.TabHeader {
+    padding: 24px 24px 0px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+.TabHeader .TabBtn {
+    font-size: 14px;
+    padding-inline: 9px;
+    background-color: transparent;
+    border: 1px solid transparent;
+    cursor: pointer;
+    padding-block: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 200px;
+    min-width: 100px;
+    color: black;
+}
+
+.TabHeader .NewBtn {
+    background-color: var(--blue-50);
+    border: none;
+    padding: 8px 24px;
+    border-radius: 8px;
+    color: var(--white);
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s all;
+}
+
+.TabHeader .NewBtn:hover {
+    background-color: var(--blue-60);
+}
+
+
+.ActionHeader {
+    padding: 2rem 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.SecondaryHeader h1 {
+    margin: 0;
+    font-weight: 500;
+}
+
+.ActionHeader .InputWrapper input {
+    background-color: white;
+    outline: none;
+    border: none;
+}
+
+.InputWrapper {
+    border: 1px solid rgb(224, 224, 224);
+    background-color: rgb(255, 255, 255);
+    border-radius: 7px;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    padding: 9px 10px;
+}
+
+.TableSectionLayout {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    overflow: auto;
+    position: relative;
+}
+
+.TableSectionLayoutAccess {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    overflow: auto;
+    position: relative;
+}
+
+.TableSectionLayoutAccess p {
+    font-size: 18px;
+}
+
+.TableSectionLayoutAccess button {
+    background-color: #214CBC;
+    border: none;
+    outline: none;
+    padding-inline: 20px;
+    padding-block: 8px;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.TableSection {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    overflow: auto;
+    margin: 16px 24px;
+    /* background-color: white; */
+    border-radius: 8px;
+    /* border: 1px solid rgb(224, 224, 224); */
+    position: relative;
+}
+
+.TableSection::-webkit-scrollbar {
+    width: 5px;
+}
+
+.TableSection::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: rgb(247, 247, 247);
+}
+
+.TableSection::-webkit-scrollbar-thumb {
+    background: #214CBC;
+    border-radius: 10px;
+}
+
+.CheckBtn {
+    background-color: transparent;
+    margin: 0;
+    padding-block: 4px;
+    padding-inline: 4px;
+    border: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #00ce8d;
+    border-radius: 40px;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.CloseBtn {
+    background-color: transparent;
+    margin: 0;
+    cursor: pointer;
+    padding-block: 4px;
+    padding-inline: 4px;
+    border: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: red;
+    border-radius: 40px;
+    margin-left: 10px;
+}
+
+.YesTag {
+    background-color: #a8ffe3;
+    width: fit-content;
+    padding-inline: 15px;
+    padding-block: 2px;
+    border-radius: 30px;
+    color: rgb(0, 0, 0);
+    border: 1px solid#01ca8a;
+}
+
+.NoTag {
+    background-color: rgb(253, 191, 191);
+    width: fit-content;
+    padding-inline: 15px;
+    padding-block: 2px;
+    border-radius: 30px;
+    color: rgb(0, 0, 0);
+    border: 1px solid red;
+}
+
+.packageCard {
+    display: flex;
+    align-items: center;
+}
+
+.packageCard h3 {
+    margin-block: 5px !important;
+}
+
+.packageCard p {
+    margin-left: 10px;
+    font-size: 12px;
+    background-color: gainsboro;
+    padding-inline: 10px;
+    padding-block: 2px;
+    border-radius: 20px;
+    margin-block: 0px;
+}
+
+.CardMainPackage {
+    cursor: pointer;
+}
+
+.CardMainPackage .CardDescription {
+    font-size: 13px;
+    margin-block: 5px;
+    color: rgb(150, 150, 150);
+}
+
+.CardMainPackage .CardAmount {
+    margin-block: 5px;
+}
+
+.packageHr {
+    border: 1px solid rgb(235, 235, 235);
+}
+
+.CardMainPackage {
+    border-bottom: 1px solid rgb(224, 224, 224);
+    padding-block: 10px;
+}
+
+.FooterContainer {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    padding-block: 10px;
+}
+
+.FooterContainer :nth-child(2) {
+    background-color: #214CBC;
+    color: white;
+    border: 1px solid #214CBC;
+    padding-inline: 15px;
+    padding-block: 5px;
+    margin-left: 3px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.FooterContainer :nth-child(1) {
+    background-color: transparent;
+    color: #3d3d3d;
+    border: 1px solid #3d3d3d;
+    padding-inline: 15px;
+    padding-block: 5px;
+    margin-left: 3px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.DownloadNotTime {
+    background-color: #c7d7ff;
+    width: calc(100% - 20px);
+    height: 30px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    padding-inline: 10px;
+    color: #5e5e5e;
+}
+
+.DownloadData {
+    padding-top: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.DownloadData p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+}
+
+.DownloadData span {
+    color: #878787;
+}
+
+
+
+@media (max-width: 479px) {}
+
+@media (min-width: 480px) and (max-width: 767px) {}
+
+/* @media (min-width: 100px) and (max-width: 1023px) {
+    .SecondaryHeader {
+        padding: 2rem 1rem;
+    }
+
+    .ActionHeader {
+        padding: 2rem 1rem;
+    }
+
+    
+    .SecondaryHeader h1 {
+        margin: 0;
+        font-size: 25px;
+    }
+} */
+
+/* @media (min-width: 1023px) and (max-width: 1500px) {
+    .SecondaryHeader {
+        padding: 2rem 2rem;
+    }
+
+    .ActionHeader {
+        padding: 2rem 2rem;
+    }
+
+    .TableSection {
+        margin: 0px 1rem 20px;
+    }
+} */
+
+@media (min-width: 100px) and (max-width: 1500px) {
+    /* .TabHeader button {
+        font-size: 16px;
+        padding-inline: 20px;
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        padding-block: 5px;
+        margin-right: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 35px;
+    }
+
+    .InputWrapper {
+        border: 1px solid rgb(224, 224, 224);
+        background-color: rgb(255, 255, 255);
+        border-radius: 7px;
+        display: flex;
+        -webkit-box-align: center;
+        align-items: center;
+        -webkit-box-pack: justify;
+        justify-content: space-between;
+        padding: 4px 8px;
+    }
+
+    .SecondaryHeader {
+        padding: 1rem 1rem;
+    }
+
+    .TabHeader {
+        padding: 1rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+    }
+
+    .SecondaryHeader h1 {
+        margin: 0;
+    } */
+
+}
+
+@media (min-width: 100px) and (max-width: 815px) {
+    .TabHeader {
+        padding: 0rem 16px 10px 16px !important;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: column;
+    }
+
+    .TabHeader .NewBtn {
+        background-color: var(--blue-50);
+        border: none;
+        padding: 8px 14px;
+        border-radius: 8px;
+        color: var(--white);
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.2s all;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .TabHeader div:nth-child(2) {
+        width: 100%;
+    }
+
+    .TabHeader .NewBtn:hover {
+        background-color: var(--blue-60);
+    }
+
+    .filterSection {
+        padding: 16px 16px 0px 16px !important;
+        width: 100%;
+    }
+
+    .TableSection {
+        margin: 16px 16px 40px;
+    }
+
+    /* 
+    .TabHeader div:nth-child(2) {
+        margin-top: 10px;
+    }
+
+    .TabHeader button {
+        margin-top: 10px;
+    } */
+
+}
+
+/* filter Section */
+
+
+.filterSection {
+    padding: 24px 24px 0px 24px;
+    width: 100%;
+}
+
+.layersInput {
+    width: 100%;
+}
+
+.layersLeft {
+    width: 100%;
+}
+
+.Splitter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.EmptyTextTable{
+    padding-block: 100px;
+}
+.EmptyTextTable h4{
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--gray-100);
+    text-transform: capitalize;
+}
+
+
+.EmptyTextTable p{
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--gray-80);
+}
+.EmptyTextTable img{
+    height: 72px;
+}

@@ -1,0 +1,11 @@
+.MainContainer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding-top: 20px;
+}
+
+.MainContainer p{
+    margin: 0;
+}

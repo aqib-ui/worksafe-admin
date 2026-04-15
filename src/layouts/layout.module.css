@@ -1,0 +1,151 @@
+.LayoutSideContainer {
+    height: 100%;
+    background: linear-gradient(180deg, #214CBC 0%, #01A6DA 100%);
+    flex-direction: column;
+    display: flex;
+}
+
+.LayoutSideContainer h2 {
+    font-size: 2.5rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    letter-spacing: 0.2px;
+    color: var(--white);
+}
+
+.LayoutSideContainer h6 {
+    color: var(--Static-White, #FFF);
+    font-size: 1.5rem;
+    font-style: normal;
+    font-weight: 500;
+    letter-spacing: 0.12px;
+    margin-top: 1rem;
+}
+
+.LayoutHeadingArea {
+    height: auto;
+    padding: 3.75rem 5rem 0px 5rem;
+}
+
+.SVGContainer {
+    height: inherit;
+    background-repeat: no-repeat;
+    background-size: contain;
+    padding: 3.75rem 5rem 3rem 5rem;
+    background-origin: content-box, padding-box;
+    background-position: center, bottom;
+}
+
+.LogoController {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.Container {
+    background-color: var(--gray-0);
+    height: 100svh;
+    width: 100%;
+}
+
+.LogoController {
+    padding-block: 2.5rem;
+}
+
+.LogoController .LayoutLogo {
+    height: 36px;
+}
+
+.ContactInfo {
+    display: flex;
+    align-items: center;
+}
+
+.ContactInfo h6 {
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    color: var(--primary);
+    cursor: pointer;
+}
+
+.ContactInfo div:nth-child(1) {
+    padding-right: 10px;
+    border-right: 1px solid var(--gray-20);
+}
+
+.ContactInfo div:nth-child(2) {
+    padding-left: 10px;
+}
+
+
+
+
+@media (min-width: 700px) and (max-width: 1439px) {
+    .LayoutSideContainer h2 {
+        font-size: 2rem;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+        letter-spacing: 0.2px;
+        color: var(--white);
+    }
+
+    .LayoutSideContainer h6 {
+        color: var(--Static-White, #FFF);
+        font-size: 1rem;
+        font-style: normal;
+        font-weight: 500;
+        letter-spacing: 0.12px;
+        margin-top: 1rem;
+    }
+
+    .LayoutHeadingArea {
+        height: auto;
+        padding: 3rem 3rem 0px 3rem;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1200px) {
+    .LayoutSideContainer h2 {
+        font-size: 1.5rem;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+        letter-spacing: 0.2px;
+        color: var(--white);
+    }
+
+    .LayoutSideContainer h6 {
+        color: var(--Static-White, #FFF);
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+        letter-spacing: 0.12px;
+        margin-top: 1rem;
+    }
+
+    .LayoutHeadingArea {
+        height: auto;
+        padding: 1.5rem 1.5rem 0px 1.5rem;
+    }
+}
+
+
+@media (min-width: 100px) and (max-width: 1200px) {
+    .LogoController {
+        padding-block: 1.5rem;
+    }
+    .ContactInfo h6 {
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        color: var(--primary);
+        cursor: pointer;
+    }
+}
