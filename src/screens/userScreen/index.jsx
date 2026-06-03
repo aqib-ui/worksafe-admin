@@ -234,17 +234,6 @@ function UserScreen({ UserReducer, GetUsers, DeleteUser, RecoverUser, GetPackage
                                         </div>
                                     ),
                                 },
-                                // {
-                                //     key: '2',
-                                //     label: (
-                                //         <div onClick={() => {
-                                //             showDrawer()
-                                //             setSelectedUser(record)
-                                //         }}>
-                                //             Make Payment
-                                //         </div>
-                                //     ),
-                                // },
                                 {
                                     key: '3',
                                     label: (
@@ -314,22 +303,22 @@ function UserScreen({ UserReducer, GetUsers, DeleteUser, RecoverUser, GetPackage
             ellipsis: true,
             width: 200,
         },
-        {
-            title: "Delete",
-            dataIndex: "isDelete",
-            key: "isDelete",
-            ellipsis: true,
-            width: 100,
-            render: (text, record) => {
-                return (
-                    record.isDelete ?
-                        <div className={Style.YesTag}>Yes</div>
-                        :
-                        <div className={Style.NoTag}>No</div>
+        // {
+        //     title: "Delete",
+        //     dataIndex: "isDelete",
+        //     key: "isDelete",
+        //     ellipsis: true,
+        //     width: 100,
+        //     render: (text, record) => {
+        //         return (
+        //             record.isDelete ?
+        //                 <div className={Style.YesTag}>Yes</div>
+        //                 :
+        //                 <div className={Style.NoTag}>No</div>
 
-                )
-            },
-        },
+        //         )
+        //     },
+        // },
         {
             title: "Verified",
             dataIndex: "isVerified",
@@ -379,61 +368,63 @@ function UserScreen({ UserReducer, GetUsers, DeleteUser, RecoverUser, GetPackage
             render: (text, record) => {
                 return (
                     <>
-                        <Dropdown trigger={['click']} menu={{
-                            items: record.isPremium && role_ids == "6768f37ff2ef345b103370df" ? [
-                                {
-                                    key: '1',
-                                    label: (
-                                        <div onClick={() => record.isDelete ? RecoverMessage(record._id) : DeleteMessage(record._id)} style={{ color: !record.isDelete ? 'red' : '#214CBC' }}>
-                                            {record.isDelete ? "Recover" : "Delete"}
-                                        </div>
-                                    ),
-                                },
-                                // {
-                                //     key: '2',
-                                //     label: (
-                                //         <div onClick={() => {
-                                //             showDrawer()
-                                //             setSelectedUser(record)
-                                //         }}>
-                                //             Make Payment
-                                //         </div>
-                                //     ),
-                                // },
-                                {
-                                    key: '3',
-                                    label: (
-                                        <div onClick={() => RecoverPaymentF(record._id)}>
-                                            Recover Payment
-                                        </div>
-                                    ),
-                                },
-                            ] : [
-                                {
-                                    key: '1',
-                                    label: (
-                                        <div onClick={() => record.isDelete ? RecoverMessage(record._id) : DeleteMessage(record._id)} style={{ color: !record.isDelete ? 'red' : '#214CBC' }}>
-                                            {record.isDelete ? "Recover" : "Delete"}
-                                        </div>
-                                    ),
-                                },
-                                // {
-                                //     key: '2',
-                                //     label: (
-                                //         <div onClick={() => {
-                                //             showDrawer()
-                                //             setSelectedUser(record)
-                                //         }}>
-                                //             Make Payment
-                                //         </div>
-                                //     ),
-                                // },
-                            ]
-                        }} placement="bottomLeft" arrow>
-                            <div style={{ paddingInline: 7, display: 'flex', alignItems: 'center', justifyContent: 'start' }}>
-                                <MdOutlineSettings color='black' size={26} />
-                            </div>
-                        </Dropdown>
+                        {record.isDelete ? "" :
+                            <Dropdown trigger={['click']} menu={{
+                                items: record.isPremium && role_ids == "6768f37ff2ef345b103370df" ? [
+                                    {
+                                        key: '1',
+                                        label: (
+                                            <div onClick={() => record.isDelete ? RecoverMessage(record._id) : DeleteMessage(record._id)} style={{ color: !record.isDelete ? 'red' : '#214CBC' }}>
+                                                {record.isDelete ? "Recover" : "Delete"}
+                                            </div>
+                                        ),
+                                    },
+                                    // {
+                                    //     key: '2',
+                                    //     label: (
+                                    //         <div onClick={() => {
+                                    //             showDrawer()
+                                    //             setSelectedUser(record)
+                                    //         }}>
+                                    //             Make Payment
+                                    //         </div>
+                                    //     ),
+                                    // },
+                                    {
+                                        key: '3',
+                                        label: (
+                                            <div onClick={() => RecoverPaymentF(record._id)}>
+                                                Recover Payment
+                                            </div>
+                                        ),
+                                    },
+                                ] : [
+                                    {
+                                        key: '1',
+                                        label: (
+                                            <div onClick={() => record.isDelete ? RecoverMessage(record._id) : DeleteMessage(record._id)} style={{ color: !record.isDelete ? 'red' : '#214CBC' }}>
+                                                {record.isDelete ? "Recover" : "Delete"}
+                                            </div>
+                                        ),
+                                    },
+                                    // {
+                                    //     key: '2',
+                                    //     label: (
+                                    //         <div onClick={() => {
+                                    //             showDrawer()
+                                    //             setSelectedUser(record)
+                                    //         }}>
+                                    //             Make Payment
+                                    //         </div>
+                                    //     ),
+                                    // },
+                                ]
+                            }} placement="bottomLeft" arrow>
+                                <div style={{ paddingInline: 7, display: 'flex', alignItems: 'center', justifyContent: 'start' }}>
+                                    <MdOutlineSettings color='black' size={26} />
+                                </div>
+                            </Dropdown>
+                        }
                     </>
                 )
             },

@@ -12,12 +12,13 @@ import { FaRegFilePdf } from "react-icons/fa6";
 import { useNavigate, useOutletContext } from 'react-router';
 import { TASK_CLEAR_EXPIRED, TASK_GET_ALERTS_COMPLETE, TASK_GET_ARCHIVED_ALERTS_COMPLETE } from '../../../../store/actions/types';
 import ListInputSearch from '../../../component/ListInputSearch';
-import blueDoc from '../../../assets/map-POI.png'
+import blueDoc from '../../../assets/dashboard-4.png'
 import blueDocSearch from '../../../assets/search-normal-blue.png'
 import { MdChevronRight } from "react-icons/md";
 import clockYellow from "../../../assets/clock-yellow.png"
 import tickCircle from "../../../assets/tick-circle.png"
 import closeCircle from "../../../assets/close-circle.png"
+import AlertFilter from './alertFilter';
 
 
 
@@ -30,21 +31,20 @@ function MyProject({ AlertsReducer, GetAlerts, ArchiveAlerts }) {
     const navigate = useNavigate()
 
     const [searchQuery, setSearchQuery] = useState("")
+    const [paramsNew, setParamsNew] = useState(null)
 
-    const [priority, setPriority] = useState([])
-    const [cpc, setCpc] = useState([])
 
 
     const [isNext, setIsNext] = useState(true)
     useEffect(() => {
         const init = async () => {
-            const totalLegngth = await GetAlerts(workSite, page, searchQuery, priority)
-            if (totalLegngth < 30) {
-                setIsNext(false)
-            }
+            console.log(paramsNew, 'paramsNew')
+            const totalLegngth = await GetAlerts(workSite, page, searchQuery, paramsNew && paramsNew, setIsNext)
         }
         init()
-    }, [page, searchQuery, priority])
+    }, [page, searchQuery])
+
+    console.log(isNext, 'a;sdklskadklsakdlksa')
 
     useEffect(() => {
         if (!messageApi) return;
@@ -84,8 +84,7 @@ function MyProject({ AlertsReducer, GetAlerts, ArchiveAlerts }) {
             });
             dispatch({ type: TASK_GET_ARCHIVED_ALERTS_COMPLETE, loading: true, payload: [] });
             dispatch({ type: TASK_GET_ALERTS_COMPLETE, loading: true, payload: [] });
-            GetAlerts(workSite, page, searchQuery)
-
+            runAgain()
         }
     }, [
         AlertsReducer.networkError,
@@ -95,6 +94,9 @@ function MyProject({ AlertsReducer, GetAlerts, ArchiveAlerts }) {
         messageApi,
     ]);
 
+    const runAgain = async () => {
+        const totalLegngth = await GetAlerts(workSite, page, searchQuery, paramsNew && paramsNew, setIsNext)
+    }
 
     const viewWorkOrder = (eId) => {
         localStorage.setItem("Pf_!9DqZ@+76MaL#CYxv3tr", eId)
@@ -129,7 +131,7 @@ function MyProject({ AlertsReducer, GetAlerts, ArchiveAlerts }) {
             ellipsis: true,
             render: (text, record) => {
                 return (
-                    <Tag style={{ color: text == "No Threat" ? "#1C8F5D" : text == "Lowest" ? "#333839" : text == "Moderate" ? '#C9A240' : text == "High" ? '#C94040' : text == "Extreme" ? '#792727' : null }} color={text == "No Threat" ? "#4DF15E14" : text == "Lowest" ? "#D8DFE0" : text == "Moderate" ? '#F1C34D14' : text == "High" ? '#F14D4D14' : text == "Extreme" ? '#501A1A14' : null}>
+                    <Tag className='AlertTag' style={{ color: text == "No Threat" ? "#666d80" : text == "Lowest" ? "#17736E" : text == "Moderate" ? '#926E26' : text == "High" ? '#D32029' : text == "Extreme" ? '#7F1319' : null }} color={text == "No Threat" ? "rgba(102, 109, 128,0.1)" : text == "Lowest" ? "rgba(23, 115, 110,0.1)" : text == "Moderate" ? 'rgba(146, 110, 38,0.1)' : text == "High" ? 'rgba(211, 32, 41,0.1)' : text == "Extreme" ? 'rgba(127, 19, 25,0.1)' : null}>
                         {text === "No Threat" ? "No Risk" : text === "Lowest" ? "Lowest Risk" : text === "Moderate" ? "Moderate Risk" : text === "High" ? "High Risk" : text === "Extreme" ? "Extreme Risk" : text}
                     </Tag>
                 )
@@ -141,11 +143,19 @@ function MyProject({ AlertsReducer, GetAlerts, ArchiveAlerts }) {
             width: 200,
             ellipsis: true,
             render: (users) => (
-                // <Space direction="vertical">
-                //     <ReactTimeAgo date={users?.createdAt} locale="en-US" />
-                // </Space>
                 <Space direction="vertical">
-                    <p>{users?.createdAt?.split("T")[0] ?? "0"}</p>
+                    <ReactTimeAgo date={users?.createdAt} locale="en-US" />
+                </Space>
+            ),
+        },
+        {
+            title: "Updated At",
+            key: "updatedAt",
+            width: 200,
+            ellipsis: true,
+            render: (users) => (
+                <Space direction="vertical">
+                    <ReactTimeAgo locale="en-US" timeStyle="round-minute" date={users?.updatedAt} locale="en-US" />
                 </Space>
             ),
         },
@@ -208,8 +218,8 @@ function MyProject({ AlertsReducer, GetAlerts, ArchiveAlerts }) {
             {contextHolder}
 
             <div className={Style.filterSection}>
-                <Row gutter={gutter} align="middle" justify="space-between">
-                    <Col xxl={20} xl={20} lg={20} md={24} sm={24} xs={24}>
+                {/* <Row gutter={gutter} align="middle" justify="space-between">
+                    <Col xxl={16} xl={16} lg={16} md={24} sm={24} xs={24}>
                         <div className={Style.Splitter}>
                             <div className={Style.layersInput}>
                                 <ListInputSearch onChange={(e) => setSearchQuery(e)} placeholder="Search Alert" />
@@ -217,7 +227,7 @@ function MyProject({ AlertsReducer, GetAlerts, ArchiveAlerts }) {
                         </div>
                     </Col>
 
-                    <Col xxl={4} xl={4} lg={4} md={24} sm={24} xs={24}>
+                    <Col xxl={8} xl={8} lg={8} md={24} sm={24} xs={24}>
                         <Select
                             getPopupContainer={(node) => node.parentElement}
                             placeholder="All Risk Level"
@@ -227,7 +237,19 @@ function MyProject({ AlertsReducer, GetAlerts, ArchiveAlerts }) {
                             onChange={(e) => setPriority(e)}
                         />
                     </Col>
+                </Row> */}
+                <Row gutter={gutter} align="middle" justify="space-between">
+                    <Col xxl={22} xl={22} lg={22} md={22} sm={22} xs={22}>
+                        <div className={Style.Splitter}>
+                            <div className={Style.layersInput}>
+                                <ListInputSearch onChange={(e) => setSearchQuery(e)} placeholder="Search Alert" />
+                            </div>
+                        </div>
+                    </Col>
 
+                    <Col xxl={2} xl={2} lg={2} md={2} sm={2} xs={2}>
+                        <AlertFilter setPage={setPage} setIsNext={setIsNext} setParamsNew={setParamsNew} loading={AlertsReducer?.alertLoading} GetPOI={GetAlerts} workSite={workSite} page={page} searchQuery={searchQuery} />
+                    </Col>
                 </Row>
             </div>
             <div className={Style.TableSection}>
@@ -264,9 +286,9 @@ function MyProject({ AlertsReducer, GetAlerts, ArchiveAlerts }) {
                     locale={{
                         emptyText: (
                             <div className={Style.EmptyTextTable}>
-                                <img src={searchQuery !== "" ? blueDocSearch : blueDoc} alt="blue-doc" />
-                                <h4>{searchQuery !== "" ? "No Search Result Found" : "No Alert Created Yet"}</h4>
-                                {searchQuery !== "" ?
+                                <img src={searchQuery !== "" || paramsNew !== null ? blueDocSearch : blueDoc} alt="blue-doc" />
+                                <h4>{searchQuery !== "" || paramsNew !== null ? "No Search Result Found" : "No Alert Created Yet"}</h4>
+                                {searchQuery !== "" || paramsNew !== null ?
                                     <p>Try adjusting your search or use different keywords to find Alert<br /> within your worksite.</p>
                                     :
                                     <p>Start by adding your Alert to mark critical zones, assign safety<br /> tasks, and track risk areas within your worksite.</p>
@@ -274,7 +296,7 @@ function MyProject({ AlertsReducer, GetAlerts, ArchiveAlerts }) {
                             </div>
                         )
                     }}
-                    pagination={false} loading={AlertsReducer?.alertLoading} scroll={{ x: 'max-content' }} rowKey={(record) => record._id} sticky={{ offsetHeader: 0 }} columns={columns} dataSource={sortedData} />
+                    pagination={false} loading={AlertsReducer?.alertLoading} scroll={{ x: 'max-content' }} rowKey={(record) => record._id} sticky={{ offsetHeader: 0 }} columns={columns} dataSource={AlertsReducer?.alertData} />
             </div>
         </>
     )

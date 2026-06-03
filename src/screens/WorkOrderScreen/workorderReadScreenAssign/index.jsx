@@ -70,8 +70,8 @@ const WorkorderScreenReadAssign = ({ GetMyAssignedWorkOrder, GetMyWorkOrder, Arc
     const formattedDate = `${year}-${month}-${day}`;
     const [messageApi, contextHolder] = message.useMessage();
     const Role_ID = localStorage.getItem('0U7Qv$N3tw69gV+T2/~1/w==')
-    const [extraDataList, setExtraDataList] = useState([]);
-    const [personanalDataList, setPersonanalDataList] = useState([]);
+    // const [extraDataList, setExtraDataList] = useState([]);
+    // const [personanalDataList, setPersonanalDataList] = useState([]);
 
     const { workOrderGetByIDData, workSiteData, workOrderGetByIDDatLoading } = WorkOrderReducer
 
@@ -370,8 +370,8 @@ const WorkorderScreenReadAssign = ({ GetMyAssignedWorkOrder, GetMyWorkOrder, Arc
 
 
     useEffect(() => {
-        setExtraDataList(workOrderGetByIDData?.extraFields ? workOrderGetByIDData?.extraFields : [])
-        setPersonanalDataList(workOrderGetByIDData?.add_hours_worked ? JSON.parse(workOrderGetByIDData?.add_hours_worked) : [])
+        // setExtraDataList(workOrderGetByIDData?.extraFields ? workOrderGetByIDData?.extraFields : [])
+        // setPersonanalDataList(workOrderGetByIDData?.add_hours_worked ? JSON.parse(workOrderGetByIDData?.add_hours_worked) : [])
         const polygons = workSiteData?.find(data => data._id == currentWorkSite)?.polygon;
 
         const firstLocation = polygons?.locations?.[0];
@@ -453,7 +453,7 @@ const WorkorderScreenReadAssign = ({ GetMyAssignedWorkOrder, GetMyWorkOrder, Arc
     // polyline
     const [pointsPolyLine, setPointsPolyLine] = useState([]);
     const [bandPolygon, setBandPolygon] = useState([]);
-    const [polylineWidth, setPolylineWidth] = useState(0)
+    const [polylineWidth, setPolylineWidth] = useState(50)
     const [polylineSafety, setPolylineSafety] = useState(0)
     const [polylineElevation, setPolylineElevation] = useState(0)
     const [safetyZonePolyLine, setSafetyZonePolyLine] = useState([]);
@@ -857,6 +857,13 @@ const WorkorderScreenReadAssign = ({ GetMyAssignedWorkOrder, GetMyWorkOrder, Arc
 
 
     const showEditModal = (id) => {
+        const rawDate = id?.completed_date || new Date().toISOString();
+        const parsedDate = new Date(rawDate);
+        setCurrentDate(
+            isNaN(parsedDate.getTime())
+                ? new Date().toISOString()
+                : parsedDate.toISOString()
+        );
         setEditPersonalModal(true);
         setCurrentWorkOrder(id._id)
         setJsaRequired(id?.isJSA == "true" ? true : false)
@@ -864,7 +871,6 @@ const WorkorderScreenReadAssign = ({ GetMyAssignedWorkOrder, GetMyWorkOrder, Arc
         setAllJSA(id?.jsaDocumentation)
         setActualEmail(JSON.parse(id?.email_copy_to_completed))
         setIsExcel(id?.isExcelCompleted == "true" ? true : false)
-        setCurrentDate(id?.completed_date !== "" ? dayjs(id?.completed_date == null ? Date.now() : id?.completed_date).format('YYYY-MM-DD hh:mm A') : getCurrentDate())
         setSendTo(id?.send_to == "true" ? "Yes" : "No")
     };
     const [editPersonalModal, setEditPersonalModal] = useState(false);
@@ -872,13 +878,6 @@ const WorkorderScreenReadAssign = ({ GetMyAssignedWorkOrder, GetMyWorkOrder, Arc
         setEditPersonalModal(false);
     };
 
-    const getCombinedDateTime = () => {
-        if (currentDate) {
-            const combined = dayjs(currentDate).format(dateFormat);
-            return combined
-        }
-        return null;
-    };
 
 
     const editWorkOrder = (eId) => {
@@ -915,16 +914,13 @@ const WorkorderScreenReadAssign = ({ GetMyAssignedWorkOrder, GetMyWorkOrder, Arc
             workOrderId: currentWorkOrder,
             email_copy_to_completed: JSON.stringify(emailList),
             send_to: sendTo === "Yes" ? "true" : "false",
-            completed_date: getCombinedDateTime(),
+            completed_date: currentDate,
             isExcelCompleted: isExcel ? "true" : "false",
             jsaDocumentation: !AwsUpload ? [] : AwsUpload,
             jsaDocumentationIds: JSON.stringify(allJSA?.filter(data => !deleteJSA.includes(data?._id)).map(data => { return data._id }))
         }
+        console.log(payload, 'asldaskdkjakjdas')
         CompleteWorkOrder(payload);
-
-        // if (HJSAOrVideos) {
-        //     formData.append("jsaDocumentationIds", JSON.stringify(allJSA?.filter(data => !deleteJSA.includes(data?._id)).map(data => { return data._id })))
-        // }
     };
 
 
@@ -1034,6 +1030,26 @@ const WorkorderScreenReadAssign = ({ GetMyAssignedWorkOrder, GetMyWorkOrder, Arc
             clearTimeout(timeout);
         }
     };
+
+
+
+
+
+    const personanalDataList = (() => {
+        try {
+            return workOrderGetByIDData?.add_hours_worked
+                ? JSON.parse(workOrderGetByIDData.add_hours_worked)
+                : [];
+        } catch {
+            return [];
+        }
+    })();
+
+
+
+
+    console.log(workOrderGetByIDData?.completed_date, 'ASDKLKLSKDA')
+
     return (
         <>
             {contextHolder}
@@ -1049,10 +1065,12 @@ const WorkorderScreenReadAssign = ({ GetMyAssignedWorkOrder, GetMyWorkOrder, Arc
                             <h3>Work Order Detail</h3>
 
                             <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <Dropdown trigger={['click']} disabled={fileLoader ? true : false} menu={{ items: getDownloadDropdown() }} placement="bottomRight">
-                                    <button className={Style.DownloadBtn}>Download <IoIosArrowDown size={20} style={{ marginLeft: 5 }} color='white' /></button>
-                                </Dropdown>
-                                {shouldRenderDropdown && (
+                                {workOrderGetByIDData?.WorkSite == workSite && (
+                                    <Dropdown trigger={['click']} disabled={fileLoader ? true : false} menu={{ items: getDownloadDropdown() }} placement="bottomRight">
+                                        <button className={Style.DownloadBtn}>Download <IoIosArrowDown size={20} style={{ marginLeft: 5 }} color='white' /></button>
+                                    </Dropdown>
+                                )}
+                                {shouldRenderDropdown && workOrderGetByIDData?.WorkSite == workSite && (
                                     < Dropdown trigger={['click']} menu={{ items: menuItems() }} placement="bottomRight">
                                         <span style={{ display: "flex", alignItems: 'center', justifyContent: 'center', width: 50 }}><img src={moreIcon} style={{ height: "24px" }} /></span>
                                     </Dropdown>
@@ -1136,7 +1154,8 @@ const WorkorderScreenReadAssign = ({ GetMyAssignedWorkOrder, GetMyWorkOrder, Arc
                                                 <>
                                                     <div>
                                                         <h6>Width Stroke</h6>
-                                                        <p>{workOrderGetByIDData?.polygon?.radius} m</p>
+                                                        <p>{Number(workOrderGetByIDData?.polygon?.radius).toFixed(2)} m</p>
+
                                                     </div>
                                                     <span></span>
                                                 </>
@@ -1144,14 +1163,14 @@ const WorkorderScreenReadAssign = ({ GetMyAssignedWorkOrder, GetMyWorkOrder, Arc
                                                     <>
                                                         <div>
                                                             <h6>Radius</h6>
-                                                            <p>{workOrderGetByIDData?.polygon?.radius} m</p>
+                                                            <p>{Number(workOrderGetByIDData?.polygon?.radius).toFixed(2)} m</p>
                                                         </div>
                                                         <span></span>
                                                     </>
                                                     : ""}
                                             <div>
                                                 <h6>Safety Zone</h6>
-                                                <p>{workOrderGetByIDData?.polygon?.safetyZone} m</p>
+                                                <p>{Number(workOrderGetByIDData?.polygon?.safetyZone).toFixed(2)} m</p>
                                             </div>
                                             <span></span>
                                             <div>
@@ -1176,11 +1195,19 @@ const WorkorderScreenReadAssign = ({ GetMyAssignedWorkOrder, GetMyWorkOrder, Arc
                                                     <p>{dayjs(workOrderGetByIDData?.cdr).format('YYYY-MM-DD hh:mm A')}</p>
                                                 </div>
                                             }
-                                            {workOrderGetByIDData?.completed_date !== "" &&
+                                            {workOrderGetByIDData?.completed_date ?
                                                 <div style={{ marginTop: 16 }}>
                                                     <h6>Date Completed</h6>
-                                                    {/* <p>{workOrderGetByIDData?.cdr?.split(" ")[0] ?? ""}</p> */}
-                                                    <p>{dayjs(workOrderGetByIDData?.completed_date == "null" ? Date.now() : workOrderGetByIDData?.completed_date).format('YYYY-MM-DD hh:mm A')}</p>
+                                                    {/* <p>{(workOrderGetByIDData?.completed_date).format('YYYY-MM-DD hh:mm A')}</p> */}
+                                                    <p>{workOrderGetByIDData?.completed_date
+                                                        ? dayjs(workOrderGetByIDData.completed_date).format("YYYY-MM-DD hh:mm A")
+                                                        : ""}</p>
+                                                </div>
+                                                :
+
+                                                <div style={{ marginTop: 16 }}>
+                                                    <h6>Date Completed</h6>
+                                                    <p>N/A</p>
                                                 </div>
                                             }
                                             <div style={{ marginTop: 16 }}>
@@ -1229,7 +1256,8 @@ const WorkorderScreenReadAssign = ({ GetMyAssignedWorkOrder, GetMyWorkOrder, Arc
                                             <div className={Style.TaskFeild} style={{ marginTop: 16 }}>
                                                 <div className={Style.AddExtraDataFeild}>
                                                     <div>
-                                                        <p>personnel <span>({personanalDataList.length ?? 0})</span></p>
+                                                        <p>Personnel <span>({personanalDataList.length || 0})</span></p>
+                                                        {/* workOrderGetByIDData?.add_hours_worked ? JSON.parse(workOrderGetByIDData?.add_hours_worked) : [] */}
                                                     </div>
                                                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                                         <MdOutlineChevronRight size={28} color='#626D6F' />
@@ -1241,7 +1269,7 @@ const WorkorderScreenReadAssign = ({ GetMyAssignedWorkOrder, GetMyWorkOrder, Arc
                                             <div className={Style.TaskFeild} style={{ marginTop: 16 }}>
                                                 <div className={Style.AddExtraDataFeild}>
                                                     <div>
-                                                        <p>Extra data <span>({extraDataList?.length ?? 0})</span></p>
+                                                        <p>Extra data <span>({workOrderGetByIDData?.extraFields?.length ?? 0})</span></p>
                                                     </div>
                                                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                                         <MdOutlineChevronRight size={28} color='#626D6F' />
@@ -1577,7 +1605,12 @@ const WorkorderScreenReadAssign = ({ GetMyAssignedWorkOrder, GetMyWorkOrder, Arc
                     key={'right'}
                 >
                     <>
-                        {extraDataList?.length > 0 ? extraDataList?.map((data, index) => {
+                        {workOrderGetByIDData?.extraFields?.length > 0 ? workOrderGetByIDData?.extraFields?.map((data, index) => {
+                            let rgbaString = '';
+                            if (capitalizeWord(data?.type) == "Color") {
+                                const [r, g, b, a] = data?.value?.split('|').map(Number);
+                                rgbaString = `rgba(${r}, ${g}, ${b}, ${a})`;
+                            }
                             return (
                                 <div key={index} className={Style.MainListingHourWork}>
                                     <div className={Style.HoursWorkListTop}>
@@ -1591,7 +1624,7 @@ const WorkorderScreenReadAssign = ({ GetMyAssignedWorkOrder, GetMyWorkOrder, Arc
                                                 : capitalizeWord(data?.type) == "Date" ?
                                                     <h6>{data?.value}</h6>
                                                     : capitalizeWord(data?.type) == "Color" ?
-                                                        <ColorPicker value={data?.value} disabled={false} style={{ marginTop: 8 }} />
+                                                        <ColorPicker value={rgbaString} disabled={false} style={{ marginTop: 8 }} />
                                                         : ""
                                         }
                                     </div>

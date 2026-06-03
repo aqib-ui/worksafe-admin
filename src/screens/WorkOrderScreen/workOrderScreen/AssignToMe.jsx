@@ -24,11 +24,12 @@ import { useDownloadNotification } from '../../../provider/downloadProvider';
 import { useOutletContext } from 'react-router';
 import { UploadOutlined } from '@ant-design/icons';
 import ListInputSearch from '../../../component/ListInputSearch';
-import blueDoc from '../../../assets/blue-Doc.png'
+import blueDoc from '../../../assets/dashboard-2.png'
 import { MdChevronRight } from "react-icons/md";
 import clockYellow from "../../../assets/clock-yellow.png"
 import tickCircle from "../../../assets/tick-circle.png"
 import closeCircle from "../../../assets/close-circle.png"
+import WorkOrderFilter from './workOrderFilter';
 
 dayjs.extend(utc);
 
@@ -57,20 +58,20 @@ function AssignedToMeWorkOrder({ PermissionReducer, WorkOrderReducer, GetMyAssig
     const [isNext, setIsNext] = useState(true)
 
     const [searchQuery, setSearchQuery] = useState("")
-    const [priority, setPriority] = useState([])
-    const [cpc, setCpc] = useState([])
+    // const [priority, setPriority] = useState([])
+    // const [cpc, setCpc] = useState([])
+
+
+    const [paramsNew, setParamsNew] = useState(null)
 
 
 
     useEffect(() => {
         const init = async () => {
-            const totalLegngth = await GetMyAssignedWorkOrder(workSite, page, searchQuery, priority, cpc)
-            if (totalLegngth < 30) {
-                setIsNext(false)
-            }
+            const totalLegngth = await GetMyAssignedWorkOrder(workSite, page, searchQuery, paramsNew && paramsNew, setIsNext)
         }
         init()
-    }, [priority, cpc, page, searchQuery])
+    }, [page, searchQuery])
 
 
 
@@ -171,7 +172,7 @@ function AssignedToMeWorkOrder({ PermissionReducer, WorkOrderReducer, GetMyAssig
                 type: "success",
                 content: "Work order complete",
             });
-            GetMyAssignedWorkOrder(workSite, page, searchQuery)
+            runAgain()
             setCurrectWorkOrder()
             setDeleteSafetyH()
             setJsaRequired(false)
@@ -182,6 +183,11 @@ function AssignedToMeWorkOrder({ PermissionReducer, WorkOrderReducer, GetMyAssig
         WorkOrderReducer.workOrderExpiredError,
         messageApi,
     ]);
+
+
+    const runAgain = async () => {
+        const totalLegngth = await GetMyAssignedWorkOrder(workSite, page, searchQuery, paramsNew && paramsNew, setIsNext)
+    }
 
     const viewWorkOrder = (eId) => {
         localStorage.setItem("Xy9#qLT7pw!5kD+M3/=8&v==", eId)
@@ -265,7 +271,18 @@ function AssignedToMeWorkOrder({ PermissionReducer, WorkOrderReducer, GetMyAssig
             ellipsis: true,
             render: (users) => (
                 <Space direction="vertical">
-                    <p>{users?.createdAt.split("T")[0] ?? "0"}</p>
+                    <ReactTimeAgo date={users?.createdAt} locale="en-US" />
+                </Space>
+            ),
+        },
+        {
+            title: "Updated At",
+            key: "updatedAt",
+            width: 200,
+            ellipsis: true,
+            render: (users) => (
+                <Space direction="vertical">
+                    <ReactTimeAgo date={users?.updatedAt} locale="en-US" />
                 </Space>
             ),
         },
@@ -326,7 +343,7 @@ function AssignedToMeWorkOrder({ PermissionReducer, WorkOrderReducer, GetMyAssig
         CompleteWorkOrder(formData);
     };
 
-    const sortedData = [...WorkOrderReducer?.assignedWorkOrderData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    // const sortedData = [...WorkOrderReducer?.assignedWorkOrderData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
 
 
@@ -408,7 +425,7 @@ function AssignedToMeWorkOrder({ PermissionReducer, WorkOrderReducer, GetMyAssig
         <>
             {contextHolder}
             <div className={Style.filterSection}>
-                <Row gutter={gutter} align="middle" justify="space-between">
+                {/* <Row gutter={gutter} align="middle" justify="space-between">
                     <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
                         <div className={Style.Splitter}>
                             <div className={Style.layersInput}>
@@ -438,14 +455,20 @@ function AssignedToMeWorkOrder({ PermissionReducer, WorkOrderReducer, GetMyAssig
                             onChange={(e) => setCpc(e)}
                         />
                     </Col>
+                </Row> */}
 
-                    {/* <Col xxl={4} xl={4} lg={4} md={24} sm={24} xs={24}>
-                        <Select
-                            getPopupContainer={(node) => node.parentElement}
-                            placeholder="All Status"
-                            style={{ width: '100%' }}
-                        />
-                    </Col> */}
+                <Row gutter={gutter} align="middle" justify="space-between">
+                    <Col xxl={22} xl={22} lg={22} md={22} sm={22} xs={22}>
+                        <div className={Style.Splitter}>
+                            <div className={Style.layersInput}>
+                                <ListInputSearch onChange={(e) => setSearchQuery(e)} placeholder="Search Work order" />
+                            </div>
+                        </div>
+                    </Col>
+
+                    <Col xxl={2} xl={2} lg={2} md={2} sm={2} xs={2}>
+                        <WorkOrderFilter setPage={setPage} setIsNext={setIsNext} setParamsNew={setParamsNew} loading={WorkOrderReducer?.workOrderLoading} GetMyAssignedWorkOrder={GetMyAssignedWorkOrder} workSite={workSite} page={page} searchQuery={searchQuery} />
+                    </Col>
                 </Row>
             </div>
 
@@ -489,7 +512,7 @@ function AssignedToMeWorkOrder({ PermissionReducer, WorkOrderReducer, GetMyAssig
                             </div>
                         )
                     }}
-                    pagination={false} loading={WorkOrderReducer?.workOrderLoading} scroll={{ x: 'max-content' }} rowKey={(record) => record._id} sticky={{ offsetHeader: 0 }} columns={columns} dataSource={sortedData} />
+                    pagination={false} loading={WorkOrderReducer?.workOrderLoading} scroll={{ x: 'max-content' }} rowKey={(record) => record._id} sticky={{ offsetHeader: 0 }} columns={columns} dataSource={WorkOrderReducer?.assignedWorkOrderData} />
             </div>
             <Drawer
                 maskClosable={false}
@@ -593,11 +616,11 @@ function AssignedToMeWorkOrder({ PermissionReducer, WorkOrderReducer, GetMyAssig
                                     <div style={{ display: 'flex', alignItems: 'center', marginTop: 3 }}>
 
                                         <a onClick={async () => {
-                                                    const AllowNewTab = await WorkPOIGetByIdDoc(new URL(data?.url).pathname.replace(/^\/+/, ''));
-                                                    if (AllowNewTab?.url) {
-                                                        window.open(AllowNewTab.url, "_blank", "noopener,noreferrer");
-                                                    }
-                                                }}style={{ marginLeft: 5, marginRight: 5, width: '100%', fontSize: 14, textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}>
+                                            const AllowNewTab = await WorkPOIGetByIdDoc(new URL(data?.url).pathname.replace(/^\/+/, ''));
+                                            if (AllowNewTab?.url) {
+                                                window.open(AllowNewTab.url, "_blank", "noopener,noreferrer");
+                                            }
+                                        }} style={{ marginLeft: 5, marginRight: 5, width: '100%', fontSize: 14, textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}>
                                             {data?.fileName}
                                         </a>
                                         <div onClick={() => setDeleteSafetyH(prev => {

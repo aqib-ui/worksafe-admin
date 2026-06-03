@@ -41,6 +41,8 @@ import { AWSUploadModuleFilter } from '../../../../component/AWSUploadModule';
 const ProjectScreenCreate = ({ LoadDailyProject, GetCompanyUser, WorkOrderReducer, ProjectReducer, PoiReducer, getDepartment, CreateDepartment, GetAllWorkOrderUnLink, getContractor, deleteContractor, addContractorAC, UpdateContractorAC }) => {
     dayjs.extend(customParseFormat);
     dayjs.extend(utc);
+    const [ismoveAblePoly, setIsmoveAblePoly] = useState(false)
+
     const dateFormat2 = 'YYYY-MM-DD';
     const now = new Date(Date.now());
     const year = now.getFullYear();
@@ -211,11 +213,9 @@ const ProjectScreenCreate = ({ LoadDailyProject, GetCompanyUser, WorkOrderReduce
             map: mapRef.current,
             center: a,
             radius: b,
-            strokeColor: '#fe541e',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#fe541e',
-            fillOpacity: 0.35,
+            fillOpacity: 0.2,
             draggable: true,
             editable: true,
         });
@@ -223,11 +223,9 @@ const ProjectScreenCreate = ({ LoadDailyProject, GetCompanyUser, WorkOrderReduce
             map: mapRef.current,
             center: a,
             radius: b + c,
-            strokeColor: '#1e88e5',
-            strokeOpacity: 0.7,
-            strokeWeight: 2,
-            fillColor: '#90caf9',
-            fillOpacity: 0.3,
+            strokeWeight: 0,
+            fillColor: '#fe541e',
+            fillOpacity: 0.2,
             clickable: false,
         });
         parent.addListener('center_changed', () => {
@@ -259,22 +257,6 @@ const ProjectScreenCreate = ({ LoadDailyProject, GetCompanyUser, WorkOrderReduce
         circleRef.current = parent;
         childCircleRef.current = child;
     };
-
-
-
-
-
-
-
-
-
-
-
-    console.log(location, 'aisd8ua8')
-
-
-
-
 
 
 
@@ -487,11 +469,9 @@ const ProjectScreenCreate = ({ LoadDailyProject, GetCompanyUser, WorkOrderReduce
             map: mapRef.current,
             center: location,
             radius: parentRadius,
-            strokeColor: '#fe541e',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#fe541e',
-            fillOpacity: 0.35,
+            fillOpacity: 0.2,
             draggable: true,
             editable: true,
         });
@@ -499,11 +479,9 @@ const ProjectScreenCreate = ({ LoadDailyProject, GetCompanyUser, WorkOrderReduce
             map: mapRef.current,
             center: location,
             radius: parentRadius + safetyOffset,
-            strokeColor: '#1e88e5',
-            strokeOpacity: 0.7,
-            strokeWeight: 2,
-            fillColor: '#90caf9',
-            fillOpacity: 0.3,
+            strokeWeight: 0,
+            fillColor: '#fe541e',
+            fillOpacity: 0.2,
             clickable: false,
         });
         parent.addListener('center_changed', () => {
@@ -575,20 +553,50 @@ const ProjectScreenCreate = ({ LoadDailyProject, GetCompanyUser, WorkOrderReduce
             lng: center.lng + dLng * scale,
         };
     };
+
+
+
+
+    const getCenter = (points) => {
+        const lat =
+            points.reduce((sum, p) => sum + p.lat, 0) / points.length;
+        const lng =
+            points.reduce((sum, p) => sum + p.lng, 0) / points.length;
+        return { lat, lng };
+    };
+
+    const movePolygonToCenter = (points, newCenter) => {
+        const currentCenter = getCenter(points);
+        const latDiff = newCenter.lat - currentCenter.lat;
+        const lngDiff = newCenter.lng - currentCenter.lng;
+        return points.map((p) => ({
+            lat: p.lat + latDiff,
+            lng: p.lng + lngDiff,
+        }));
+    };
+
+
     const handleMapClick = useCallback((e) => {
-        // if (points.length < 3) {
         const newPoint = {
             lat: e.latLng.lat(),
             lng: e.latLng.lng(),
         };
-        setPoints((prev) => [...prev, newPoint]);
-        // }
-    }, [points]);
+        if (ismoveAblePoly) {
+            const updated = movePolygonToCenter(points, newPoint);
+            setPoints(updated);
+        }
+        else {
+            setPoints((prev) => [...prev, newPoint]);
+        }
+    }, [points, ismoveAblePoly]);
+
+
 
     const removeIconCustomArea = (indexRemover) => {
         setPoints(prev => prev?.filter((_, index) => index !== indexRemover));
     }
     const drawCustomArea = () => {
+        setIsmoveAblePoly(false)
         setSelectedTab(2)
         setPointsMore([])
         circleRef.current.setMap(null);
@@ -612,6 +620,7 @@ const ProjectScreenCreate = ({ LoadDailyProject, GetCompanyUser, WorkOrderReduce
     const [safetyOffsetMore, setSafetyOffsetMore] = useState(0);
     const [offsetPolygon, setOffsetPolygon] = useState([]);
     const drawPolyLine = () => {
+        setIsmoveAblePoly(false)
         setSelectedTab(3)
         setPoints([])
         circleRef.current.setMap(null);
@@ -619,14 +628,39 @@ const ProjectScreenCreate = ({ LoadDailyProject, GetCompanyUser, WorkOrderReduce
         childCircleRef.current.setMap(null);
         childCircleRef.current = null;
     }
+
+    const getCenter2 = (points) => {
+        const lat =
+            points.reduce((sum, p) => sum + p.lat, 0) / points.length;
+        const lng =
+            points.reduce((sum, p) => sum + p.lng, 0) / points.length;
+        return { lat, lng };
+    };
+    const movePolyLineToCenter = (points, newCenter) => {
+        const currentCenter = getCenter2(points);
+        const latDiff = newCenter.lat - currentCenter.lat;
+        const lngDiff = newCenter.lng - currentCenter.lng;
+        return points.map((p) => ({
+            lat: p.lat + latDiff,
+            lng: p.lng + lngDiff,
+        }));
+    };
     const handleMapClickMore = useCallback((e) => {
         setPoints([])
         const newPoint = {
             lat: e.latLng.lat(),
             lng: e.latLng.lng(),
         };
-        setPointsMore((prev) => [...prev, newPoint]);
-    }, []);
+        if (ismoveAblePoly) {
+            const updated = movePolyLineToCenter(pointsMore, newPoint);
+            setPointsMore(updated);
+        }
+        else {
+            setPointsMore((prev) => [...prev, newPoint]);
+        }
+    }, [ismoveAblePoly]);
+
+
     function computeOffsetPolyline(points, offsetDistance) {
         const offsetLeftPoints = [];
         const offsetRightPoints = [];
@@ -1102,187 +1136,6 @@ const ProjectScreenCreate = ({ LoadDailyProject, GetCompanyUser, WorkOrderReduce
         const reportedDateRefine = dayjs(rawReportedDate).format('YYYY-MM-DD HH:mm:ss')
         const reminderDateandTimeRefine = dayjs(rawReminderDateandTime).format('YYYY-MM-DD HH:mm:ss')
 
-        // formData.append("project_name", data?.projectName ? data?.projectName : "");
-        // formData.append("address", data?.address ? data?.address : "");
-        // formData.append("project_manager", data.projectmanager ? data.projectmanager : "");
-        // formData.append("nmo_date", dateNow ? dateNow : "");
-        // if (extraDataList.length > 0) {
-        //     const convertedArray = extraDataList.map(item => ({
-        //         name: item.name,
-        //         description: item.description,
-        //         value: item.value.type === 'date'
-        //             ? dayjs(item.value.value).format('YYYY-MM-DD')
-        //             : item.value.type === 'color' ? rgbaStringToPipe(item.value.value) : item.value.value,
-        //         type: item.value.type,
-        //         isRequired: false,
-        //     }));
-        //     formData.append("extraFields", JSON.stringify(convertedArray) ? JSON.stringify(convertedArray) : "");
-        // }
-        // formData.append("nmo_i_r", data?.incidentReview ? data?.incidentReview : "");
-        // formData.append("date", dateNow ? dateNow : "");
-        // formData.append("sc_date", dateNow ? dateNow : "");
-        // if (personanalDataArray.length > 0) {
-        //     const converted = personanalDataArray.map((item) => ({
-        //         id: generateBase64UrlId(),
-        //         name: item.name,
-        //         date_and_hours: item.date_and_hours.map((r) => ({
-        //             date: dayjs(r.date).format('YYYY-MM-DD'),
-        //             no_of_hours: r.no_of_hours.toString(),
-        //         })),
-        //     }));
-        //     formData.append("add_hours_worked", JSON.stringify(converted) ? JSON.stringify(converted) : "[");
-        // }
-        // else {
-        //     formData.append("add_hours_worked", "[]");
-        // }
-        // uploadDocument.forEach((file) => {
-        //     formData.append("documents", file);
-        // });
-        // addPhoto.forEach((file) => {
-        //     formData.append("photosOrVideos", file);
-        // });
-        // safetyDocument.forEach((file) => {
-        //     formData.append("safetyDocumentation", file);
-        // });
-        // warrantyDocument.forEach((file) => {
-        //     formData.append("warrantyDocumentation", file);
-        // });
-        // JSA1.forEach((file) => {
-        //     formData.append("otherDocumentation", file);
-        // });
-        // JSA2.forEach((file) => {
-        //     formData.append("jsaDocumentation", file);
-        // });
-
-        // formData.append("nmo_v_r_t", data?.verballyReportedTo);
-        // selectedContractorIds?.forEach(level => {
-        //     formData.append('nmo_contractor', level ? level : "");
-        // });
-        // formData.append("nmo_v_r_t_date", reportedDateRefine == "Invalid Date" ? "" : reportedDateRefine);
-        // formData.append("nmo_r_c_a_w_h", data?.whatHappend ? data?.whatHappend : "");
-        // // formData.append("nmo_r_c_a_w_d_i_h", data?.whyDidItHappen ? data?.whyDidItHappen : "");
-        // formData.append("nmo_r_c_a_w_d_i_h", data?.whyDidItHappen ? data?.whyDidItHappen : "");
-        // formData.append("nmo_r_c_a_h_t_p_r", data.howToPR ? data.howToPR : "");
-        // formData.append("nmo_r_c_a_r_t_r_s", reportedDateRefine == "Invalid Date" ? "" : reportedDateRefine);
-        // formData.append("sc_d_o_c", data?.descriptionOfChanges ? data?.descriptionOfChanges : "");
-        // formData.append("sc_s_c_a_c", data?.safetyCOC ? data?.safetyCOC : "");
-        // formData.append("sc_approvals", JSON.stringify(listemailCTC) ? JSON.stringify(listemailCTC) : "[]");
-        // formData.append("sc_notification", JSON.stringify(data?.approvers) ? JSON.stringify(data?.approvers) : "[]");
-        // formData.append("sc_d_a", dateApprovedRefine == "Invalid Date" ? "" : dateApprovedRefine);
-        // formData.append("sc_r_a_s", reminderDateandTimeRefine == "Invalid Date" ? "" : reminderDateandTimeRefine);
-        // formData.append("projectId", currectProjectObj?._id ? currectProjectObj?._id : "");
-        // // formData.append("projectmanager", data.projectmanager ? data.projectmanager : "");
-        // const metaString = JSON.stringify({
-        //     id: "",
-        //     type: "project",
-        //     title: data?.projectName,
-        // });
-        // if (selectedTab == 1) {
-        //     const CircleData = {
-        //         type: "Circle",
-        //         locations: actualCenter == null
-        //             ? [
-        //                 [
-        //                     location.lat?.toString(),
-        //                     location.lng?.toString(),
-        //                 ]
-        //             ]
-        //             : [
-        //                 [
-        //                     actualCenter?.lat?.toString(),
-        //                     actualCenter?.lng?.toString(),
-        //                 ]
-        //             ],
-        //         safetyZone: safetyOffset,
-        //         altitude: Number(altitude),
-        //         radius: parentRadius,
-        //         meta: metaString,
-        //     };
-        //     formData.append(
-        //         "location",
-        //         JSON.stringify({
-        //             safetyZone: CircleData.safetyZone || 0.0,
-        //             altitude: CircleData.altitude || 0.0,
-        //             radius: CircleData.radius || 0.0,
-        //             locations: CircleData.locations.length > 0
-        //                 ? CircleData.locations
-        //                 : [],
-        //             type: "Circle",
-        //             meta: CircleData.meta || "{}",
-        //             latitude: location.lat,
-        //             longitude: location.lng,
-        //         })
-        //     );
-        // }
-        // else if (selectedTab == 2) {
-        //     const CircleData = {
-        //         type: "Polygon",
-        //         locations: actualCenter == null
-        //             ? points.map(location => [
-        //                 location.lat.toString(),
-        //                 location.lng.toString(),
-        //             ])
-        //             : points.map(location => [
-        //                 location.lat.toString(),
-        //                 location.lng.toString(),
-        //             ]),
-        //         safetyZone: padding,
-        //         altitude: Number(altitude),
-        //         radius: parentRadius,
-        //         meta: metaString,
-        //     };
-        //     formData.append(
-        //         "location",
-        //         JSON.stringify({
-        //             safetyZone: CircleData.safetyZone || 0.0,
-        //             altitude: CircleData.altitude || 0.0,
-        //             radius: CircleData.radius || 0.0,
-        //             locations: CircleData.locations.length > 0
-        //                 ? CircleData.locations
-        //                 : [],
-        //             type: CircleData.type,
-        //             meta: CircleData.meta || "{}",
-        //             latitude: centerLNG.lat,
-        //             longitude: centerLNG.lng,
-        //         })
-        //     );
-
-        // }
-        // else if (selectedTab == 3) {
-        //     const CircleData = {
-        //         type: "Polyline",
-        //         locations: actualCenter == null
-        //             ? pointsMore.map(location => [
-        //                 location.lat.toString(),
-        //                 location.lng.toString(),
-        //             ])
-        //             : pointsMore.map(location => [
-        //                 location.lat.toString(),
-        //                 location.lng.toString(),
-        //             ]),
-        //         safetyZone: safetyOffsetMore,
-        //         altitude: Number(altitude),
-        //         radius: parentRadius,
-        //         meta: metaString,
-        //     };
-        //     formData.append(
-        //         "location",
-        //         JSON.stringify({
-        //             safetyZone: CircleData.safetyZone || 0.0,
-        //             altitude: CircleData.altitude || 0.0,
-        //             radius: CircleData.radius || 0.0,
-        //             locations: CircleData.locations.length > 0
-        //                 ? CircleData.locations
-        //                 : [],
-        //             type: CircleData.type,
-        //             meta: CircleData.meta || "{}",
-        //             latitude: centerLNGMore.lat,
-        //             longitude: centerLNGMore.lng,
-        //         })
-        //     );
-        // }
-        // else null
-
 
 
         const fileArray = [
@@ -1442,7 +1295,7 @@ const ProjectScreenCreate = ({ LoadDailyProject, GetCompanyUser, WorkOrderReduce
                                     value:
                                         item.value.type === "date"
                                             ? dayjs(item.value.value).format("YYYY-MM-DD")
-                                            : item.value.type === "color"
+                                            : item.value.type === "Color"
                                                 ? rgbaStringToPipe(item.value.value)
                                                 : item.value.value,
                                     type: item.value.type,
@@ -1629,7 +1482,7 @@ const ProjectScreenCreate = ({ LoadDailyProject, GetCompanyUser, WorkOrderReduce
                                     value:
                                         item.value.type === "date"
                                             ? dayjs(item.value.value).format("YYYY-MM-DD")
-                                            : item.value.type === "color"
+                                            : item.value.type === "Color"
                                                 ? rgbaStringToPipe(item.value.value)
                                                 : item.value.value,
                                     type: item.value.type,
@@ -1808,7 +1661,7 @@ const ProjectScreenCreate = ({ LoadDailyProject, GetCompanyUser, WorkOrderReduce
     const handleRecenter = () => {
         if (mapRef.current) {
             mapRef.current.panTo(new window.google.maps.LatLng(locationCurrent?.lat, locationCurrent?.lng));
-            mapRef.current.setZoom(14.5);
+            mapRef.current.setZoom(18);
         }
     };
 
@@ -1862,11 +1715,9 @@ const ProjectScreenCreate = ({ LoadDailyProject, GetCompanyUser, WorkOrderReduce
             map: mapRef.current,
             center: loc,
             radius: radius,
-            strokeColor: '#050c1f',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#0d1e4b',
-            fillOpacity: 0.35,
+            fillOpacity: 0.4,
             draggable: false,
             editable: false,
         });
@@ -2815,30 +2666,14 @@ const ProjectScreenCreate = ({ LoadDailyProject, GetCompanyUser, WorkOrderReduce
                                 </Upload>
                             </div>
 
-
-                            {/* <div className={Style.FeildColLeft}>
-                                <label style={{ marginBottom: 10 }}>Training Document <span style={{ fontSize: 12, color: '#a1a1a1' }}>(optional)</span></label>
-                                <Upload onRemove={(e) => setTrainingDocument(prev =>
-                                    prev.filter(file => file.uid !== e.uid)
-                                )} multiple={true} accept={".png,.jpg,.jpeg,.svg,.pdf,.docx,.doc"} disabled={CreateLoading} beforeUpload={createBeforeUploadHandler('trainingDocument')}>
-                                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                                </Upload>
-                            </div>
-
-                            <div className={Style.FeildColLeft}>
-                                <label style={{ marginBottom: 10 }}>Upload Permit <span style={{ fontSize: 12, color: '#a1a1a1' }}>(optional)</span></label>
-                                <Upload onRemove={(e) => setUploadPermit(prev =>
-                                    prev.filter(file => file.uid !== e.uid)
-                                )} multiple={true} accept={".png,.jpg,.jpeg,.svg,.pdf,.docx,.doc"} disabled={CreateLoading} beforeUpload={createBeforeUploadHandler('uploadPermit')}>
-                                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                                </Upload>
-                            </div> */}
                         </div>
                     </div >
                     <div className={Style.MapSide}>
                         {isLoaded ? (
                             <>
                                 <GoogleMapCreate
+                                    setIsmoveAblePoly={setIsmoveAblePoly}
+                                    ismoveAblePoly={ismoveAblePoly}
                                     locationCurrent={locationCurrent}
                                     center={location}
                                     onMapLoad={onMapLoad}

@@ -426,7 +426,7 @@ const AdvanceSearch = ({ advanceModalSearchModal, handleCancel }) => {
                                                 }
                                             </div>
                                             <p>
-                                                <ReactTimeAgo date={item?.createdAt} locale="en-US" />
+                                                <ReactTimeAgo date={item?.updatedAt} locale="en-US" />
                                             </p>
                                         </div>
                                         :
@@ -461,7 +461,7 @@ const AdvanceSearch = ({ advanceModalSearchModal, handleCancel }) => {
                                                 }
                                             </div>
                                             <p>
-                                                <ReactTimeAgo date={item?.createdAt} locale="en-US" />
+                                                <ReactTimeAgo date={item?.updatedAt} locale="en-US" />
                                             </p>
                                         </div>
                                 ))
@@ -693,9 +693,9 @@ const AdvanceSearch = ({ advanceModalSearchModal, handleCancel }) => {
                         }} style={{ color: 'red', cursor: 'pointer' }}>Reset</h4>
                     </div>
                     <div>
+                        <Checkbox onClick={() => AddTypeKey("Polygon")} checked={polygonType.includes('Polygon') ? true : false} defaultChecked={false}>Polygon</Checkbox>
                         <Checkbox onClick={() => AddTypeKey("Polyline")} checked={polygonType.includes('Polyline') ? true : false} defaultChecked={false}>Polyline</Checkbox>
                         <Checkbox onClick={() => AddTypeKey("Circle")} checked={polygonType.includes('Circle') ? true : false} defaultChecked={false}>Circle</Checkbox>
-                        <Checkbox onClick={() => AddTypeKey("Polygon")} checked={polygonType.includes('Polygon') ? true : false} defaultChecked={false}>Polygon</Checkbox>
                     </div>
                 </div>
 

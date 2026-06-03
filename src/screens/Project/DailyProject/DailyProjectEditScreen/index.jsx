@@ -41,6 +41,7 @@ import { AWSUploadModuleFilter } from '../../../../component/AWSUploadModule';
 const ProjectScreenEdit = ({ LoadDailyProject, GetCompanyUser, WorkOrderReducer, ProjectReducer, PoiReducer, getDepartment, CreateDepartment, GetAllWorkOrderUnLink, getContractor, deleteContractor, addContractorAC, UpdateContractorAC, LoadDailyProjectDetail }) => {
     dayjs.extend(customParseFormat);
     dayjs.extend(utc);
+    const [ismoveAblePoly, setIsmoveAblePoly] = useState(false)
 
 
     const handleUnauthorized = () => {
@@ -292,11 +293,9 @@ const ProjectScreenEdit = ({ LoadDailyProject, GetCompanyUser, WorkOrderReducer,
             map: mapRef.current,
             center: a,
             radius: b,
-            strokeColor: '#fe541e',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#fe541e',
-            fillOpacity: 0.35,
+            fillOpacity: 0.2,
             draggable: true,
             editable: true,
         });
@@ -304,11 +303,9 @@ const ProjectScreenEdit = ({ LoadDailyProject, GetCompanyUser, WorkOrderReducer,
             map: mapRef.current,
             center: a,
             radius: b + c,
-            strokeColor: '#1e88e5',
-            strokeOpacity: 0.7,
-            strokeWeight: 2,
-            fillColor: '#90caf9',
-            fillOpacity: 0.3,
+            strokeWeight: 0,
+            fillColor: '#fe541e',
+            fillOpacity: 0.2,
             clickable: false
         });
         parent.addListener('center_changed', () => {
@@ -577,11 +574,9 @@ const ProjectScreenEdit = ({ LoadDailyProject, GetCompanyUser, WorkOrderReducer,
             map: mapRef.current,
             center: location,
             radius: parentRadius,
-            strokeColor: '#fe541e',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#fe541e',
-            fillOpacity: 0.35,
+            fillOpacity: 0.2,
             draggable: true,
             editable: true,
         });
@@ -589,11 +584,9 @@ const ProjectScreenEdit = ({ LoadDailyProject, GetCompanyUser, WorkOrderReducer,
             map: mapRef.current,
             center: location,
             radius: parentRadius + safetyOffset,
-            strokeColor: '#1e88e5',
-            strokeOpacity: 0.7,
-            strokeWeight: 2,
-            fillColor: '#90caf9',
-            fillOpacity: 0.3,
+            strokeWeight: 0,
+            fillColor: '#fe541e',
+            fillOpacity: 0.2,
             clickable: false,
         });
         parent.addListener('center_changed', () => {
@@ -665,20 +658,47 @@ const ProjectScreenEdit = ({ LoadDailyProject, GetCompanyUser, WorkOrderReducer,
             lng: center.lng + dLng * scale,
         };
     };
+
+
+    const getCenter = (points) => {
+        const lat =
+            points.reduce((sum, p) => sum + p.lat, 0) / points.length;
+        const lng =
+            points.reduce((sum, p) => sum + p.lng, 0) / points.length;
+        return { lat, lng };
+    };
+
+    const movePolygonToCenter = (points, newCenter) => {
+        const currentCenter = getCenter(points);
+        const latDiff = newCenter.lat - currentCenter.lat;
+        const lngDiff = newCenter.lng - currentCenter.lng;
+        return points.map((p) => ({
+            lat: p.lat + latDiff,
+            lng: p.lng + lngDiff,
+        }));
+    };
+    
+    
+
     const handleMapClick = useCallback((e) => {
-        // if (points.length < 3) {
-        const newPoint = {
-            lat: e.latLng.lat(),
-            lng: e.latLng.lng(),
-        };
-        setPoints((prev) => [...prev, newPoint]);
-        // }
-    }, [points]);
+            const newPoint = {
+                lat: e.latLng.lat(),
+                lng: e.latLng.lng(),
+            };
+            if (ismoveAblePoly) {
+                const updated = movePolygonToCenter(points, newPoint);
+                setPoints(updated);
+            }
+            else {
+                setPoints((prev) => [...prev, newPoint]);
+            }
+        }, [points, ismoveAblePoly]);
 
     const removeIconCustomArea = (indexRemover) => {
         setPoints(prev => prev?.filter((_, index) => index !== indexRemover));
     }
     const drawCustomArea = () => {
+        setIsmoveAblePoly(false)
         setSelectedTab(2)
         setPointsMore([])
         circleRef.current.setMap(null);
@@ -702,6 +722,7 @@ const ProjectScreenEdit = ({ LoadDailyProject, GetCompanyUser, WorkOrderReducer,
     const [safetyOffsetMore, setSafetyOffsetMore] = useState(0);
     const [offsetPolygon, setOffsetPolygon] = useState([]);
     const drawPolyLine = () => {
+        setIsmoveAblePoly(false)
         setSelectedTab(3)
         setPoints([])
         circleRef.current.setMap(null);
@@ -709,14 +730,37 @@ const ProjectScreenEdit = ({ LoadDailyProject, GetCompanyUser, WorkOrderReducer,
         childCircleRef.current.setMap(null);
         childCircleRef.current = null;
     }
+    const getCenter2 = (points) => {
+        const lat =
+            points.reduce((sum, p) => sum + p.lat, 0) / points.length;
+        const lng =
+            points.reduce((sum, p) => sum + p.lng, 0) / points.length;
+        return { lat, lng };
+    };
+    const movePolyLineToCenter = (points, newCenter) => {
+        const currentCenter = getCenter2(points);
+        const latDiff = newCenter.lat - currentCenter.lat;
+        const lngDiff = newCenter.lng - currentCenter.lng;
+        return points.map((p) => ({
+            lat: p.lat + latDiff,
+            lng: p.lng + lngDiff,
+        }));
+    };
     const handleMapClickMore = useCallback((e) => {
         setPoints([])
         const newPoint = {
             lat: e.latLng.lat(),
             lng: e.latLng.lng(),
         };
-        setPointsMore((prev) => [...prev, newPoint]);
-    }, []);
+        if (ismoveAblePoly) {
+            const updated = movePolyLineToCenter(pointsMore, newPoint);
+            setPointsMore(updated);
+        }
+        else {
+            setPointsMore((prev) => [...prev, newPoint]);
+        }
+    }, [ismoveAblePoly]);
+
     function computeOffsetPolyline(points, offsetDistance) {
         const offsetLeftPoints = [];
         const offsetRightPoints = [];
@@ -1310,15 +1354,12 @@ const ProjectScreenEdit = ({ LoadDailyProject, GetCompanyUser, WorkOrderReducer,
                 longitude: centerLNGMore.lng,
             };
         }
-
-
         if (
             selectedTab !== undefined &&
             points.length > 2 ||
             pointsMore.length > 2 ||
             circleRef.current !== null
         ) {
-
             if (expandNMO) {
                 if (selectedContractorIds.length > 0) {
                     setCreateLoading(true)
@@ -1347,7 +1388,7 @@ const ProjectScreenEdit = ({ LoadDailyProject, GetCompanyUser, WorkOrderReducer,
                                     value:
                                         item.value.type === "date"
                                             ? dayjs(item.value.value).format("YYYY-MM-DD")
-                                            : item.value.type === "color"
+                                            : item.value.type === "Color"
                                                 ? rgbaStringToPipe(item.value.value)
                                                 : item.value.value,
                                     type: item.value.type,
@@ -1572,7 +1613,7 @@ const ProjectScreenEdit = ({ LoadDailyProject, GetCompanyUser, WorkOrderReducer,
                                     value:
                                         item.value.type === "date"
                                             ? dayjs(item.value.value).format("YYYY-MM-DD")
-                                            : item.value.type === "color"
+                                            : item.value.type === "Color"
                                                 ? rgbaStringToPipe(item.value.value)
                                                 : item.value.value,
                                     type: item.value.type,
@@ -1696,11 +1737,9 @@ const ProjectScreenEdit = ({ LoadDailyProject, GetCompanyUser, WorkOrderReducer,
                         else {
                             response = await fetch(`${baseUrl}/dailyprojects`, options);
                         }
-                        // const response = await fetch(`${baseUrl}/dailyprojects`, options);
                         const res = await response.json();
                         clearTimeout(timeout);
                         setCreateLoading(false);
-
                         if (response.status === 403) {
                             if ("roleUpdated" in res) {
                                 handleUnauthorized();
@@ -1712,7 +1751,7 @@ const ProjectScreenEdit = ({ LoadDailyProject, GetCompanyUser, WorkOrderReducer,
                                 });
                             }
                         } else if (response.status === 200 || response.status === 201) {
-                            // LoadDailyProject(currentParentProject, 1, "")
+                            document.body.style.overflow = "auto"
                             messageApi.open({
                                 type: "success",
                                 content: "Project update successfully.",
@@ -1765,6 +1804,10 @@ const ProjectScreenEdit = ({ LoadDailyProject, GetCompanyUser, WorkOrderReducer,
             }
         }
     }
+
+
+
+    
     const [value1, setValue1] = useState(null);
     const locationDataFunc = (ee) => {
         setValue1(ee)
@@ -1792,7 +1835,7 @@ const ProjectScreenEdit = ({ LoadDailyProject, GetCompanyUser, WorkOrderReducer,
     const handleRecenter = () => {
         if (mapRef.current) {
             mapRef.current.panTo(new window.google.maps.LatLng(locationCurrent?.lat, locationCurrent?.lng));
-            mapRef.current.setZoom(14.5);
+            mapRef.current.setZoom(18);
         }
     };
 
@@ -1846,11 +1889,9 @@ const ProjectScreenEdit = ({ LoadDailyProject, GetCompanyUser, WorkOrderReducer,
             map: mapRef.current,
             center: loc,
             radius: radius,
-            strokeColor: '#050c1f',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#0d1e4b',
-            fillOpacity: 0.35,
+            fillOpacity: 0.4,
             draggable: false,
             editable: false,
         });
@@ -2174,10 +2215,6 @@ const ProjectScreenEdit = ({ LoadDailyProject, GetCompanyUser, WorkOrderReducer,
 
 
 
-    console.log(JSA1?.length, JSA2?.length, HJSA1?.length, HJSA2?.length, 'ASD((((')
-
-
-
 
     return (
 
@@ -2253,26 +2290,6 @@ const ProjectScreenEdit = ({ LoadDailyProject, GetCompanyUser, WorkOrderReducer,
                         }) : ""}
                     </div>
                 </div>
-                {/* <div style={{ paddingTop: 20, display: 'flex', alignItems: 'center', justifyContent: 'end' }}>
-                    <button
-                        style={{
-                            cursor: CreateLoading || !((JSA1?.length && JSA2?.length) && (HJSA1?.length && HJSA2?.length)) ? "no-drop" : "pointer",
-                            background: "#214CBC",
-                            padding: "8px 25px",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "50px",
-                        }}
-                        disabled={CreateLoading || !((JSA1?.length && JSA2?.length) && (HJSA1?.length && HJSA2?.length))}
-                        onClick={handleSubmit((data) => {
-                            setFormDataNew(data);
-                            setIsJSAOpened(true);
-                        })}
-                    >
-                        {CreateLoading ? "Saving Daily Project..." : "Save Daily Project"}
-                    </button>
-                </div> */}
-
                 <div style={{ paddingTop: 20, display: 'flex', alignItems: 'center', justifyContent: 'end' }}>
                     <button
                         style={{
@@ -2301,7 +2318,7 @@ const ProjectScreenEdit = ({ LoadDailyProject, GetCompanyUser, WorkOrderReducer,
                     <div className={Style.SecondaryHeader}>
                         <h1>Edit Daily Project</h1>
                         <div>
-                            <button style={{ cursor: "pointer" }} disabled={CreateLoading} onClick={handleSubmit(adddataWorkOrder)}>{CreateLoading ? "Saving Daily Project..." : "Save Daily Project"}</button>
+                            <button style={{ cursor: "pointer" }} disabled={CreateLoading} onClick={()=>showJSAModal()}>{CreateLoading ? "Saving Daily Project..." : "Save Daily Project"}</button>
                         </div>
                     </div>
                     <div className={Style.ActionHeader}></div>
@@ -3008,6 +3025,8 @@ const ProjectScreenEdit = ({ LoadDailyProject, GetCompanyUser, WorkOrderReducer,
                         {isLoaded ? (
                             <>
                                 <GoogleMapCreate
+                                    setIsmoveAblePoly={setIsmoveAblePoly}
+                                    ismoveAblePoly={ismoveAblePoly}
                                     locationCurrent={locationCurrent}
                                     center={location}
                                     onMapLoad={onMapLoad}

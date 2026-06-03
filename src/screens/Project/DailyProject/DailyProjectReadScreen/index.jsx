@@ -488,11 +488,9 @@ const ProjectScreenRead = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer, P
             map: mapRef.current,
             center: a,
             radius: b,
-            strokeColor: '#fe541e',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#fe541e',
-            fillOpacity: 0.35,
+            fillOpacity: 0.2,
             draggable: false,
             editable: false,
             clickable: false
@@ -501,11 +499,9 @@ const ProjectScreenRead = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer, P
             map: mapRef.current,
             center: a,
             radius: b + c,
-            strokeColor: '#1e88e5',
-            strokeOpacity: 0.7,
-            strokeWeight: 2,
-            fillColor: '#90caf9',
-            fillOpacity: 0.3,
+            strokeWeight: 0,
+            fillColor: '#fe541e',
+            fillOpacity: 0.2,
             draggable: false,
             editable: false,
             clickable: false
@@ -734,11 +730,9 @@ const ProjectScreenRead = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer, P
             map: mapRef.current,
             center: location,
             radius: parentRadius,
-            strokeColor: '#fe541e',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#fe541e',
-            fillOpacity: 0.35,
+            fillOpacity: 0.2,
             draggable: false,
             editable: false,
             clickable: false
@@ -747,11 +741,9 @@ const ProjectScreenRead = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer, P
             map: mapRef.current,
             center: location,
             radius: parentRadius + safetyOffset,
-            strokeColor: '#1e88e5',
-            strokeOpacity: 0.7,
-            strokeWeight: 2,
-            fillColor: '#90caf9',
-            fillOpacity: 0.3,
+            strokeWeight: 0,
+            fillColor: '#fe541e',
+            fillOpacity: 0.2,
             draggable: false,
             editable: false,
             clickable: false
@@ -940,7 +932,7 @@ const ProjectScreenRead = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer, P
     const handleRecenter = () => {
         if (mapRef.current) {
             mapRef.current.panTo(new window.google.maps.LatLng(locationCurrent?.lat, locationCurrent?.lng));
-            mapRef.current.setZoom(14.5);
+            mapRef.current.setZoom(18);
         }
     };
 
@@ -984,11 +976,9 @@ const ProjectScreenRead = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer, P
             map: mapRef.current,
             center: loc,
             radius: radius,
-            strokeColor: '#050c1f',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#0d1e4b',
-            fillOpacity: 0.35,
+            fillOpacity: 0.4,
             draggable: false,
             editable: false,
             clickable: false

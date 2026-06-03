@@ -85,6 +85,17 @@ function AllCompanies({ EnterpriseReducer, GetAllCompanies, EditCompany }) {
             ),
         },
         {
+            title: "Updated At",
+            key: "updatedAt",
+            width: 200,
+            ellipsis: true,
+            render: (users) => (
+                <Space direction="vertical">
+                    <ReactTimeAgo date={users?.updatedAt} locale="en-US" />
+                </Space>
+            ),
+        },
+        {
             title: "Is Verified",
             key: "createAt",
             width: 200,

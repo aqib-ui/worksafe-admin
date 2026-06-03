@@ -12,10 +12,15 @@ import { FaRegFilePdf } from "react-icons/fa6";
 import { useNavigate, useOutletContext } from 'react-router';
 import { TASK_CLEAR_EXPIRED, TASK_GET_ARCHIVED_ASSETS_COMPLETE, TASK_GET_ASSETS_COMPLETE } from '../../../../store/actions/types';
 import ListInputSearch from '../../../component/ListInputSearch';
-import blueDoc from '../../../assets/boxListing.png'
+import blueDoc from '../../../assets/dashboard-5.png'
 import blueDocSearch from '../../../assets/search-normal-blue.png'
+import AssetFilter from './assetFilter';
 
-function MyAssets({ AssetsReducer, GetAssets, ArchiveAssets }) {
+
+
+
+
+function MyAssets({ getDepartment, getModel, getAssetType, AssetsReducer, GetAssets, ArchiveAssets }) {
     const [messageApi, contextHolder] = message.useMessage();
     const [page, setPage] = useState(1)
     const workSite = localStorage.getItem("+AOQ^%^f0Gn4frTqztZadLrKg==")
@@ -24,17 +29,19 @@ function MyAssets({ AssetsReducer, GetAssets, ArchiveAssets }) {
     const [searchQuery, setSearchQuery] = useState("")
     const [priority, setPriority] = useState([])
 
+    const [paramsNew, setParamsNew] = useState(null)
+
 
     const [isNext, setIsNext] = useState(true)
     useEffect(() => {
         const init = async () => {
-            const totalLegngth = await GetAssets(workSite, page, searchQuery,priority)
-            if (totalLegngth < 30) {
-                setIsNext(false)
-            }
+            getDepartment(workSite)
+            getModel()
+            getAssetType()
+            const totalLegngth = await GetAssets(workSite, page, searchQuery, paramsNew && paramsNew, setIsNext)
         }
         init()
-    }, [page, searchQuery,priority])
+    }, [page, searchQuery])
 
     useEffect(() => {
         if (!messageApi) return;
@@ -74,7 +81,7 @@ function MyAssets({ AssetsReducer, GetAssets, ArchiveAssets }) {
             });
             dispatch({ type: TASK_GET_ARCHIVED_ASSETS_COMPLETE, loading: true, payload: [] });
             dispatch({ type: TASK_GET_ASSETS_COMPLETE, loading: true, payload: [] });
-            GetAssets(workSite, page, searchQuery)
+            runAgain()
         }
     }, [
         AssetsReducer.networkError,
@@ -84,6 +91,10 @@ function MyAssets({ AssetsReducer, GetAssets, ArchiveAssets }) {
         messageApi,
     ]);
 
+
+    const runAgain = async () => {
+        const totalLegngth = await GetAssets(workSite, page, searchQuery, paramsNew && paramsNew, setIsNext)
+    }
 
     const viewWorkOrder = (eId) => {
         localStorage.setItem("Wl2^gTP7ys&1aN$E5-/9hu==", eId)
@@ -189,7 +200,19 @@ function MyAssets({ AssetsReducer, GetAssets, ArchiveAssets }) {
             ellipsis: true,
             render: (users) => (
                 <Space direction="vertical">
-                    <p>{users?.createdAt?.split("T")[0] ?? "0"}</p>
+                    <ReactTimeAgo date={users?.createdAt} locale="en-US" />
+                    {/* <p>{users?.createdAt?.split("T")[0] ?? "0"}</p> */}
+                </Space>
+            ),
+        },
+        {
+            title: "Updated At",
+            key: "updatedAt",
+            width: 200,
+            ellipsis: true,
+            render: (users) => (
+                <Space direction="vertical">
+                    <ReactTimeAgo date={users?.updatedAt} locale="en-US" />
                 </Space>
             ),
         },
@@ -211,7 +234,7 @@ function MyAssets({ AssetsReducer, GetAssets, ArchiveAssets }) {
         },
     ];
 
-    const sortedData = [...AssetsReducer?.AssetsData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    // const sortedData = [...AssetsReducer?.AssetsData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
 
 
@@ -241,7 +264,7 @@ function MyAssets({ AssetsReducer, GetAssets, ArchiveAssets }) {
             {contextHolder}
             <div className={Style.filterSection}>
                 <Row gutter={gutter} align="middle" justify="space-between">
-                    <Col xxl={20} xl={20} lg={20} md={24} sm={24} xs={24}>
+                    <Col xxl={22} xl={22} lg={22} md={22} sm={22} xs={22}>
                         <div className={Style.Splitter}>
                             <div className={Style.layersInput}>
                                 <ListInputSearch onChange={(e) => setSearchQuery(e)} placeholder="Search Assets" />
@@ -249,17 +272,9 @@ function MyAssets({ AssetsReducer, GetAssets, ArchiveAssets }) {
                         </div>
                     </Col>
 
-                    <Col xxl={4} xl={4} lg={4} md={24} sm={24} xs={24}>
-                        <Select
-                            getPopupContainer={(node) => node.parentElement}
-                            placeholder="All Elevation Level"
-                            style={{ width: '100%' }}
-                            options={threatLevelOption}
-                            mode='multiple'
-                            onChange={(e) => setPriority(e)}
-                        />
+                    <Col xxl={2} xl={2} lg={2} md={2} sm={2} xs={2}>
+                        <AssetFilter setPage={setPage} setIsNext={setIsNext} setParamsNew={setParamsNew} AssetsReducer={AssetsReducer} loading={AssetsReducer?.AssetsLoading} GetPOI={GetAssets} workSite={workSite} page={page} searchQuery={searchQuery} />
                     </Col>
-
                 </Row>
             </div>
             <div className={Style.TableSection}>
@@ -296,9 +311,9 @@ function MyAssets({ AssetsReducer, GetAssets, ArchiveAssets }) {
                     locale={{
                         emptyText: (
                             <div className={Style.EmptyTextTable}>
-                                <img src={searchQuery !== "" ? blueDocSearch : blueDoc} alt="blue-doc" />
-                                <h4>{searchQuery !== "" ? "No Search Result Found" : "No Assets Created Yet"}</h4>
-                                {searchQuery !== "" ?
+                                <img src={searchQuery !== "" || paramsNew !== null ? blueDocSearch : blueDoc} alt="blue-doc" />
+                                <h4>{searchQuery !== "" || paramsNew !== null ? "No Search Result Found" : "No Assets Created Yet"}</h4>
+                                {searchQuery !== "" || paramsNew !== null ?
                                     <p>Try adjusting your search or use different keywords to find Assets<br /> within your worksite.</p>
                                     :
                                     <p>Start by adding your Assets to mark critical zones, assign safety<br /> tasks, and track risk areas within your worksite.</p>
@@ -306,7 +321,7 @@ function MyAssets({ AssetsReducer, GetAssets, ArchiveAssets }) {
                             </div>
                         )
                     }}
-                    pagination={false} loading={AssetsReducer?.AssetsLoading} scroll={{ x: 'max-content' }} rowKey={(record) => record._id} sticky={{ offsetHeader: 0 }} columns={columns} dataSource={sortedData} />
+                    pagination={false} loading={AssetsReducer?.AssetsLoading} scroll={{ x: 'max-content' }} rowKey={(record) => record._id} sticky={{ offsetHeader: 0 }} columns={columns} dataSource={AssetsReducer?.AssetsData} />
             </div>
         </>
     )

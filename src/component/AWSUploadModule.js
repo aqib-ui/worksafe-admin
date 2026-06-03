@@ -157,6 +157,8 @@ const AWSUploadModule = async ({
     const updatedData = fileArray.map((item, index) => {
 
         const { key, ...rest } = item;
+        
+        console.log(key)
 
         const needsPrefix = moduleName === "asset" && key === "inspection";
         const uuidPrefix = needsPrefix ? `ws${key}_` : "";
@@ -271,19 +273,9 @@ const AWSUploadModule = async ({
         }
 
     } catch (err) {
-
-        console.error("Upload Error:", err);
-
-        messageApi.open({
-            type: "error",
-            content: "File upload failed",
-        });
-
         setCreateLoading(false);
-
         return false;
     }
-
     return false;
 };
 

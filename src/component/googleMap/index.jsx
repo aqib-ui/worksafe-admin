@@ -1,8 +1,20 @@
+// 
+
+
+
+
+
+
+
+
+
+
+
 import React, { useEffect, useRef, useState } from 'react';
 import { GoogleMap, InfoWindow, Marker, Polygon, Polyline } from '@react-google-maps/api';
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 import { Popover, Tooltip } from 'antd';
-import { IoSettingsOutline } from 'react-icons/io5';
+import { IoMoveSharp, IoSettingsOutline } from 'react-icons/io5';
 import { FaRegCircle } from 'react-icons/fa';
 import { AiOutlineEdit } from 'react-icons/ai';
 import { MdOutlinePolyline, MdOutlineLocationSearching } from 'react-icons/md';
@@ -19,6 +31,8 @@ const GoogleMapCreate = ({
   onClick,
   mapOptions = {},
   selectedTab,
+  ismoveAblePoly,
+  setIsmoveAblePoly,
   locationToggle,
   circleRef,
   location,
@@ -71,6 +85,8 @@ const GoogleMapCreate = ({
   isWorksite,
   isWorksiteCreate,
 }) => {
+
+
 
 
   const renderSettingsPopover = () => {
@@ -149,6 +165,7 @@ const GoogleMapCreate = ({
         clickableIcons: false,
         streetViewControl: false,
         fullscreenControl: false,
+        keyboardShortcuts: false,
         ...mapOptions,
       }}
     >
@@ -159,11 +176,9 @@ const GoogleMapCreate = ({
             path={[...points, points[0]]}
             options={{
               zIndex: isMusterMap ? 999 : 10,
-              fillColor: isMusterMap ? '#548F1C' : isWorksiteCreate ? '#0d1e4b' : '#fe541e',
-              fillOpacity: 0.4,
-              strokeColor: isMusterMap ? '#115638' : isWorksiteCreate ? '#050c1f' : '#fe541e',
-              strokeOpacity: 1,
-              strokeWeight: 2,
+              fillColor: isMusterMap ? '#548F1C' : isWorksiteCreate ? '#0d1e4b' : '#ff3030',
+              fillOpacity: isWorksiteCreate ? 0.4 : 0.2,
+              strokeWeight: 0,
             }}
           />
           {!isMusterMap &&
@@ -171,11 +186,9 @@ const GoogleMapCreate = ({
               path={getSafetyZonePath()}
               options={{
                 zIndex: isMusterMap ? 999 : 10,
-                fillColor: isWorksiteCreate ? '#373834ff' : '#90caf9',
+                fillColor: isWorksiteCreate ? '#373834ff' : '#ff3030',
                 fillOpacity: 0.2,
-                strokeColor: isWorksiteCreate ? '#050c1f' : '#1e88e5',
-                strokeOpacity: 0.7,
-                strokeWeight: 2,
+                strokeWeight: 0,
               }}
             />
           }
@@ -185,11 +198,13 @@ const GoogleMapCreate = ({
         <Marker
           key={`custom-${index}`}
           position={point}
-          onClick={() => removeIconCustomArea(index)}
+          // onClick={() => removeIconCustomArea(index)}
+          onClick={() => !ismoveAblePoly && removeIconCustomArea(index)}
           icon={{
             url: isMusterMap ? GiveWayIcon : GiveWayIconRed,
             scaledSize: new window.google.maps.Size(40, 40),
           }}
+          zIndex={999}
         />
       ))}
 
@@ -213,7 +228,7 @@ const GoogleMapCreate = ({
                 fillOpacity: 0.4,
                 strokeColor: "#115638",
                 strokeOpacity: 1,
-                strokeWeight: 2,
+                strokeWeight: 0,
                 zIndex: 888
               }}
             />
@@ -273,7 +288,7 @@ const GoogleMapCreate = ({
                   options={{
                     strokeColor: "#115638",
                     strokeOpacity: 1,
-                    strokeWeight: 2,
+                    strokeWeight: 0,
                     zIndex: 888
                   }}
                   onMouseOver={(e) =>
@@ -361,11 +376,9 @@ const GoogleMapCreate = ({
           onClick={selectedTab == 1 ? handlePolygonClick : onClick}
           path={[...pointsWorkSite, pointsWorkSite[0]]}
           options={{
-            fillColor: '#0d1e4b',
-            fillOpacity: 0.4,
-            strokeColor: '#050c1f',
-            strokeOpacity: 1,
-            strokeWeight: 2,
+            fillColor: '#070F26',
+            fillOpacity: 0.5,
+            strokeWeight: 0,
           }}
         />
       )}
@@ -377,15 +390,12 @@ const GoogleMapCreate = ({
           onClick={selectedTab == 1 ? handlePolygonClick : onClick}
           path={pointsMoreWorkSite}
           options={{
-            strokeColor: '#050c1f',
+            strokeColor: '#070F26',
             strokeOpacity: 1,
-            strokeWeight: 2,
+            strokeWeight: 1,
           }}
         />
       )}
-
-
-
       {/* Work Site*/}
 
 
@@ -408,7 +418,7 @@ const GoogleMapCreate = ({
           options={{
             strokeColor: isMusterMap ? '#115638' : isWorksiteCreate ? '#050c1f' : '#fe541e',
             strokeOpacity: 1,
-            strokeWeight: 2,
+            strokeWeight: isWorksiteCreate ? 1 : 1,
             zIndex: 888
           }}
         />
@@ -419,11 +429,11 @@ const GoogleMapCreate = ({
         <Polygon
           path={offsetPolygon}
           options={{
-            fillColor: isWorksiteCreate ? '#373834ff' : '#90caf9',
-            fillOpacity: 0.3,
-            strokeColor: isWorksiteCreate ? '#050c1f' : '#1e88e5',
+            fillColor: isWorksiteCreate ? '#373834ff' : '#fe541e',
+            fillOpacity: 0.2,
+            strokeColor: isWorksiteCreate ? '#050c1f' : '#fe541e',
             strokeOpacity: 0.7,
-            strokeWeight: 2,
+            strokeWeight: isWorksiteCreate ? 1 : 0,
           }}
         />
       )}
@@ -436,19 +446,14 @@ const GoogleMapCreate = ({
         <Marker
           key={`poly-${index}`}
           position={point}
-          onClick={() => removeIconCustomArea2(index)}
+          onClick={() => !ismoveAblePoly && removeIconCustomArea2(index)}
           icon={{
             url: isMusterMap ? GiveWayIcon : GiveWayIconRed,
             scaledSize: new window.google.maps.Size(40, 40),
           }}
+          zIndex={999}
         />
       ))}
-
-
-
-
-
-
 
 
 
@@ -508,6 +513,7 @@ const GoogleMapCreate = ({
                 value: value1,
                 placeholder: 'Search location...',
                 onChange: locationDataFunc,
+                isClearable: true,
               }}
               debounce={400}
               minLengthAutocomplete={2}
@@ -523,6 +529,21 @@ const GoogleMapCreate = ({
         </>
       }
       {/* Recenter Button */}
+
+
+
+      {!readMap &&
+        <>
+          {(pointsMore?.length >= 3 || points?.length >= 3) && (
+            <div
+              onClick={() => setIsmoveAblePoly(!ismoveAblePoly)}
+              className={Style.CenterChangeIcon2}
+            >
+              <IoMoveSharp size={22} color={ismoveAblePoly ? "#214cbc" : "#666"} />
+            </div>
+          )}
+        </>
+      }
       <div className={Style.PolyCenter}>
         <Tooltip title="Move to current location" placement="leftTop">
           <div onClick={!locationToggle ? requestLocationAgain : handleRecenter} className={Style.PolyDot}>

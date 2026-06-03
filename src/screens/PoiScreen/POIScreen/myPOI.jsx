@@ -12,12 +12,13 @@ import { FaRegFilePdf } from "react-icons/fa6";
 import { useNavigate, useOutletContext } from 'react-router';
 import { TASK_CLEAR_EXPIRED, TASK_GET_POI_ARCHIVED_COMPLETE, TASK_GET_POI_COMPLETE } from '../../../../store/actions/types';
 import ListInputSearch from '../../../component/ListInputSearch';
-import blueDoc from '../../../assets/map-POI.png'
+import blueDoc from '../../../assets/dashboard-3.png'
 import blueDocSearch from '../../../assets/search-normal-blue.png'
 import { MdChevronRight } from "react-icons/md";
 import clockYellow from "../../../assets/clock-yellow.png"
 import tickCircle from "../../../assets/tick-circle.png"
 import closeCircle from "../../../assets/close-circle.png"
+import PoiFilter from './poiFilter.jsx';
 
 
 
@@ -37,8 +38,7 @@ function MyPOI({ PermissionReducer, PoiReducer, GetPOI, PoiArchived, GetWorkSite
     const [isNext, setIsNext] = useState(true)
 
     const [searchQuery, setSearchQuery] = useState("")
-    const [priority, setPriority] = useState([])
-    const [cpc, setCpc] = useState([])
+    const [paramsNew, setParamsNew] = useState(null)
 
     const Role_ID = localStorage.getItem('0U7Qv$N3tw69gV+T2/~1/w==')
 
@@ -49,22 +49,20 @@ function MyPOI({ PermissionReducer, PoiReducer, GetPOI, PoiArchived, GetWorkSite
         const init = async () => {
             const loadWorkSite = localStorage.getItem('+AOQ^%^f0Gn4frTqztZadLrKg==');
             if (!loadWorkSite) return;
-            const totalLength = await GetPOI(workSite, page, searchQuery, priority, cpc);
+            const totalLength = await GetPOI(workSite, page, searchQuery, paramsNew && paramsNew, setIsNext);
             if (!isMounted) return;
-            setIsNext(totalLength >= 30);
+            (totalLength >= 30);
             if (Role_ID === '6768f37ff2ef345b103370df') {
                 GetAdminWorkSite();
             } else {
                 GetWorkSite();
             }
         };
-
         init();
-
         return () => {
             isMounted = false;
         };
-    }, [page, searchQuery, workSite, Role_ID, priority, cpc]);
+    }, [page, searchQuery, workSite, Role_ID]);
 
 
 
@@ -94,7 +92,7 @@ function MyPOI({ PermissionReducer, PoiReducer, GetPOI, PoiArchived, GetWorkSite
             });
             dispatch({ type: TASK_GET_POI_ARCHIVED_COMPLETE, loading: true, payload: [] });
             dispatch({ type: TASK_GET_POI_COMPLETE, loading: true, payload: [] });
-            GetPOI(workSite, page, searchQuery)
+            runAgain()
         }
         if (PoiReducer.poiExpiredError) {
             messageApi.destroy();
@@ -117,6 +115,10 @@ function MyPOI({ PermissionReducer, PoiReducer, GetPOI, PoiArchived, GetWorkSite
         PoiReducer.poiArchived,
         messageApi,
     ]);
+
+    const runAgain = async () => {
+        const totalLegngth = await GetPOI(workSite, page, searchQuery, paramsNew && paramsNew,setIsNext)
+    }
 
 
 
@@ -154,7 +156,7 @@ function MyPOI({ PermissionReducer, PoiReducer, GetPOI, PoiArchived, GetWorkSite
             ellipsis: true,
             render: (text) => {
                 return (
-                    <Tag style={{ color: text == "No Threat" ? "#1C8F5D" : text == "Lowest" ? "#333839" : text == "Moderate" ? '#C9A240' : text == "High" ? '#C94040' : text == "Extreme" ? '#792727' : null }} color={text == "No Threat" ? "#4DF15E14" : text == "Lowest" ? "#D8DFE0" : text == "Moderate" ? '#F1C34D14' : text == "High" ? '#F14D4D14' : text == "Extreme" ? '#501A1A14' : null}>
+                    <Tag className='AlertTag' style={{ color: text == "No Threat" ? "#666d80" : text == "Lowest" ? "#17736E" : text == "Moderate" ? '#926E26' : text == "High" ? '#D32029' : text == "Extreme" ? '#7F1319' : null }} color={text == "No Threat" ? "rgba(102, 109, 128,0.1)" : text == "Lowest" ? "rgba(23, 115, 110,0.1)" : text == "Moderate" ? 'rgba(146, 110, 38,0.1)' : text == "High" ? 'rgba(211, 32, 41,0.1)' : text == "Extreme" ? 'rgba(127, 19, 25,0.1)' : null}>
                         {text === "No Threat" ? "No Risk" : text === "Lowest" ? "Lowest Risk" : text === "Moderate" ? "Moderate Risk" : text === "High" ? "High Risk" : text === "Extreme" ? "Extreme Risk" : text}
                     </Tag>
                 )
@@ -179,13 +181,25 @@ function MyPOI({ PermissionReducer, PoiReducer, GetPOI, PoiArchived, GetWorkSite
             },
         },
         {
-            title: "Created On",
+            title: "Created At",
             key: "createAt",
             width: 200,
             ellipsis: true,
             render: (users) => (
                 <Space direction="vertical">
-                    <p>{users?.createdAt?.split("T")[0] ?? "0"}</p>
+                    {/* <p>{users?.createdAt?.split("T")[0] ?? "0"}</p> */}
+                    <ReactTimeAgo date={users?.createdAt} locale="en-US" />
+                </Space>
+            ),
+        },
+        {
+            title: "Updated At",
+            key: "updatedAt",
+            width: 200,
+            ellipsis: true,
+            render: (users) => (
+                <Space direction="vertical">
+                    <ReactTimeAgo date={users?.updatedAt} locale="en-US" />
                 </Space>
             ),
         },
@@ -207,7 +221,7 @@ function MyPOI({ PermissionReducer, PoiReducer, GetPOI, PoiArchived, GetWorkSite
         },
     ];
 
-    const sortedData = [...PoiReducer?.poiData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    // const sortedData = [...PoiReducer?.poiData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     const { useBreakpoint } = Grid;
     const screens = useBreakpoint();
 
@@ -244,7 +258,7 @@ function MyPOI({ PermissionReducer, PoiReducer, GetPOI, PoiArchived, GetWorkSite
             {contextHolder}
             <div className={Style.filterSection}>
                 <Row gutter={gutter} align="middle" justify="space-between">
-                    <Col xxl={16} xl={16} lg={16} md={24} sm={24} xs={24}>
+                    <Col xxl={22} xl={22} lg={22} md={22} sm={22} xs={22}>
                         <div className={Style.Splitter}>
                             <div className={Style.layersInput}>
                                 <ListInputSearch onChange={(e) => setSearchQuery(e)} placeholder="Search POI" />
@@ -252,26 +266,8 @@ function MyPOI({ PermissionReducer, PoiReducer, GetPOI, PoiArchived, GetWorkSite
                         </div>
                     </Col>
 
-                    <Col xxl={4} xl={4} lg={4} md={24} sm={24} xs={24}>
-                        <Select
-                            getPopupContainer={(node) => node.parentElement}
-                            placeholder="All Risk Level"
-                            style={{ width: '100%' }}
-                            options={threatLevelOption}
-                            mode='multiple'
-                            onChange={(e) => setPriority(e)}
-                        />
-                    </Col>
-
-                    <Col xxl={4} xl={4} lg={4} md={24} sm={24} xs={24}>
-                        <Select
-                            getPopupContainer={(node) => node.parentElement}
-                            placeholder="All Elevation Level"
-                            style={{ width: '100%' }}
-                            options={CpcOption}
-                            mode='multiple'
-                            onChange={(e) => setCpc(e)}
-                        />
+                    <Col xxl={2} xl={2} lg={2} md={2} sm={2} xs={2}>
+                        <PoiFilter setPage={setPage} setParamsNew={setParamsNew} setIsNext={setIsNext} loading={PoiReducer?.poiLoading} GetPOI={GetPOI} workSite={workSite} page={page} searchQuery={searchQuery} />
                     </Col>
                 </Row>
             </div>
@@ -310,9 +306,9 @@ function MyPOI({ PermissionReducer, PoiReducer, GetPOI, PoiArchived, GetWorkSite
                     locale={{
                         emptyText: (
                             <div className={Style.EmptyTextTable}>
-                                <img src={searchQuery !== "" ? blueDocSearch : blueDoc} alt="blue-doc" />
-                                <h4>{searchQuery !== "" ? "No Search Result Found" : "No POIs Created Yet"}</h4>
-                                {searchQuery !== "" ?
+                                <img src={searchQuery !== "" || paramsNew !== null ? blueDocSearch : blueDoc} alt="blue-doc" />
+                                <h4>{searchQuery !== "" || paramsNew !== null ? "No Search Result Found" : "No POIs Created Yet"}</h4>
+                                {searchQuery !== "" || paramsNew !== null ?
                                     <p>Try adjusting your search or use different keywords to find Points of<br /> Interest within your worksite.</p>
                                     :
                                     <p>Start by adding your Point of Interest to mark critical zones, assign safety<br /> tasks, and track risk areas within your worksite.</p>
@@ -320,7 +316,7 @@ function MyPOI({ PermissionReducer, PoiReducer, GetPOI, PoiArchived, GetWorkSite
                             </div>
                         )
                     }}
-                    pagination={false} loading={PoiReducer?.poiLoading} scroll={{ x: 'max-content' }} rowKey={(record) => record._id} sticky={{ offsetHeader: 0 }} columns={columns} dataSource={sortedData} />
+                    pagination={false} loading={PoiReducer?.poiLoading} scroll={{ x: 'max-content' }} rowKey={(record) => record._id} sticky={{ offsetHeader: 0 }} columns={columns} dataSource={PoiReducer?.poiData} />
             </div>
         </>
     )

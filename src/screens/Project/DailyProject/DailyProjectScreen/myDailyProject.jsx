@@ -129,6 +129,17 @@ function MyDailyProject({ ProjectReducer, LoadDailyProject, DeleteDailyProject }
             ),
         },
         {
+            title: "Updated At",
+            key: "updatedAt",
+            width: 200,
+            ellipsis: true,
+            render: (users) => (
+                <Space direction="vertical">
+                    <ReactTimeAgo date={users?.updatedAt} locale="en-US" />
+                </Space>
+            ),
+        },
+        {
             title: "Action",
             key: "action",
             className: " space-x-2",

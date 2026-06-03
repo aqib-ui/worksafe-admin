@@ -39,6 +39,8 @@ import { AWSUploadModuleFilter } from '../../../component/AWSUploadModule';
 const ProjectScreenCreate = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer, PoiReducer, getDepartment, CreateDepartment, GetAllWorkOrderUnLink, getContractor, deleteContractor, addContractorAC, UpdateContractorAC }) => {
     dayjs.extend(customParseFormat);
     dayjs.extend(utc);
+    const [ismoveAblePoly, setIsmoveAblePoly] = useState(false)
+
     const dateFormat2 = 'YYYY-MM-DD';
     const now = new Date(Date.now());
     const year = now.getFullYear();
@@ -132,11 +134,9 @@ const ProjectScreenCreate = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer,
             map: mapRef.current,
             center: a,
             radius: b,
-            strokeColor: '#fe541e',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#fe541e',
-            fillOpacity: 0.35,
+            fillOpacity: 0.2,
             draggable: true,
             editable: true,
         });
@@ -144,11 +144,9 @@ const ProjectScreenCreate = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer,
             map: mapRef.current,
             center: a,
             radius: b + c,
-            strokeColor: '#1e88e5',
-            strokeOpacity: 0.7,
-            strokeWeight: 2,
-            fillColor: '#90caf9',
-            fillOpacity: 0.3,
+            strokeWeight: 0,
+            fillColor: '#fe541e',
+            fillOpacity: 0.2,
             clickable: false,
         });
         parent.addListener('center_changed', () => {
@@ -548,11 +546,9 @@ const ProjectScreenCreate = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer,
             map: mapRef.current,
             center: location,
             radius: parentRadius,
-            strokeColor: '#fe541e',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#fe541e',
-            fillOpacity: 0.35,
+            fillOpacity: 0.2,
             draggable: true,
             editable: true,
         });
@@ -560,11 +556,9 @@ const ProjectScreenCreate = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer,
             map: mapRef.current,
             center: location,
             radius: parentRadius + safetyOffset,
-            strokeColor: '#1e88e5',
-            strokeOpacity: 0.7,
-            strokeWeight: 2,
-            fillColor: '#90caf9',
-            fillOpacity: 0.3,
+            strokeWeight: 0,
+            fillColor: '#fe541e',
+            fillOpacity: 0.2,
             clickable: false,
         });
         parent.addListener('center_changed', () => {
@@ -636,20 +630,46 @@ const ProjectScreenCreate = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer,
             lng: center.lng + dLng * scale,
         };
     };
-    const handleMapClick = useCallback((e) => {
-        // if (points.length < 3) {
-        const newPoint = {
-            lat: e.latLng.lat(),
-            lng: e.latLng.lng(),
-        };
-        setPoints((prev) => [...prev, newPoint]);
-        // }
-    }, [points]);
 
+    const getCenter = (points) => {
+        const lat =
+            points.reduce((sum, p) => sum + p.lat, 0) / points.length;
+        const lng =
+            points.reduce((sum, p) => sum + p.lng, 0) / points.length;
+        return { lat, lng };
+    };
+
+    const movePolygonToCenter = (points, newCenter) => {
+        const currentCenter = getCenter(points);
+        const latDiff = newCenter.lat - currentCenter.lat;
+        const lngDiff = newCenter.lng - currentCenter.lng;
+        return points.map((p) => ({
+            lat: p.lat + latDiff,
+            lng: p.lng + lngDiff,
+        }));
+    };
+    
+    
+
+    const handleMapClick = useCallback((e) => {
+            const newPoint = {
+                lat: e.latLng.lat(),
+                lng: e.latLng.lng(),
+            };
+            if (ismoveAblePoly) {
+                const updated = movePolygonToCenter(points, newPoint);
+                setPoints(updated);
+            }
+            else {
+                setPoints((prev) => [...prev, newPoint]);
+            }
+        }, [points, ismoveAblePoly]);
     const removeIconCustomArea = (indexRemover) => {
         setPoints(prev => prev?.filter((_, index) => index !== indexRemover));
     }
     const drawCustomArea = () => {
+        setIsmoveAblePoly(false)
+
         setSelectedTab(2)
         setPointsMore([])
         circleRef.current.setMap(null);
@@ -673,6 +693,7 @@ const ProjectScreenCreate = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer,
     const [safetyOffsetMore, setSafetyOffsetMore] = useState(0);
     const [offsetPolygon, setOffsetPolygon] = useState([]);
     const drawPolyLine = () => {
+        setIsmoveAblePoly(false)
         setSelectedTab(3)
         setPoints([])
         circleRef.current.setMap(null);
@@ -680,14 +701,37 @@ const ProjectScreenCreate = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer,
         childCircleRef.current.setMap(null);
         childCircleRef.current = null;
     }
+    const getCenter2 = (points) => {
+        const lat =
+            points.reduce((sum, p) => sum + p.lat, 0) / points.length;
+        const lng =
+            points.reduce((sum, p) => sum + p.lng, 0) / points.length;
+        return { lat, lng };
+    };
+    const movePolyLineToCenter = (points, newCenter) => {
+        const currentCenter = getCenter2(points);
+        const latDiff = newCenter.lat - currentCenter.lat;
+        const lngDiff = newCenter.lng - currentCenter.lng;
+        return points.map((p) => ({
+            lat: p.lat + latDiff,
+            lng: p.lng + lngDiff,
+        }));
+    };
     const handleMapClickMore = useCallback((e) => {
-        setPoints([])
-        const newPoint = {
-            lat: e.latLng.lat(),
-            lng: e.latLng.lng(),
-        };
-        setPointsMore((prev) => [...prev, newPoint]);
-    }, []);
+            setPoints([])
+            const newPoint = {
+                lat: e.latLng.lat(),
+                lng: e.latLng.lng(),
+            };
+            if (ismoveAblePoly) {
+                const updated = movePolyLineToCenter(pointsMore, newPoint);
+                setPointsMore(updated);
+            }
+            else {
+                setPointsMore((prev) => [...prev, newPoint]);
+            }
+        }, [ismoveAblePoly]);
+    
     function computeOffsetPolyline(points, offsetDistance) {
         const offsetLeftPoints = [];
         const offsetRightPoints = [];
@@ -1525,7 +1569,7 @@ const ProjectScreenCreate = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer,
                                 value:
                                     item.value.type === "date"
                                         ? dayjs(item.value.value).format("YYYY-MM-DD")
-                                        : item.value.type === "color"
+                                        : item.value.type === "Color"
                                             ? rgbaStringToPipe(item.value.value)
                                             : item.value.value,
                                 type: item.value.type,
@@ -1927,7 +1971,7 @@ const ProjectScreenCreate = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer,
     const handleRecenter = () => {
         if (mapRef.current) {
             mapRef.current.panTo(new window.google.maps.LatLng(locationCurrent?.lat, locationCurrent?.lng));
-            mapRef.current.setZoom(14.5);
+            mapRef.current.setZoom(18);
         }
     };
 
@@ -1981,11 +2025,9 @@ const ProjectScreenCreate = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer,
             map: mapRef.current,
             center: loc,
             radius: radius,
-            strokeColor: '#050c1f',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#0d1e4b',
-            fillOpacity: 0.35,
+            fillOpacity: 0.4,
             draggable: false,
             editable: false,
         });
@@ -2948,6 +2990,8 @@ const ProjectScreenCreate = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer,
                         {isLoaded ? (
                             <>
                                 <GoogleMapCreate
+                                    setIsmoveAblePoly={setIsmoveAblePoly}
+                                    ismoveAblePoly={ismoveAblePoly}
                                     locationCurrent={locationCurrent}
                                     center={location}
                                     onMapLoad={onMapLoad}

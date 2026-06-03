@@ -359,6 +359,9 @@
     background: #555;
 }
 
+.FilterBoxes{
+    margin-top: 10px;
+}
 
 .FilterBoxes h4 {
     font-size: 14px;

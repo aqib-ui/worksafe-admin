@@ -63,8 +63,8 @@ const POILayout = ({ PermissionReducer }) => {
                     <div className={Style.TabHeader}>
                         <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
                             <button className={Style.TabBtn} style={location.pathname == "/POI/Poi" ? { borderBottom: '1px solid var(--blue-50)' } : null} onClick={() => navigate('/POI/Poi')}>POIs</button>
-                            <button className={Style.TabBtn} style={location.pathname == "/POI/draft" ? { borderBottom: '1px solid var(--blue-50)' } : null} onClick={() => navigate('/POI/draft')}>Draft</button>
                             <button className={Style.TabBtn} style={location.pathname == "/POI/archived" ? { borderBottom: '1px solid var(--blue-50)' } : null} onClick={() => navigate('/POI/archived')}>Archived</button>
+                            <button className={Style.TabBtn} style={location.pathname == "/POI/draft" ? { borderBottom: '1px solid var(--blue-50)' } : null} onClick={() => navigate('/POI/draft')}>Draft</button>
                         </div>
                         <div>
                             <button className={Style.NewBtn} onClick={() => navigate('/POI/create')}>Create POI</button>

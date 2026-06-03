@@ -104,6 +104,17 @@ function MyProject({ EvacuateReducer }) {
             ),
         },
         {
+            title: "Updated At",
+            key: "updatedAt",
+            width: 200,
+            ellipsis: true,
+            render: (users) => (
+                <Space direction="vertical">
+                    <ReactTimeAgo date={users?.updatedAt} locale="en-US" />
+                </Space>
+            ),
+        },
+        {
             title: "Status",
             key: "createAt",
             width: 200,

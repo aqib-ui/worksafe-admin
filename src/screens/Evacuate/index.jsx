@@ -266,7 +266,7 @@ function RealTimeEvacuationMap({ GetWorkSiteByID, GetMusterStation, WorkOrderRed
       radius: b,
       strokeColor: '#115638',
       strokeOpacity: 0.8,
-      strokeWeight: 2,
+      strokeWeight: 0,
       fillColor: '#548F1C',
       fillOpacity: 0.35,
       draggable: false,
@@ -578,11 +578,9 @@ function RealTimeEvacuationMap({ GetWorkSiteByID, GetMusterStation, WorkOrderRed
       map: mapRef.current,
       center: loc,
       radius: radius,
-      strokeColor: '#050c1f',
-      strokeOpacity: 0.8,
-      strokeWeight: 2,
-      fillColor: '#0d1e4b',
-      fillOpacity: 0.35,
+      strokeWeight: 0,
+            fillColor: '#0d1e4b',
+            fillOpacity: 0.4,
       draggable: false,
       editable: false,
     });
@@ -1174,7 +1172,7 @@ function RealTimeEvacuationMap({ GetWorkSiteByID, GetMusterStation, WorkOrderRed
               fillOpacity: 0.4,
               strokeColor: '#050c1f',
               strokeOpacity: 1,
-              strokeWeight: 2,
+              strokeWeight: 0,
               zIndex: 100
             }}
           />
@@ -1185,7 +1183,7 @@ function RealTimeEvacuationMap({ GetWorkSiteByID, GetMusterStation, WorkOrderRed
             options={{
               strokeColor: '#050c1f',
               strokeOpacity: 1,
-              strokeWeight: 2,
+              strokeWeight: 0,
               zIndex: 100
             }}
           />
@@ -1251,7 +1249,7 @@ function RealTimeEvacuationMap({ GetWorkSiteByID, GetMusterStation, WorkOrderRed
                   fillOpacity: 0.4,
                   strokeColor: "#115638",
                   strokeOpacity: 1,
-                  strokeWeight: 2,
+                  strokeWeight: 0,
                   zIndex: 999
                 }}
                 onClick={(e) =>
@@ -1298,7 +1296,7 @@ function RealTimeEvacuationMap({ GetWorkSiteByID, GetMusterStation, WorkOrderRed
                     options={{
                       strokeColor: "#115638",
                       strokeOpacity: 1,
-                      strokeWeight: 2,
+                      strokeWeight: 0,
                       zIndex: 999
                     }}
                     onClick={(e) =>

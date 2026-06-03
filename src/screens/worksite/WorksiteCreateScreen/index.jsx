@@ -42,6 +42,7 @@ import evacuationIcon from '../../../assets/evacuation.png'
 const WorksiteScreenCreate = ({ GetMusterStation, GetWorkSite, GetRoles, WorksiteReducer, GetManagerInWorksite, GetTeamInWorksite, TeamReducer, AlertsReducer, PoiReducer, GetAllWorkOrderUnLink, InserTeamUserV2 }) => {
     dayjs.extend(customParseFormat);
     dayjs.extend(utc);
+    const [ismoveAblePoly, setIsmoveAblePoly] = useState(false)
     const dateFormat2 = 'YYYY-MM-DD';
     const now = new Date(Date.now());
     const year = now.getFullYear();
@@ -163,29 +164,15 @@ const WorksiteScreenCreate = ({ GetMusterStation, GetWorkSite, GetRoles, Worksit
             map: mapRef.current,
             center: a,
             radius: b,
-            strokeColor: '#050c1f',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#0d1e4b',
-            fillOpacity: 0.35,
+            fillOpacity: 0.4,
             draggable: true,
             editable: true,
-        });
-        const child = new window.google.maps.Circle({
-            map: mapRef.current,
-            center: a,
-            radius: b + c,
-            strokeColor: '#050c1f',
-            strokeOpacity: 0.7,
-            strokeWeight: 2,
-            fillColor: '#050c1f',
-            fillOpacity: 0.3,
-            clickable: false,
         });
         const newCenter = parent.getCenter();
         parent.addListener('center_changed', () => {
             const newCenter = parent.getCenter();
-            child.setCenter(newCenter);
             const newCenterString = {
                 lat: newCenter.lat(),
                 lng: newCenter.lng()
@@ -201,9 +188,6 @@ const WorksiteScreenCreate = ({ GetMusterStation, GetWorkSite, GetRoles, Worksit
             if (circleRef.current) {
                 circleRef.current.setCenter(newCenter);
             }
-            if (childCircleRef.current) {
-                childCircleRef.current.setCenter(newCenter);
-            }
         });
 
         parent.addListener('radius_changed', () => {
@@ -211,7 +195,6 @@ const WorksiteScreenCreate = ({ GetMusterStation, GetWorkSite, GetRoles, Worksit
             setParentRadius(newRadius);
         });
         circleRef.current = parent;
-        childCircleRef.current = child;
     };
 
 
@@ -536,7 +519,7 @@ const WorksiteScreenCreate = ({ GetMusterStation, GetWorkSite, GetRoles, Worksit
             radius: b,
             strokeColor: '#115638',
             strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#548F1C',
             fillOpacity: 0.35,
             draggable: false,
@@ -776,28 +759,15 @@ const WorksiteScreenCreate = ({ GetMusterStation, GetWorkSite, GetRoles, Worksit
             map: mapRef.current,
             center: location,
             radius: parentRadius,
-            strokeColor: '#050c1f',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#0d1e4b',
-            fillOpacity: 0.35,
+            fillOpacity: 0.4,
             draggable: true,
             editable: true,
         });
-        const child = new window.google.maps.Circle({
-            map: mapRef.current,
-            center: location,
-            radius: parentRadius + safetyOffset,
-            strokeColor: '#050c1f',
-            strokeOpacity: 0.7,
-            strokeWeight: 2,
-            fillColor: '#050c1f',
-            fillOpacity: 0.3,
-            clickable: false,
-        });
+
         parent.addListener('center_changed', () => {
             const newCenter = parent.getCenter();
-            child.setCenter(newCenter);
             const newCenterString = {
                 lat: newCenter.lat(),
                 lng: newCenter.lng()
@@ -864,19 +834,45 @@ const WorksiteScreenCreate = ({ GetMusterStation, GetWorkSite, GetRoles, Worksit
             lng: center.lng + dLng * scale,
         };
     };
+
+
+
+    const getCenter = (points) => {
+        const lat =
+            points.reduce((sum, p) => sum + p.lat, 0) / points.length;
+        const lng =
+            points.reduce((sum, p) => sum + p.lng, 0) / points.length;
+        return { lat, lng };
+    };
+
+    const movePolygonToCenter = (points, newCenter) => {
+        const currentCenter = getCenter(points);
+        const latDiff = newCenter.lat - currentCenter.lat;
+        const lngDiff = newCenter.lng - currentCenter.lng;
+        return points.map((p) => ({
+            lat: p.lat + latDiff,
+            lng: p.lng + lngDiff,
+        }));
+    };
     const handleMapClick = useCallback((e) => {
-        setActualCenter()
         const newPoint = {
             lat: e.latLng.lat(),
             lng: e.latLng.lng(),
         };
-        setPoints((prev) => [...prev, newPoint]);
-    }, [points]);
+        if (ismoveAblePoly) {
+            const updated = movePolygonToCenter(points, newPoint);
+            setPoints(updated);
+        }
+        else {
+            setPoints((prev) => [...prev, newPoint]);
+        }
+    }, [points, ismoveAblePoly]);
 
     const removeIconCustomArea = (indexRemover) => {
         setPoints(prev => prev?.filter((_, index) => index !== indexRemover));
     }
     const drawCustomArea = () => {
+        setIsmoveAblePoly(false)
         setSelectedTab(2)
         setPointsMore([])
         circleRef.current.setMap(null);
@@ -900,6 +896,7 @@ const WorksiteScreenCreate = ({ GetMusterStation, GetWorkSite, GetRoles, Worksit
     const [safetyOffsetMore, setSafetyOffsetMore] = useState(0);
     const [offsetPolygon, setOffsetPolygon] = useState([]);
     const drawPolyLine = () => {
+        setIsmoveAblePoly(false)
         setActualCenter()
         setSelectedTab(3)
         setPoints([])
@@ -908,14 +905,37 @@ const WorksiteScreenCreate = ({ GetMusterStation, GetWorkSite, GetRoles, Worksit
         childCircleRef.current.setMap(null);
         childCircleRef.current = null;
     }
+    const getCenter2 = (points) => {
+        const lat =
+            points.reduce((sum, p) => sum + p.lat, 0) / points.length;
+        const lng =
+            points.reduce((sum, p) => sum + p.lng, 0) / points.length;
+        return { lat, lng };
+    };
+    const movePolyLineToCenter = (points, newCenter) => {
+        const currentCenter = getCenter2(points);
+        const latDiff = newCenter.lat - currentCenter.lat;
+        const lngDiff = newCenter.lng - currentCenter.lng;
+        return points.map((p) => ({
+            lat: p.lat + latDiff,
+            lng: p.lng + lngDiff,
+        }));
+    };
     const handleMapClickMore = useCallback((e) => {
         setPoints([])
         const newPoint = {
             lat: e.latLng.lat(),
             lng: e.latLng.lng(),
         };
-        setPointsMore((prev) => [...prev, newPoint]);
-    }, []);
+        if (ismoveAblePoly) {
+            const updated = movePolyLineToCenter(pointsMore, newPoint);
+            setPointsMore(updated);
+        }
+        else {
+            setPointsMore((prev) => [...prev, newPoint]);
+        }
+    }, [ismoveAblePoly]);
+
     function computeOffsetPolyline(points, offsetDistance) {
         const offsetLeftPoints = [];
         const offsetRightPoints = [];
@@ -1333,7 +1353,7 @@ const WorksiteScreenCreate = ({ GetMusterStation, GetWorkSite, GetRoles, Worksit
     const handleRecenter = () => {
         if (mapRef.current) {
             mapRef.current.panTo(new window.google.maps.LatLng(locationCurrent?.lat, locationCurrent?.lng));
-            mapRef.current.setZoom(14.5);
+            mapRef.current.setZoom(18);
         }
     };
 
@@ -1387,11 +1407,9 @@ const WorksiteScreenCreate = ({ GetMusterStation, GetWorkSite, GetRoles, Worksit
             map: mapRef.current,
             center: loc,
             radius: radius,
-            strokeColor: '#050c1f',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#0d1e4b',
-            fillOpacity: 0.35,
+            fillOpacity: 0.4,
             draggable: false,
             editable: false,
         });
@@ -2345,13 +2363,17 @@ const WorksiteScreenCreate = ({ GetMusterStation, GetWorkSite, GetRoles, Worksit
                                             inputMode="decimal"
                                             disabled={CreateLoading}
                                             value={value}
+                                            maxLength={4}
                                             placeholder="Enter speed limit"
                                             status={errors?.speedLimit?.message ? 'error' : ''}
                                             style={{ height: 45, marginTop: 3 }}
                                             onChange={(e) => {
                                                 const val = e.target.value;
                                                 if (/^(?!\.)[0-9]*\.?[0-9]*$/.test(val)) {
-                                                    onChange(val);
+                                                    // Prevent values greater than 1000
+                                                    if (val === '' || Number(val) <= 1000) {
+                                                        onChange(val);
+                                                    }
                                                 }
                                             }}
                                         />
@@ -2586,6 +2608,8 @@ const WorksiteScreenCreate = ({ GetMusterStation, GetWorkSite, GetRoles, Worksit
                         {isLoaded ? (
                             <>
                                 <GoogleMapCreate
+                                    setIsmoveAblePoly={setIsmoveAblePoly}
+                                    ismoveAblePoly={ismoveAblePoly}
                                     locationCurrent={locationCurrent}
                                     center={location}
                                     onMapLoad={onMapLoad}

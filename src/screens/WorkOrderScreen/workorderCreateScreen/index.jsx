@@ -103,7 +103,6 @@ const WorkorderScreenCreate = ({ WorkOrderReducer, GetWorkSite, GetCompanyUser, 
             console.warn("Expected a string, but got:", value);
             return null;
         }
-
         if (value.startsWith("rgba")) {
             const matches = value.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
             if (matches) {
@@ -138,7 +137,7 @@ const WorkorderScreenCreate = ({ WorkOrderReducer, GetWorkSite, GetCompanyUser, 
         if (stepOneData) {
             setAllFormData(prev => ({ ...prev, ...stepOneData }));
             StepChange(1)
-            setCounter(prev => prev + 1)
+            setCounter(1)
         }
         else {
             return
@@ -150,7 +149,7 @@ const WorkorderScreenCreate = ({ WorkOrderReducer, GetWorkSite, GetCompanyUser, 
         if (stepTwoData) {
             setAllFormData(prev => ({ ...prev, ...stepTwoData }));
             StepChange(2)
-            setCounter(prev => prev + 1)
+            setCounter(2)
         } else {
             messageApi.open({
                 type: "error",
@@ -341,7 +340,7 @@ const WorkorderScreenCreate = ({ WorkOrderReducer, GetWorkSite, GetCompanyUser, 
                                 value:
                                     item.value.type === "Date"
                                         ? dayjs(item.value.value).format("YYYY-MM-DD")
-                                        : item.value.type === "color"
+                                        : item.value.type === "Color"
                                             ? rgbaStringToPipe(item.value.value)
                                             : item.value.value,
                                 type: item.value.type,
@@ -349,7 +348,7 @@ const WorkorderScreenCreate = ({ WorkOrderReducer, GetWorkSite, GetCompanyUser, 
                             }))
                             : []),
                 };
-                /* Map / Polygon Data */
+                console.log(allFormDataFine,'ASLDKASDKJSD')
                 if (allFormDataFine?.mapData?.type) {
                     const map = allFormDataFine.mapData;
                     basePayload.polygon = JSON.stringify({
@@ -656,7 +655,7 @@ const BasicInformation = forwardRef(({ counter, basicInfoSectionRef, ComapnyUser
     // polyline
     const [pointsPolyLine, setPointsPolyLine] = useState([]);
     const [bandPolygon, setBandPolygon] = useState([]);
-    const [polylineWidth, setPolylineWidth] = useState(0)
+    const [polylineWidth, setPolylineWidth] = useState(50)
     const [polylineSafety, setPolylineSafety] = useState(0)
     const [polylineElevation, setPolylineElevation] = useState(0)
     const [safetyZonePolyLine, setSafetyZonePolyLine] = useState([]);
@@ -667,7 +666,7 @@ const BasicInformation = forwardRef(({ counter, basicInfoSectionRef, ComapnyUser
 
 
     // circle
-    const [circleRadius, setCircleRadius] = useState(100)
+    const [circleRadius, setCircleRadius] = useState(250)
     const [circleSafety, setCircleSafety] = useState(0)
     const [circleElevation, setCircleElevation] = useState(0)
     const circleRef = useRef(null);
@@ -994,7 +993,7 @@ const BasicInformation = forwardRef(({ counter, basicInfoSectionRef, ComapnyUser
     const resetController = (slide) => {
         if (slide === 1) {
             setSelectShape(1)
-            setCircleRadius(100)
+            setCircleRadius(250)
             setCircleSafety(0)
             setCircleElevation(0)
             setCircleCenter(null)
@@ -1009,7 +1008,7 @@ const BasicInformation = forwardRef(({ counter, basicInfoSectionRef, ComapnyUser
             setSelectShape(2)
             setPointsPolyLine([])
             setBandPolygon([])
-            setPolylineWidth(0)
+            setPolylineWidth(50)
             setPolylineSafety(0)
             setPolylineElevation(0)
             setSafetyZonePolyLine([])
@@ -1020,11 +1019,11 @@ const BasicInformation = forwardRef(({ counter, basicInfoSectionRef, ComapnyUser
             setSelectShape(3)
             setPointsPolyLine([])
             setBandPolygon([])
-            setPolylineWidth(0)
+            setPolylineWidth(50)
             setPolylineSafety(0)
             setPolylineElevation(0)
             setSafetyZonePolyLine([])
-            setCircleRadius(100)
+            setCircleRadius(250)
             setCircleSafety(0)
             setCircleElevation(0)
             setCircleCenter(null)
@@ -1410,7 +1409,7 @@ const BasicInformation = forwardRef(({ counter, basicInfoSectionRef, ComapnyUser
                                 <div className={Style.FeildCol}>
                                     <label>Set Stroke</label>
                                     <div className={Style.SliderContainer}>
-                                        <Slider value={polylineWidth} disabled={selectedShape == 0} style={{ width: '100%' }} max={measureSetting == "m" ? 1067 : 3500} onChange={(e) => setPolylineWidth(e)} className='blue-slider' styles={stylesObjectBlue} />
+                                        <Slider value={polylineWidth} min={1} disabled={selectedShape == 0} style={{ width: '100%' }} max={measureSetting == "m" ? 1067 : 3500} onChange={(e) => setPolylineWidth(e)} className='blue-slider' styles={stylesObjectBlue} />
                                         <div className={Style.SliderValueBox}>
                                             <p>
                                                 {polylineWidth}{measureSetting}
@@ -1543,7 +1542,7 @@ const BasicInformation = forwardRef(({ counter, basicInfoSectionRef, ComapnyUser
                                         <div className={Style.FeildCol}>
                                             <label>Set Stroke</label>
                                             <div className={Style.SliderContainer}>
-                                                <Slider value={polylineWidth} disabled={selectedShape == 0} style={{ width: '100%' }} max={measureSetting == "m" ? 1000 : 3500} onChange={(e) => setPolylineWidth(e)} className='blue-slider' styles={stylesObjectBlue} />
+                                                <Slider value={polylineWidth} min={1} disabled={selectedShape == 0} style={{ width: '100%' }} max={measureSetting == "m" ? 1000 : 3500} onChange={(e) => setPolylineWidth(e)} className='blue-slider' styles={stylesObjectBlue} />
                                                 <div className={Style.SliderValueBox}>
                                                     <p>
                                                         {polylineWidth}{measureSetting}
@@ -1602,6 +1601,7 @@ const BasicInformation = forwardRef(({ counter, basicInfoSectionRef, ComapnyUser
                                     className: "NewSearchInputMap",
                                     placeholder: 'Search Location',
                                     onChange: locationDataFunc,
+                                    isClearable: true,
                                 }}
                                 debounce={400}
                                 minLengthAutocomplete={2}
@@ -1609,7 +1609,7 @@ const BasicInformation = forwardRef(({ counter, basicInfoSectionRef, ComapnyUser
                             {/* <Input placeholder='Search Location' suffix={<img style={{height:24}} src={searchNormal}/>}/> */}
                         </div>
                         <div className={Style.MapSide}>
-                            {isLoaded ? (
+                            {isLoaded  ? (
                                 <>
                                     <MapWidget
                                         // center Marker
@@ -1709,8 +1709,14 @@ const TaskAndLocation = forwardRef(({ counter, taskAndLocationRef, messageApi, e
         return id;
     }
 
+    const capitalizeWord = (word) =>
+        typeof word === "string" && word.length > 0
+            ? word[0].toUpperCase() + word.slice(1)
+            : "";
+
     useEffect(() => {
         if (editId && counter == 1) {
+
             reset(
                 {
                     startDate: workOrderGetByIDData.cdr,
@@ -1721,23 +1727,29 @@ const TaskAndLocation = forwardRef(({ counter, taskAndLocationRef, messageApi, e
                     materialParts: workOrderGetByIDData?.mopo,
                 }
             )
-            const capitalizeWord = (word) =>
-                typeof word === "string" && word.length > 0
-                    ? word[0].toUpperCase() + word.slice(1)
-                    : "";
-            const formattedData = workOrderGetByIDData?.extraFields.map(item => ({
-                name: item.name || '',
-                description: item.description ?? null,
-                type: capitalizeWord(item.type) || 'Input',
-                id: generateRandomId(),
-                value: {
-                    type: item.type || '',
-                    value: item.value || ''
+          
+            const transformedArray = workOrderGetByIDData?.extraFields?.map(item => {
+                const { type, value, ...rest } = item;
+                let rgbaString = '';
+                if (capitalizeWord(type) == "Color") {
+                    const [r, g, b, a] = value?.split('|').map(Number);
+                    rgbaString = `rgba(${r}, ${g}, ${b}, ${a})`;
                 }
-            }));
-            // setExtraDataList(formattedData)
+                const newValue = capitalizeWord(type) === "Color" ? rgbaString : value;
+                return {
+                    name: item.name || '',
+                    description: item.description ?? null,
+                    type: capitalizeWord(item.type) || 'Input',
+                    id: generateRandomId(),
+                    value: {
+                        type: capitalizeWord(item.type) || 'Input',
+                        value: newValue
+                    }
+                };
+            });
+
             setExtraDataList(() => {
-                const updatedList = [...formattedData];
+                const updatedList = [...transformedArray];
                 const prevJsonData = JSON.parse(
                     localStorage.getItem("Q8@L!zM7B_1xP#t+6R9Dg*v==") || "{}"
                 );
@@ -2187,26 +2199,6 @@ const TaskAndLocation = forwardRef(({ counter, taskAndLocationRef, messageApi, e
                         </div>
                     </Col>
                     <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
-                        {/* <div className={Style.TaskFeild} style={{ marginTop: 16 }}>
-                            <label style={{ display: 'flex', alignItems: 'center', overflow: 'visible' }}>Extra Data
-                                <div onMouseEnter={() => setShowExtraToolTip(true)} onMouseLeave={() => setShowExtraToolTip(false)} className={Style.FillPoint}>
-                                    <FiInfo size={20} style={{ marginLeft: 5 }} color='#214CBC' />
-                                    {showExtraToolTip && (
-                                        <div className={Style.tooltipBox} >
-                                            <p> Attach any additional notes or custom data relevant to<br /> the task.</p>
-                                        </div>
-                                    )}
-                                </div>
-                            </label>
-                            <div onClick={showAddExtraDrawer} className={Style.AddExtraDataFeild}>
-                                <div>
-                                    <p>Add extra data<span> ({extraDataList?.length ?? 0})</span></p>
-                                </div>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <MdOutlineChevronRight size={28} color='#626D6F' />
-                                </div>
-                            </div>
-                        </div> */}
                         <ExtraData name={"Work Order"} extraDataList={extraDataList} setExtraDataList={setExtraDataList} localStoreKey={localStoreKey} counter={counter} workOrderGetByIDData={workOrderGetByIDData} editId={editId} messageApi={messageApi} taskAndLocationRef={taskAndLocationRef} />
                     </Col>
                     <Col span={24}>
@@ -2403,208 +2395,6 @@ const TaskAndLocation = forwardRef(({ counter, taskAndLocationRef, messageApi, e
                     </>
                 </Modal>
                 {/* Personanal drawer */}
-
-
-                {/* <Drawer
-
-                    maskClosable={false}
-                    getContainer={document.body}
-                    afterOpenChange={(visible) => {
-                        document.body.style.overflow = visible ? "hidden" : "auto";
-                    }}
-                    title="Add Extra Data"
-                    placement={'right'}
-                    styles={{ header: { padding: '17px 24px' }, body: { padding: '24px' } }}
-                    onClose={closeAddExtraDrawer}
-                    open={addExtraDrawer}
-                    width={486}
-                    key={'right'}
-                >
-                    <div onFocus={() => { document.body.style.overflow = "hidden"; }}>
-                        <div>
-                            <label>Name <span style={{ color: 'red' }}>*</span></label>
-                            <Input value={extraDataState.name} onChange={(e) => setExtraDataState(prev => ({ ...prev, name: e.target.value }))} placeholder='Enter name' />
-                        </div>
-                        <div style={{ marginTop: 16 }}>
-                            <label>Value Type <span style={{ color: 'red' }}>*</span></label>
-                            <div className={Style.ValueTypeWrapper}>
-                                <div onClick={() => setExtraDataState(prev => ({ ...prev, type: "Input", value: { type: "Input", value: "" } }))} className={extraDataState.type == "Input" ? Style.ValueTypeBlockSelect : Style.ValueTypeBlock}>Input</div>
-                                <div onClick={() => setExtraDataState(prev => ({ ...prev, type: "Boolean", value: { type: "Boolean", value: true } }))} className={extraDataState.type == "Boolean" ? Style.ValueTypeBlockSelect : Style.ValueTypeBlock}>Boolean</div>
-                                <div onClick={() => setExtraDataState(prev => ({ ...prev, type: "Date", value: { type: "Date", value: "" } }))} className={extraDataState.type == "Date" ? Style.ValueTypeBlockSelect : Style.ValueTypeBlock}>Date</div>
-                                <div onClick={() => setExtraDataState(prev => ({ ...prev, type: "Color", value: { type: "Color", value: "" } }))} className={extraDataState.type == "Color" ? Style.ValueTypeBlockSelect : Style.ValueTypeBlock}>Color</div>
-                            </div>
-                        </div>
-
-                        {extraDataState.type == "Input" ?
-                            <div style={{ marginTop: 16 }}>
-                                <label>Value <span style={{ color: 'red' }}>*</span></label>
-                                <Input value={extraDataState.value.value}
-                                    onChange={(e) => setExtraDataState(prev => ({
-                                        ...prev,
-                                        value: { type: "Input", value: e.target.value }
-                                    }))}
-                                    placeholder='Enter value' />
-                            </div>
-                            : extraDataState.type == "Boolean" ?
-                                <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                    <label>{extraDataState.value.value ? "On" : "Off"}</label>
-                                    <Switch value={extraDataState.value.value} onChange={(e) => setExtraDataState(prev => ({
-                                        ...prev,
-                                        value: { type: "Boolean", value: e }
-                                    }))} />
-                                </div>
-                                : extraDataState.type == "Date" ?
-                                    <div style={{ marginTop: 16 }}>
-                                        <label>Date <span style={{ color: 'red' }}>*</span></label>
-                                        <DatePicker value={extraDataState.value.value ? dayjs(extraDataState.value.value) : null} suffixIcon={<img src={calendarDatePicker} style={{ height: "24px" }} />} onChange={(date) => {
-                                            setExtraDataState(prev => ({
-                                                ...prev,
-                                                value: { type: 'Date', value: date ? dayjs(date).format('YYYY-MM-DD') : null }
-                                            }));
-                                        }} minDate={dayjs(formattedDate, dateFormat2)} placeholder='Select date' />
-                                    </div>
-                                    : extraDataState.type == "Color" ?
-                                        <div style={{ marginTop: 16 }}>
-                                            <label>Color <span style={{ color: 'red' }}>*</span></label>
-                                            <ColorPicker value={extraDataState.value.value} onChange={(color) =>
-                                                setExtraDataState(prev => ({
-                                                    ...prev,
-                                                    value: { type: "Color", value: color.toRgbString() }
-                                                }))
-                                            } style={{ marginTop: 8 }} />
-                                        </div>
-                                        : ""
-                        }
-                        <hr className={Style.HRHtm} />
-                        <div style={{ marginTop: 16 }}>
-                            <label>Description</label>
-                            <Input.TextArea onFocus={() => { document.body.style.overflow = "hidden"; }} rows={4} style={{ padding: 16 }} value={extraDataState.description} onChange={(e) => setExtraDataState(prev => ({ ...prev, description: e.target.value }))} placeholder='Write description' />
-                        </div>
-                        <div style={{ marginTop: 16 }} className={Style.PersonalActionWrapper}>
-                            <button onClick={handleCloseExtra} className={Style.cancelWorkBtn}>Cancel</button>
-                            <button disabled={hasInvalidExtraData} className={hasInvalidExtraData ? Style.AddWorkBtnD : Style.AddWorkBtn} style={{ paddingInline: 30 }} onClick={handleAddExtraData}>Add</button>
-                        </div>
-
-
-                        {extraDataList?.length > 0 ? extraDataList?.map((data, index) => {
-                            return (
-                                <div key={index} className={Style.MainListingHourWork}>
-                                    <div className={Style.HoursWorkListTop}>
-                                        {data?.type == "Input" ?
-                                            <h6>{data?.value?.value}</h6>
-                                            : data?.type == "Boolean" ?
-                                                <div className={data?.value?.value ? Style.InputDesign : Style.FInputDesign}>
-                                                    <p>{data?.value?.value ? "On" : "Off"}</p>
-                                                    <Switch size='small' disabled={true} value={data?.value?.value} />
-                                                </div>
-                                                : data?.type == "Date" ?
-                                                    <h6>{data?.value?.value}</h6>
-                                                    : data?.type == "Color" ?
-                                                        <ColorPicker value={data?.value?.value} disabled={false} style={{ marginTop: 8 }} />
-                                                        : ""
-                                        }
-                                        <Dropdown trigger={['click']} menu={{ items: getExtraDropdown(data?.id) }} placement="bottomRight">
-                                            <button><img src={moreIcon} style={{ height: "24px" }} /></button>
-                                        </Dropdown>
-                                    </div>
-                                    <h6>{data?.name}</h6>
-                                    <p>{data?.description}</p>
-                                </div>
-                            )
-                        }) : ""}
-                    </div>
-                </Drawer>
-                <Modal
-                    open={deleteExtra}
-                    onCancel={cancelEditModal}
-                    header={false}
-                    centered={true}
-                    closeIcon={false}
-                    footer={<>
-                        <div className={Style.editPersonalModalFooter}>
-                            <button onClick={() => setDeleteExtra(false)} className={Style.editPersonalModalFooterCancel}>Cancel</button>
-                            <button onClick={() => deleteExtraList(deleteExtraId)} className={Style.editPersonalModalFooterDelete}>Delete</button>
-                        </div>
-                    </>}
-                >
-                    <>
-                        <h4 className={Style.AreYouSure}>Are you sure you want to delete this extra data?</h4>
-                        <p className={Style.AreYouSurePara}>This will permanently remove this extra field and its value from the Work Order.</p>
-                    </>
-                </Modal>
-                <Modal
-                    title="Edit Extra Data"
-                    open={editExtra}
-                    onCancel={cancelEditExtraModal}
-                    footer={<>
-                        <div className={Style.editPersonalModalFooter}>
-                            <button onClick={cancelEditExtraModal} className={Style.editPersonalModalFooterCancel}>Cancel</button>
-                            <button disabled={hasInvalidExtraDataEdit} onClick={() => handleSaveExtraEdit(extraDataEditState?.id)} className={hasInvalidExtraDataEdit ? Style.editPersonalModalFooterSaveD : Style.editPersonalModalFooterSave}>Save Changes</button>
-                        </div>
-                    </>}
-                >
-                    <>
-                        <div>
-                            <label>Name <span style={{ color: 'red' }}>*</span></label>
-                            <Input value={extraDataEditState?.name} onChange={(e) => setExtraDataEditState(prev => ({ ...prev, name: e.target.value }))} placeholder='Enter name' />
-                        </div>
-                        <div style={{ marginTop: 16 }}>
-                            <label>Value Type <span style={{ color: 'red' }}>*</span></label>
-                            <div className={Style.ValueTypeWrapper}>
-                                <div onClick={() => setExtraDataEditState(prev => ({ ...prev, type: "Input", value: { type: "Input", value: "" } }))} className={extraDataEditState?.type == "Input" ? Style.ValueTypeBlockSelect : Style.ValueTypeBlock}>Input</div>
-                                <div onClick={() => setExtraDataEditState(prev => ({ ...prev, type: "Boolean", value: { type: "Boolean", value: true } }))} className={extraDataEditState?.type == "Boolean" ? Style.ValueTypeBlockSelect : Style.ValueTypeBlock}>Boolean</div>
-                                <div onClick={() => setExtraDataEditState(prev => ({ ...prev, type: "Date", value: { type: "Date", value: "" } }))} className={extraDataEditState?.type == "Date" ? Style.ValueTypeBlockSelect : Style.ValueTypeBlock}>Date</div>
-                                <div onClick={() => setExtraDataEditState(prev => ({ ...prev, type: "Color", value: { type: "Color", value: "" } }))} className={extraDataEditState?.type == "Color" ? Style.ValueTypeBlockSelect : Style.ValueTypeBlock}>Color</div>
-                            </div>
-                        </div>
-
-                        {extraDataEditState?.type == "Input" ?
-                            <div style={{ marginTop: 16 }}>
-                                <label>Value <span style={{ color: 'red' }}>*</span></label>
-                                <Input value={extraDataEditState?.value.value}
-                                    onChange={(e) => setExtraDataEditState(prev => ({
-                                        ...prev,
-                                        value: { type: "Input", value: e.target.value }
-                                    }))}
-                                    placeholder='Enter value' />
-                            </div>
-                            : extraDataEditState?.type == "Boolean" ?
-                                <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                    <label>{extraDataEditState?.value.value ? "On" : "Off"}</label>
-                                    <Switch value={extraDataEditState?.value.value} onChange={(e) => setExtraDataEditState(prev => ({
-                                        ...prev,
-                                        value: { type: "Boolean", value: e }
-                                    }))} />
-                                </div>
-                                : extraDataEditState?.type == "Date" ?
-                                    <div style={{ marginTop: 16 }}>
-                                        <label>Date <span style={{ color: 'red' }}>*</span></label>
-                                        <DatePicker value={extraDataEditState?.value.value ? dayjs(extraDataEditState?.value.value) : null} suffixIcon={<img src={calendarDatePicker} style={{ height: "24px" }} />} onChange={(date) => {
-                                            setExtraDataEditState(prev => ({
-                                                ...prev,
-                                                value: { type: 'Date', value: date ? dayjs(date).format('YYYY-MM-DD') : null }
-                                            }));
-                                        }} minDate={dayjs(formattedDate, dateFormat2)} placeholder='Select date' />
-                                    </div>
-                                    : extraDataEditState?.type == "Color" ?
-                                        <div style={{ marginTop: 16 }}>
-                                            <label>Color <span style={{ color: 'red' }}>*</span></label>
-                                            <ColorPicker value={extraDataEditState?.value.value} onChange={(color) =>
-                                                setExtraDataEditState(prev => ({
-                                                    ...prev,
-                                                    value: { type: "Color", value: color.toRgbString() }
-                                                }))
-                                            } style={{ marginTop: 8 }} />
-                                        </div>
-                                        : ""
-                        }
-                        <hr className={Style.HRHtm} />
-                        <div style={{ marginTop: 16 }}>
-                            <label>Description</label>
-                            <Input.TextArea rows={4} style={{ padding: 16 }} value={extraDataEditState?.description} onChange={(e) => setExtraDataEditState(prev => ({ ...prev, description: e.target.value }))} placeholder='Write description' />
-                        </div>
-                    </>
-                </Modal> */}
             </div >
         </>
     )
@@ -2614,6 +2404,7 @@ const TaskAndLocation = forwardRef(({ counter, taskAndLocationRef, messageApi, e
 
 // Third Step complete
 const AttachmentsSection = forwardRef(({ counter, attachmentsRef, messageApi, createLoading, editId, workOrderGetByIDData }) => {
+    console.log(counter,'AOSKDKASKDAKSDKASDKJS')
     const now = new Date(Date.now());
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import Style from './ProjectScreen.module.css'
-import { Dropdown, message, Space, Table, Tag } from 'antd'
+import { Dropdown, message, Space, Table, Tag, Tooltip } from 'antd'
 import * as ProjectAction from '../../../../store/actions/Project/index';
 import { connect, useDispatch } from 'react-redux';
 import { MdOutlineSettings } from 'react-icons/md';
@@ -11,26 +11,32 @@ import { IoCheckmark, IoClose, IoEyeOutline, IoVolumeMuteOutline } from "react-i
 import { FaRegFilePdf } from "react-icons/fa6";
 import { useNavigate, useOutletContext } from 'react-router';
 import { TASK_CLEAR_EXPIRED, TASK_GET_ARCHIVED_PROJECT_COMPLETE, TASK_GET_PROJECT_COMPLETE } from '../../../../store/actions/types';
+import ListInputSearch from '../../../component/ListInputSearch';
+import { FiPlus } from 'react-icons/fi';
+import PoiFilter from '../../PoiScreen/POIScreen/poiFilter';
+import ProjectFilter from './ProjectFilter';
 
 
 function MyProject({ ProjectReducer, GetProjects, ArchiveProject }) {
     const [messageApi, contextHolder] = message.useMessage();
     const [page, setPage] = useState(1)
     const workSite = localStorage.getItem("+AOQ^%^f0Gn4frTqztZadLrKg==")
-    const { searchQuery } = useOutletContext();
+    // const { searchQuery } = useOutletContext();
+    const [query, setQuery] = useState('')
+
+    const [paramsNew, setParamsNew] = useState(null)
+
+
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
     const [isNext, setIsNext] = useState(true)
     useEffect(() => {
         const init = async () => {
-            const totalLegngth = await GetProjects(workSite, page, searchQuery)
-            if (totalLegngth < 30) {
-                setIsNext(false)
-            }
+            const totalLegngth = await GetProjects(workSite, page, query, paramsNew && paramsNew, setIsNext)
         }
         init()
-    }, [page, searchQuery])
+    }, [page, query])
 
     useEffect(() => {
         if (!messageApi) return;
@@ -70,7 +76,7 @@ function MyProject({ ProjectReducer, GetProjects, ArchiveProject }) {
             });
             dispatch({ type: TASK_GET_ARCHIVED_PROJECT_COMPLETE, loading: true, payload: [] });
             dispatch({ type: TASK_GET_PROJECT_COMPLETE, loading: true, payload: [] });
-            GetProjects(workSite, page, searchQuery)
+            runAgain()
         }
     }, [
         ProjectReducer.networkError,
@@ -79,6 +85,11 @@ function MyProject({ ProjectReducer, GetProjects, ArchiveProject }) {
         ProjectReducer.projectDeleteLoading,
         messageApi,
     ]);
+
+
+    const runAgain = async () => {
+        const totalLegngth = await GetProjects(workSite, page, searchQuery, paramsNew && paramsNew, setIsNext)
+    }
 
 
     const viewWorkOrder = (eId) => {
@@ -139,6 +150,17 @@ function MyProject({ ProjectReducer, GetProjects, ArchiveProject }) {
             ),
         },
         {
+            title: "Updated At",
+            key: "updatedAt",
+            width: 200,
+            ellipsis: true,
+            render: (users) => (
+                <Space direction="vertical">
+                    <ReactTimeAgo date={users?.updatedAt} locale="en-US" />
+                </Space>
+            ),
+        },
+        {
             title: "Action",
             key: "action",
             className: " space-x-2",
@@ -183,11 +205,32 @@ function MyProject({ ProjectReducer, GetProjects, ArchiveProject }) {
         },
     ];
 
-    const sortedData = [...ProjectReducer?.projectData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    // const sortedData = [...ProjectReducer?.projectData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    const removeTemp = () => {
+        localStorage.removeItem('Wm8^pLC7ux$5kJ~E2-/3zq==')
+        localStorage.removeItem('Rd9!tMQ4vz#1gN*B6_+7@x==')
+    }
 
     return (
         <>
             {contextHolder}
+            <div className={Style.TabHeader}>
+                <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <button style={location.pathname == "/project/my-project" ? { border: '1px solid #214CBC', color: "#214CBC" } : null} onClick={() => navigate('/project/my-project')}>Projects</button>
+                    <button style={location.pathname == "/project/archived" ? { border: '1px solid #214CBC', color: "#214CBC" } : null} onClick={() => navigate('/project/archived')}>Archived</button>
+                    <Tooltip title={"Create Project"}>
+                        <button onClick={() => {
+                            removeTemp()
+                            navigate('/project/create')
+                        }} style={location.pathname == "/project/create" ? { border: '1px solid #214CBC', color: "#214CBC" } : null}><FiPlus color='#214CBC' size={22} /></button>
+                    </Tooltip>
+                </div>
+                <div style={{ display: "flex", alignItems: 'center' }}>
+                    <ListInputSearch onChange={setQuery} value={query} placeholder="Search Projects" debounceTime={500} />
+                    <ProjectFilter setPage={setPage} setIsNext={setIsNext} setParamsNew={setParamsNew} loading={ProjectReducer?.projectLoading} GetPOI={GetProjects} workSite={workSite} page={page} searchQuery={query} />
+                </div>
+            </div>
             <div className={Style.TableSection}>
                 <Table footer={() => (
                     <>
@@ -214,7 +257,7 @@ function MyProject({ ProjectReducer, GetProjects, ArchiveProject }) {
                             </>
                         }
                     </>
-                )} pagination={false} loading={ProjectReducer?.projectLoading} scroll={{ x: 'max-content' }} rowKey={(record) => record._id} sticky={{ offsetHeader: 0 }} columns={columns} dataSource={sortedData} />
+                )} pagination={false} loading={ProjectReducer?.projectLoading} scroll={{ x: 'max-content' }} rowKey={(record) => record._id} sticky={{ offsetHeader: 0 }} columns={columns} dataSource={ProjectReducer?.projectData} />
             </div>
         </>
     )

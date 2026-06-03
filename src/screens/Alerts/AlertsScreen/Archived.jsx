@@ -1,217 +1,3 @@
-// import { useEffect, useState } from 'react'
-// import Style from './AlertsScreen.module.css'
-// import { Dropdown, message, Space, Table, Tag, } from 'antd'
-// import * as AlertAction from '../../../../store/actions/Alerts/index';
-// import { connect, useDispatch } from 'react-redux';
-// import { MdOutlineSettings } from 'react-icons/md';
-// import ReactTimeAgo from 'react-time-ago';
-// import { IoEyeOutline } from 'react-icons/io5';
-// import { useNavigate, useOutletContext } from 'react-router';
-
-
-
-// function ArchivedProject({ AlertsReducer, GetArchivedGetAlerts }) {
-//     const [messageApi, contextHolder] = message.useMessage();
-//     const [page, setPage] = useState(1)
-//     const workSite = localStorage.getItem("+AOQ^%^f0Gn4frTqztZadLrKg==")
-//     const { searchQuery } = useOutletContext();
-//     const dispatch = useDispatch()
-//     const navigate = useNavigate()
-
-//     // const [isNext, setIsNext] = useState(false)
-//     // useEffect(() => {
-//     //     const init = async () => {
-//     //         const totalLegngth = await GetArchivedGetAlerts(workSite, page, searchQuery)
-//     //         if (totalLegngth < 30) {
-//     //             setIsNext(true)
-//     //         }
-//     //     }
-//     //     init()
-//     // }, [page, searchQuery])
-
-
-//     const [isNext, setIsNext] = useState(true)
-//     useEffect(() => {
-//         const init = async () => {
-//             const totalLegngth = await GetArchivedGetAlerts(workSite, page, searchQuery)
-//             if (totalLegngth < 30) {
-//                 setIsNext(false)
-//             }
-//         }
-//         init()
-//     }, [page, searchQuery])
-
-//     useEffect(() => {
-//         if (!messageApi) return;
-//         if (AlertsReducer.networkError) {
-//             messageApi.destroy();
-//             messageApi.open({
-//                 type: "error",
-//                 content: "Something went wrong, please try again",
-//             });
-//         }
-//         if (AlertsReducer.projectExpiredError) {
-//             messageApi.destroy();
-//             messageApi.open({
-//                 type: "info",
-//                 content: "Payment Expired",
-//             });
-//             const timeoutNavigate = setTimeout(() => {
-//                 navigate('/')
-//             }, 1000);
-//             return () => {
-//                 dispatch({ type: TASK_CLEAR_EXPIRED });
-//                 clearTimeout(timeoutNavigate)
-//             }
-//         }
-//     }, [
-//         AlertsReducer.networkError,
-//         AlertsReducer.projectExpiredError,
-//         messageApi,
-//     ]);
-
-
-//     const viewWorkOrder = (eId) => {
-//         localStorage.setItem("Pf_!9DqZ@+76MaL#CYxv3tr", eId)
-//         window.location.reload()
-//         window.location.href = '/alerts/read';
-//     }
-
-//     const columns = [
-//         {
-//             title: "Alerts Title",
-//             dataIndex: "title",
-//             key: "title",
-//             ellipsis: true,
-//             width: 200,
-//             render: (text, record) => {
-//                 return (
-//                     <div onClick={() => viewWorkOrder(record?._id)} style={{
-//                         cursor: 'pointer',
-//                         whiteSpace: 'nowrap',
-//                         overflow: 'hidden',
-//                         textOverflow: 'ellipsis',
-//                         width: 200
-//                     }}>{text}</div>
-//                 )
-//             },
-//         },
-//         {
-//             title: "Risk Level",
-//             dataIndex: "riskLevel",
-//             key: "riskLevel",
-//             width: 100,
-//             ellipsis: true,
-//             render: (text, record) => {
-//                 return (
-//                     <Tag color={text == "Moderate" ? "orange" : text == "No Threat" ? "green" : text == "High" ? 'red' : text == "Lowest" ? 'yellow' : null}>
-//                         {text === "No Threat" ? "No Risk" : text === "Lowest" ? "Lowest Risk" : text === "Moderate" ? "Moderate Risk" : text === "High" ? "High Risk" : text === "Extreme" ? "Extreme Risk" : text}
-//                     </Tag>
-//                 )
-//             },
-//         },
-//         {
-//             title: "Created At",
-//             key: "createAt",
-//             width: 200,
-//             ellipsis: true,
-//             render: (users) => (
-//                 <Space direction="vertical">
-//                     <ReactTimeAgo date={users?.createdAt} locale="en-US" />
-//                 </Space>
-//             ),
-//         },
-//         {
-//             title: "Action",
-//             key: "action",
-//             className: " space-x-2",
-//             ellipsis: true,
-//             width: 100,
-//             render: (record) => {
-//                 return (
-//                     <>
-//                         <Dropdown trigger={['click']} menu={{
-//                             items: [
-//                                 {
-//                                     key: '3',
-//                                     label: (
-//                                         <div onClick={() => viewWorkOrder(record?._id)} style={{ display: 'flex', alignItems: 'center' }}>
-//                                             <IoEyeOutline size={18} style={{ marginRight: 5 }} /> View Alerts
-//                                         </div>
-//                                     ),
-//                                 },
-//                             ],
-//                         }}>
-//                             <MdOutlineSettings size={24} />
-//                         </Dropdown>
-//                     </>
-//                 )
-//             },
-//         },
-//     ];
-
-
-//     const sortedData = [...AlertsReducer?.archivedalertData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-//     return (
-//         <>
-//             {contextHolder}
-//             <div className={Style.TableSection}>
-//                 <Table footer={() => (
-//                     <>
-//                         {AlertsReducer?.archivedalertData.length > 0 && !AlertsReducer?.archivedalertLoading &&
-//                             <>
-//                                 {isNext &&
-//                                     <div style={{ textAlign: "center", padding: "0 0" }}>
-//                                         <button
-//                                             onClick={() => setPage(prev => prev + 1)}
-//                                             disabled={AlertsReducer?.archivedalertLoading}
-//                                             style={{
-//                                                 border: "1px solid #1890ff",
-//                                                 background: "#1890ff",
-//                                                 color: "white",
-//                                                 padding: "6px 16px",
-//                                                 borderRadius: "4px",
-//                                                 cursor: AlertsReducer?.archivedalertLoading ? "not-allowed" : "pointer",
-//                                             }}
-//                                         >
-//                                             {AlertsReducer?.archivedalertLoading ? "Loading..." : "Load More"}
-//                                         </button>
-//                                     </div>
-//                                 }
-//                             </>
-//                         }
-//                     </>
-//                 )} pagination={false} loading={AlertsReducer?.archivedalertLoading} scroll={{ x: 'max-content' }} rowKey={(record) => record._id} sticky={{ offsetHeader: 0 }} columns={columns} dataSource={sortedData} />
-//             </div>
-//         </>
-//     )
-// }
-
-// function mapStateToProps({ AlertsReducer }) {
-//     return { AlertsReducer };
-// }
-// export default connect(mapStateToProps, AlertAction)(ArchivedProject);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 import { useEffect, useState } from 'react'
 import Style from './AlertsScreen.module.css'
@@ -227,12 +13,13 @@ import { FaRegFilePdf } from "react-icons/fa6";
 import { useNavigate, useOutletContext } from 'react-router';
 import { TASK_CLEAR_EXPIRED, TASK_GET_ALERTS_COMPLETE, TASK_GET_ARCHIVED_ALERTS_COMPLETE } from '../../../../store/actions/types';
 import ListInputSearch from '../../../component/ListInputSearch';
-import blueDoc from '../../../assets/map-POI.png'
+import blueDoc from '../../../assets/dashboard-4.png'
 import blueDocSearch from '../../../assets/search-normal-blue.png'
 import { MdChevronRight } from "react-icons/md";
 import clockYellow from "../../../assets/clock-yellow.png"
 import tickCircle from "../../../assets/tick-circle.png"
 import closeCircle from "../../../assets/close-circle.png"
+import AlertFilter from './alertFilter';
 
 
 
@@ -246,20 +33,18 @@ function ArchivedProject({ AlertsReducer, GetArchivedGetAlerts }) {
 
     const [searchQuery, setSearchQuery] = useState("")
 
-    const [priority, setPriority] = useState([])
-    const [cpc, setCpc] = useState([])
+    const [paramsNew, setParamsNew] = useState(null)
+
+
 
 
     const [isNext, setIsNext] = useState(true)
     useEffect(() => {
         const init = async () => {
-            const totalLegngth = await GetArchivedGetAlerts(workSite, page, searchQuery, priority)
-            if (totalLegngth < 30) {
-                setIsNext(false)
-            }
+            const totalLegngth = await GetArchivedGetAlerts(workSite, page, searchQuery, paramsNew && paramsNew, setIsNext)
         }
         init()
-    }, [page, searchQuery, priority])
+    }, [page, searchQuery])
 
     useEffect(() => {
         if (!messageApi) return;
@@ -299,8 +84,7 @@ function ArchivedProject({ AlertsReducer, GetArchivedGetAlerts }) {
             });
             dispatch({ type: TASK_GET_ARCHIVED_ALERTS_COMPLETE, loading: true, payload: [] });
             dispatch({ type: TASK_GET_ALERTS_COMPLETE, loading: true, payload: [] });
-            GetAlerts(workSite, page, searchQuery)
-
+            runAgain()
         }
     }, [
         AlertsReducer.networkError,
@@ -309,6 +93,10 @@ function ArchivedProject({ AlertsReducer, GetArchivedGetAlerts }) {
         AlertsReducer.alertDeleteLoading,
         messageApi,
     ]);
+
+    const runAgain = async () => {
+        const totalLegngth = await GetArchivedGetAlerts(workSite, page, searchQuery, paramsNew && paramsNew, setIsNext)
+    }
 
 
     const viewWorkOrder = (eId) => {
@@ -344,7 +132,7 @@ function ArchivedProject({ AlertsReducer, GetArchivedGetAlerts }) {
             ellipsis: true,
             render: (text, record) => {
                 return (
-                    <Tag style={{ color: text == "No Threat" ? "#1C8F5D" : text == "Lowest" ? "#333839" : text == "Moderate" ? '#C9A240' : text == "High" ? '#C94040' : text == "Extreme" ? '#792727' : null }} color={text == "No Threat" ? "#4DF15E14" : text == "Lowest" ? "#D8DFE0" : text == "Moderate" ? '#F1C34D14' : text == "High" ? '#F14D4D14' : text == "Extreme" ? '#501A1A14' : null}>
+                    <Tag className='AlertTag' style={{ color: text == "No Threat" ? "#666d80" : text == "Lowest" ? "#17736E" : text == "Moderate" ? '#926E26' : text == "High" ? '#D32029' : text == "Extreme" ? '#7F1319' : null }} color={text == "No Threat" ? "rgba(102, 109, 128,0.1)" : text == "Lowest" ? "rgba(23, 115, 110,0.1)" : text == "Moderate" ? 'rgba(146, 110, 38,0.1)' : text == "High" ? 'rgba(211, 32, 41,0.1)' : text == "Extreme" ? 'rgba(127, 19, 25,0.1)' : null}>
                         {text === "No Threat" ? "No Risk" : text === "Lowest" ? "Lowest Risk" : text === "Moderate" ? "Moderate Risk" : text === "High" ? "High Risk" : text === "Extreme" ? "Extreme Risk" : text}
                     </Tag>
                 )
@@ -356,11 +144,22 @@ function ArchivedProject({ AlertsReducer, GetArchivedGetAlerts }) {
             width: 200,
             ellipsis: true,
             render: (users) => (
-                // <Space direction="vertical">
-                //     <ReactTimeAgo date={users?.createdAt} locale="en-US" />
-                // </Space>
                 <Space direction="vertical">
-                    <p>{users?.createdAt?.split("T")[0] ?? "0"}</p>
+                    <ReactTimeAgo date={users?.createdAt} locale="en-US" />
+                </Space>
+                // <Space direction="vertical">
+                //     <p>{users?.createdAt?.split("T")[0] ?? "0"}</p>
+                // </Space>
+            ),
+        },
+        {
+            title: "Updated At",
+            key: "updatedAt",
+            width: 200,
+            ellipsis: true,
+            render: (users) => (
+                <Space direction="vertical">
+                    <ReactTimeAgo date={users?.updatedAt} locale="en-US" />
                 </Space>
             ),
         },
@@ -382,7 +181,7 @@ function ArchivedProject({ AlertsReducer, GetArchivedGetAlerts }) {
         },
     ];
 
-    const sortedData = [...AlertsReducer?.archivedalertData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    // const sortedData = [...AlertsReducer?.archivedalertData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
 
     const { useBreakpoint } = Grid;
@@ -424,7 +223,7 @@ function ArchivedProject({ AlertsReducer, GetArchivedGetAlerts }) {
 
             <div className={Style.filterSection}>
                 <Row gutter={gutter} align="middle" justify="space-between">
-                    <Col xxl={16} xl={16} lg={16} md={24} sm={24} xs={24}>
+                    <Col xxl={22} xl={22} lg={22} md={22} sm={22} xs={22}>
                         <div className={Style.Splitter}>
                             <div className={Style.layersInput}>
                                 <ListInputSearch onChange={(e) => setSearchQuery(e)} placeholder="Search Alert" />
@@ -432,17 +231,9 @@ function ArchivedProject({ AlertsReducer, GetArchivedGetAlerts }) {
                         </div>
                     </Col>
 
-                    <Col xxl={8} xl={8} lg={8} md={24} sm={24} xs={24}>
-                        <Select
-                            getPopupContainer={(node) => node.parentElement}
-                            placeholder="All Risk Level"
-                            style={{ width: '100%' }}
-                            options={threatLevelOption}
-                            mode='multiple'
-                            onChange={(e) => setPriority(e)}
-                        />
+                    <Col xxl={2} xl={2} lg={2} md={2} sm={2} xs={2}>
+                        <AlertFilter setPage={setPage} setIsNext={setIsNext} setParamsNew={setParamsNew} loading={AlertsReducer?.archivedalertLoading} GetPOI={GetArchivedGetAlerts} workSite={workSite} page={page} searchQuery={searchQuery} />
                     </Col>
-
                 </Row>
             </div>
             <div className={Style.TableSection}>
@@ -479,9 +270,9 @@ function ArchivedProject({ AlertsReducer, GetArchivedGetAlerts }) {
                     locale={{
                         emptyText: (
                             <div className={Style.EmptyTextTable}>
-                                <img src={searchQuery !== "" ? blueDocSearch : blueDoc} alt="blue-doc" />
-                                <h4>{searchQuery !== "" ? "No Search Result Found" : "No Alert Archived Yet"}</h4>
-                                {searchQuery !== "" ?
+                                <img src={searchQuery !== "" || paramsNew !== null ? blueDocSearch : blueDoc} alt="blue-doc" />
+                                <h4>{searchQuery !== "" || paramsNew !== null ? "No Search Result Found" : "No Alert Archived Yet"}</h4>
+                                {searchQuery !== "" || paramsNew !== null ?
                                     <p>Try adjusting your search or use different keywords to find Alert<br /> within your worksite.</p>
                                     :
                                     <p>Start by Archiving your Alert to mark critical zones, assign safety<br /> tasks, and track risk areas within your worksite.</p>
@@ -489,7 +280,7 @@ function ArchivedProject({ AlertsReducer, GetArchivedGetAlerts }) {
                             </div>
                         )
                     }}
-                    pagination={false} loading={AlertsReducer?.archivedalertLoading} scroll={{ x: 'max-content' }} rowKey={(record) => record._id} sticky={{ offsetHeader: 0 }} columns={columns} dataSource={sortedData} />
+                    pagination={false} loading={AlertsReducer?.archivedalertLoading} scroll={{ x: 'max-content' }} rowKey={(record) => record._id} sticky={{ offsetHeader: 0 }} columns={columns} dataSource={AlertsReducer?.archivedalertData} />
             </div>
         </>
     )

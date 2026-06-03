@@ -73,7 +73,7 @@ function PaymentScreen({ PaymentReducer, GetPayment }) {
             width: 200,
         },
         {
-            title: "Created at",
+            title: "Created At",
             key: "License",
             render: (packageId) => (
                 <Space direction="vertical">
@@ -82,6 +82,17 @@ function PaymentScreen({ PaymentReducer, GetPayment }) {
             ),
             ellipsis: true,
             width: 200,
+        },
+        {
+            title: "Updated At",
+            key: "updatedAt",
+            width: 200,
+            ellipsis: true,
+            render: (users) => (
+                <Space direction="vertical">
+                    <ReactTimeAgo date={users?.updatedAt} locale="en-US" />
+                </Space>
+            ),
         },
     ];
 

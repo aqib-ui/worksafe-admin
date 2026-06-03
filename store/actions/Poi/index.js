@@ -105,24 +105,48 @@ export const GetPOIWorksite = (worksiteId, page, query) => async (dispatch, getS
 };
 
 
-export const GetPOI = (worksiteId, page, query, priority, cpcs) => async (dispatch, getState) => {
+export const GetPOI = (worksiteId, page, query, params2, setIsNext) => async (dispatch, getState) => {
     dispatch({ type: TASK_LOAD_TEAM_COMPLETE, loading: false, payload: [] });
     dispatch({ type: TASK_GET_ALERTS_COMPLETE, loading: false, payload: [] });
     dispatch({ type: TASK_GET_ASSETS_COMPLETE, loading: false, payload: [] });
     dispatch({ type: TASK_GET_PROJECT_COMPLETE, loading: false, payload: [] });
     dispatch({ type: TASK_LOAD_ASSIGEND_TO_ME_COMPLETE, loading: false, payload: [] });
 
-    const hasQuery = query?.trim().length > 0;
-    const hasCpc = cpcs?.length > 0;
-    const hasPriority = priority?.length > 0;
+    const hasQuery = query?.trim()?.length > 0;
 
-    if (hasQuery || hasCpc || hasPriority) {
-        dispatch({
-            type: TASK_GET_POI_COMPLETE,
-            loading: false,
-            payload: [],
-        });
-    }
+    const hasThreatFilter =
+        params2?.threatFilter?.length > 0;
+
+    const hasElevationFilter =
+        params2?.elevationFilter?.length > 0;
+
+    const hasPolygonType =
+        params2?.polygonType?.length > 0;
+
+    const hasExtraField =
+        !!params2?.extraData?.name ||
+        !!params2?.extraData?.type;
+
+    const hasLocationFilter =
+        !!params2?.location?.lat ||
+        !!params2?.location?.lng ||
+        !!params2?.location?.radius;
+
+    const hasAnyFilter =
+        hasQuery ||
+        hasThreatFilter ||
+        hasElevationFilter ||
+        hasPolygonType ||
+        hasExtraField ||
+        hasLocationFilter;
+
+    // if (hasAnyFilter) {
+    //     dispatch({
+    //         type: TASK_GET_POI_COMPLETE,
+    //         loading: false,
+    //         payload: [],
+    //     });
+    // }
 
     dispatch({ type: TASK_GET_POI_ARCHIVED_COMPLETE, loading: false, payload: [] });
     const { poiData } = getState()?.PoiReducer
@@ -136,20 +160,49 @@ export const GetPOI = (worksiteId, page, query, priority, cpcs) => async (dispat
     const params = new URLSearchParams({
         worksiteId,
         page,
-        title: query,
-        sortBy: 'newest',
+        title: query || '',
+        sortBy: params2?.sortBy || 'newest',
     });
 
-    if (cpcs?.length > 0) {
-        cpcs.forEach(element => {
-            params.append('elevationLevels[]', element);
+
+    if (params2?.threatFilter?.length > 0) {
+        params2.threatFilter.forEach((item) => {
+            params.append('threatLevels[]', item);
         });
     }
 
-    if (priority?.length > 0) {
-        priority.forEach(element => {
-            params.append('threatLevels[]', element);
+    if (params2?.elevationFilter?.length > 0) {
+        params2.elevationFilter.forEach((item) => {
+            params.append('elevationLevels[]', item);
         });
+    }
+
+    if (params2?.polygonType?.length > 0) {
+        params2.polygonType.forEach((item) => {
+            params.append('polygon_type[]', item);
+        });
+    }
+
+
+    if (params2?.extraData?.name) {
+        params.append('extraFieldName', params2.extraData.name);
+    }
+
+    if (params2?.extraData?.type) {
+        params.append('extraFieldType', params2.extraData.type);
+    }
+
+
+    if (params2?.location?.lat) {
+        params.append('lat', params2.location.lat);
+    }
+
+    if (params2?.location?.lng) {
+        params.append('long', params2.location.lng);
+    }
+
+    if (params2?.location?.radius) {
+        params.append('radius', params2.location.radius);
     }
 
     const url = `/suggestions?${params.toString()}`;
@@ -171,6 +224,7 @@ export const GetPOI = (worksiteId, page, query, priority, cpcs) => async (dispat
             const filteredRes = res.filter(item => !existingIds.has(item._id));
             localStorage.removeItem('expireUser')
             dispatch({ type: TASK_GET_POI_COMPLETE, loading: false, payload: [...poiData, ...filteredRes] });
+            setIsNext(filteredRes?.length <= 1 ? false : true);
             return res?.length || 0
         } else if (response.status === 403) {
             if ("roleUpdated" in res) {
@@ -195,20 +249,72 @@ export const GetPOI = (worksiteId, page, query, priority, cpcs) => async (dispat
     }
 };
 
-export const GetArchivedPOI = (worksiteId, page, query, priority, cpcs) => async (dispatch, getState) => {
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export const GetArchivedPOI = (worksiteId, page, query, params2, setIsNext) => async (dispatch, getState) => {
     const hasQuery = query?.trim().length > 0;
-    const hasCpc = cpcs?.length > 0;
-    const hasPriority = priority?.length > 0;
+    const hasThreatFilter =
+        params2?.threatFilter?.length > 0;
 
-    if (hasQuery || hasCpc || hasPriority) {
-        dispatch({
-            type: TASK_GET_POI_ARCHIVED_COMPLETE,
-            loading: false,
-            payload: [],
-        });
-    }
+    const hasElevationFilter =
+        params2?.elevationFilter?.length > 0;
 
+    const hasPolygonType =
+        params2?.polygonType?.length > 0;
+
+    const hasExtraField =
+        !!params2?.extraData?.name ||
+        !!params2?.extraData?.type;
+
+    const hasLocationFilter =
+        !!params2?.location?.lat ||
+        !!params2?.location?.lng ||
+        !!params2?.location?.radius;
+
+    const hasAnyFilter =
+        hasQuery ||
+        hasThreatFilter ||
+        hasElevationFilter ||
+        hasPolygonType ||
+        hasExtraField ||
+        hasLocationFilter;
+
+    // if (hasAnyFilter) {
+    //     dispatch({
+    //         type: TASK_GET_POI_ARCHIVED_COMPLETE,
+    //         loading: false,
+    //         payload: [],
+    //     });
+    // }
     dispatch({ type: TASK_GET_POI_COMPLETE, loading: false, payload: [] });
     const { poiArchivedData } = getState()?.PoiReducer
     const controller = new AbortController();
@@ -216,24 +322,56 @@ export const GetArchivedPOI = (worksiteId, page, query, priority, cpcs) => async
 
 
 
+
+
     const params = new URLSearchParams({
         worksiteId,
         page,
-        title: query,
-        sortBy: 'newest',
+        title: query || '',
+        sortBy: params2?.sortBy || 'newest',
     });
 
-    if (cpcs?.length > 0) {
-        cpcs.forEach(element => {
-            params.append('elevationLevels[]', element);
+
+    if (params2?.threatFilter?.length > 0) {
+        params2.threatFilter.forEach((item) => {
+            params.append('threatLevels[]', item);
         });
     }
 
-    if (priority?.length > 0) {
-        priority.forEach(element => {
-            params.append('threatLevels[]', element);
+    if (params2?.elevationFilter?.length > 0) {
+        params2.elevationFilter.forEach((item) => {
+            params.append('elevationLevels[]', item);
         });
     }
+
+    if (params2?.polygonType?.length > 0) {
+        params2.polygonType.forEach((item) => {
+            params.append('polygon_type[]', item);
+        });
+    }
+
+
+    if (params2?.extraData?.name) {
+        params.append('extraFieldName', params2.extraData.name);
+    }
+
+    if (params2?.extraData?.type) {
+        params.append('extraFieldType', params2.extraData.type);
+    }
+
+
+    if (params2?.location?.lat) {
+        params.append('lat', params2.location.lat);
+    }
+
+    if (params2?.location?.lng) {
+        params.append('long', params2.location.lng);
+    }
+
+    if (params2?.location?.radius) {
+        params.append('radius', params2.location.radius);
+    }
+
 
     const url = `/suggestions/archived?${params.toString()}`;
     const token = localStorage.getItem("aX7@qB*9tw!1zV+T2/&1^x==");
@@ -256,6 +394,7 @@ export const GetArchivedPOI = (worksiteId, page, query, priority, cpcs) => async
             const filteredRes = res.filter(item => !existingIds.has(item._id));
             localStorage.removeItem('expireUser')
             dispatch({ type: TASK_GET_POI_ARCHIVED_COMPLETE, loading: false, payload: [...poiArchivedData, ...filteredRes] });
+            setIsNext(filteredRes?.length <= 1 ? false : true);
             return res?.length || 0
         } else if (response.status === 403) {
             if ("roleUpdated" in res) {
@@ -301,13 +440,15 @@ export const GetAllWorkOrderUnLink = (worksiteId) => async (dispatch) =>
 
 
 
-export const GetAllWorkOrderFilterLink = (worksiteId, module, currentWorkSite) => async (dispatch) =>
+export const GetAllWorkOrderFilterLink = (worksiteId, module, currentWorkSite) => async (dispatch) => {
+    dispatch({ type: TASK_WORKORDER_LINK_FOR_POI_COMPLETE, loading: false, payload: [] });
+    console.log(module, worksiteId, 'asldklaskdlsak')
     handleRequest(dispatch, `/workorder/getAllByModeuleTypeAndId?moduleType=${module}&moduleId=${worksiteId}&worksiteId=${currentWorkSite}`, 'GET', [
         TASK_WORKORDER_LINK_FOR_POI_START,
         TASK_WORKORDER_LINK_FOR_POI_COMPLETE,
         TASK_WORKORDER_LINK_FOR_POI_END
     ]);
-
+}
 
 
 export const PoiArchived = (body) => async (dispatch) => {

@@ -68,7 +68,7 @@ const WorkorderScreenRead = ({ workOrderGetDoc, GetMyAssignedWorkOrder, GetMyWor
     const formattedDate = `${year}-${month}-${day}`;
     const [messageApi, contextHolder] = message.useMessage();
     const Role_ID = localStorage.getItem('0U7Qv$N3tw69gV+T2/~1/w==')
-    const [personanalDataList, setPersonanalDataList] = useState([]);
+    // const [personanalDataList, setPersonanalDataList] = useState([]);
 
     const { workOrderGetByIDData, workSiteData, workOrderGetByIDDatLoading } = WorkOrderReducer
 
@@ -210,7 +210,6 @@ const WorkorderScreenRead = ({ workOrderGetDoc, GetMyAssignedWorkOrder, GetMyWor
 
 
     useEffect(() => {
-        setPersonanalDataList(workOrderGetByIDData?.add_hours_worked ? JSON.parse(workOrderGetByIDData?.add_hours_worked) : [])
         const polygons = workSiteData?.find(data => data._id == currentWorkSite)?.polygon;
         const firstLocation = polygons?.locations?.[0];
         if (polygons?.type == "Circle") {
@@ -291,7 +290,7 @@ const WorkorderScreenRead = ({ workOrderGetDoc, GetMyAssignedWorkOrder, GetMyWor
     // polyline
     const [pointsPolyLine, setPointsPolyLine] = useState([]);
     const [bandPolygon, setBandPolygon] = useState([]);
-    const [polylineWidth, setPolylineWidth] = useState(0)
+    const [polylineWidth, setPolylineWidth] = useState(50)
     const [polylineSafety, setPolylineSafety] = useState(0)
     const [polylineElevation, setPolylineElevation] = useState(0)
     const [safetyZonePolyLine, setSafetyZonePolyLine] = useState([]);
@@ -603,7 +602,6 @@ const WorkorderScreenRead = ({ workOrderGetDoc, GetMyAssignedWorkOrder, GetMyWor
 
             else if (polygon?.type === "Polygon") {
                 setSelectShape(3);
-
                 timeoutId = setTimeout(() => {
                     if (!isMounted) return;
                     setCustomAreaSafety(Number(polygon.safetyZone?.toFixed()));
@@ -621,7 +619,6 @@ const WorkorderScreenRead = ({ workOrderGetDoc, GetMyAssignedWorkOrder, GetMyWor
 
             else if (polygon?.type === "Polyline") {
                 setSelectShape(1);
-
                 timeoutId = setTimeout(() => {
                     if (!isMounted) return;
                     setPolylineWidth(Number(polygon.radius?.toFixed()));
@@ -644,7 +641,6 @@ const WorkorderScreenRead = ({ workOrderGetDoc, GetMyAssignedWorkOrder, GetMyWor
             if (timeoutId) clearTimeout(timeoutId);
         };
     }, [workOrderGetByIDData]);
-
     // map
 
 
@@ -1088,6 +1084,23 @@ const WorkorderScreenRead = ({ workOrderGetDoc, GetMyAssignedWorkOrder, GetMyWor
         }
     };
 
+
+
+
+    const personanalDataList = (() => {
+        try {
+            return workOrderGetByIDData?.add_hours_worked
+                ? JSON.parse(workOrderGetByIDData.add_hours_worked)
+                : [];
+        } catch {
+            return [];
+        }
+    })();
+
+
+
+
+    // console.log("workOrderGetByIDData", workOrderGetByIDData, workSite)
     return (
         <>
             {contextHolder}
@@ -1103,16 +1116,12 @@ const WorkorderScreenRead = ({ workOrderGetDoc, GetMyAssignedWorkOrder, GetMyWor
                             <h3>Work Order Detail</h3>
 
                             <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <Dropdown trigger={['click']} disabled={fileLoader ? true : false} menu={{ items: getDownloadDropdown() }} placement="bottomRight">
-                                    <button className={Style.DownloadBtn}>Download <IoIosArrowDown size={20} style={{ marginLeft: 5 }} color='white' /></button>
-                                </Dropdown>
-                                {/* {!workOrderGetByIDData?.isArchived && workOrderGetByIDData?.requested_by?._id === UserID ||  workOrderGetByIDData?.status !== "completed"?
-                                    < Dropdown menu={{ items: menuItems() }} placement="bottomRight">
-                                        <span style={{ display: "flex", alignItems: 'center', justifyContent: 'center', width: 50 }}><img src={moreIcon} style={{ height: "24px" }} /></span>
+                                {workOrderGetByIDData?.WorkSite == workSite && (
+                                    <Dropdown trigger={['click']} disabled={fileLoader ? true : false} menu={{ items: getDownloadDropdown() }} placement="bottomRight">
+                                        <button className={Style.DownloadBtn}>Download <IoIosArrowDown size={20} style={{ marginLeft: 5 }} color='white' /></button>
                                     </Dropdown>
-                                    : ""
-                                } */}
-                                {!workOrderGetByIDData?.isArchived && (
+                                )}
+                                {!workOrderGetByIDData?.isArchived && workOrderGetByIDData?.WorkSite == workSite && (
                                     < Dropdown trigger={['click']} menu={{ items: menuItems() }} placement="bottomRight">
                                         <span style={{ display: "flex", alignItems: 'center', justifyContent: 'center', width: 50 }}><img src={moreIcon} style={{ height: "24px" }} /></span>
                                     </Dropdown>
@@ -1196,7 +1205,7 @@ const WorkorderScreenRead = ({ workOrderGetDoc, GetMyAssignedWorkOrder, GetMyWor
                                                 <>
                                                     <div>
                                                         <h6>Width Stroke</h6>
-                                                        <p>{workOrderGetByIDData?.polygon?.radius} m</p>
+                                                        <p>{Number(workOrderGetByIDData?.polygon?.radius).toFixed(2)} m</p>
                                                     </div>
                                                     <span></span>
                                                 </>
@@ -1204,14 +1213,14 @@ const WorkorderScreenRead = ({ workOrderGetDoc, GetMyAssignedWorkOrder, GetMyWor
                                                     <>
                                                         <div>
                                                             <h6>Radius</h6>
-                                                            <p>{workOrderGetByIDData?.polygon?.radius} m</p>
+                                                            <p>{Number(workOrderGetByIDData?.polygon?.radius).toFixed(2)} m</p>
                                                         </div>
                                                         <span></span>
                                                     </>
                                                     : ""}
                                             <div>
                                                 <h6>Safety Zone</h6>
-                                                <p>{workOrderGetByIDData?.polygon?.safetyZone} m</p>
+                                                <p>{Number(workOrderGetByIDData?.polygon?.safetyZone).toFixed(2)} m</p>
                                             </div>
                                             <span></span>
                                             <div>
@@ -1236,11 +1245,19 @@ const WorkorderScreenRead = ({ workOrderGetDoc, GetMyAssignedWorkOrder, GetMyWor
                                                     <p>{dayjs(workOrderGetByIDData?.cdr).format('YYYY-MM-DD hh:mm A')}</p>
                                                 </div>
                                             }
-                                            {workOrderGetByIDData?.completed_date !== "" &&
+                                            {workOrderGetByIDData?.completed_date ?
                                                 <div style={{ marginTop: 16 }}>
                                                     <h6>Date Completed</h6>
-                                                    {/* <p>{workOrderGetByIDData?.cdr?.split(" ")[0] ?? ""}</p> */}
-                                                    <p>{dayjs(workOrderGetByIDData?.completed_date == "null" ? Date.now() : workOrderGetByIDData?.completed_date).format('YYYY-MM-DD hh:mm A')}</p>
+                                                    {/* <p>{(workOrderGetByIDData?.completed_date).format('YYYY-MM-DD hh:mm A')}</p> */}
+                                                    <p>{workOrderGetByIDData?.completed_date
+                                                        ? dayjs(workOrderGetByIDData.completed_date).format("YYYY-MM-DD hh:mm A")
+                                                        : ""}</p>
+                                                </div>
+                                                :
+
+                                                <div style={{ marginTop: 16 }}>
+                                                    <h6>Date Completed</h6>
+                                                    <p>N/A</p>
                                                 </div>
                                             }
                                             <div style={{ marginTop: 16 }}>
@@ -1641,6 +1658,11 @@ const WorkorderScreenRead = ({ workOrderGetDoc, GetMyAssignedWorkOrder, GetMyWor
                 >
                     <>
                         {workOrderGetByIDData?.extraFields?.length > 0 ? workOrderGetByIDData?.extraFields?.map((data, index) => {
+                            let rgbaString = '';
+                            if (capitalizeWord(data?.type) == "Color") {
+                                const [r, g, b, a] = data?.value?.split('|').map(Number);
+                                rgbaString = `rgba(${r}, ${g}, ${b}, ${a})`;
+                            }
                             return (
                                 <div key={index} className={Style.MainListingHourWork}>
                                     <div className={Style.HoursWorkListTop}>
@@ -1654,7 +1676,7 @@ const WorkorderScreenRead = ({ workOrderGetDoc, GetMyAssignedWorkOrder, GetMyWor
                                                 : capitalizeWord(data?.type) == "Date" ?
                                                     <h6>{data?.value}</h6>
                                                     : capitalizeWord(data?.type) == "Color" ?
-                                                        <ColorPicker value={data?.value} disabled={false} style={{ marginTop: 8 }} />
+                                                        <ColorPicker value={rgbaString} disabled={false} style={{ marginTop: 8 }} />
                                                         : ""
                                         }
                                     </div>

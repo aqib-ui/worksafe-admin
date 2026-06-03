@@ -208,6 +208,17 @@
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
+.PolyCenter3 {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    bottom: 110px;
+    left: 10px;
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
 .PolyDot1 {
     height: 40px;
     width: 40px;
@@ -478,7 +489,7 @@
     width: 55px;
     border-radius: 55px;
     border: none;
-    background-color: #214CBC;
+    /* background-color: #214CBC; */
     margin-right: 7px;
     display: flex;
     align-items: center;
@@ -486,8 +497,8 @@
 }
 
 .ContainIcon img {
-    height: 30px;
-    width: 30px;
+    height: 55px;
+    width: 55px;
 }
 
 .TootTopName {
@@ -645,6 +656,7 @@
     flex-direction: column;
     background-color: rgba(0, 0, 0, 0.7);
     position: absolute;
+    text-align: center;
     top: 0;
     left: 0;
     opacity: 1;
@@ -769,6 +781,11 @@
         padding-left: 0px;
         padding-bottom: 30px;
     }
+
+    .BarStyleChart21 {
+        justify-content: start;
+        min-height: 100% !important;
+    }
 }
 
 
@@ -793,11 +810,233 @@
         margin-left: 0px;
         margin-top: 12px;
     }
+}
 
+.searchLocationInput {
+    position: absolute;
+    top: 0px;
+    padding: 10px;
+    right: 0px;
+    width: 100%;
+    max-width: 800px;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
+
+.searchLocationInput input {
+    width: 100%;
 }
 
 @media (min-width: 100px) and (max-width: 1800px) {
     .DoughNutRightWrap {
         padding-inline: 0px !important;
     }
+}
+
+.SearchButton {
+    height: 30px;
+    width: 30px;
+    background-color: red;
+}
+
+.FullScreenWrapper {
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+}
+
+.FullScreenWrapper div:nth-child(0) {
+    height: 100% !important;
+}
+
+.AssetsFilterIcon {
+    /* height: 48px; */
+    /* width: 48px; */
+    padding: 10px;
+    background-color: white;
+    border-radius: 48px;
+    border: 1px solid #d9d9d9;
+    margin-left: 10px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s all;
+    cursor: pointer;
+}
+
+.AssetsFilterIcon:hover {
+    background-color: #f1f1f1;
+}
+
+.FeildCol {
+    margin-top: 10px;
+    width: 100%;
+}
+
+.ResetterIcon {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.FeildCol label {
+    margin-bottom: 5px !important;
+}
+
+.ResetButton {
+    color: red;
+    cursor: pointer;
+}
+
+.ApplyBtn {
+    background-color: var(--primary);
+    color: var(--white);
+    border: none;
+    width: 100%;
+    padding-block: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s all;
+}
+
+.ApplyBtn:hover {
+    background-color: rgb(16, 52, 145);
+    color: var(--white);
+    border: none;
+    width: 100%;
+    padding-block: 10px;
+    border-radius: 8px;
+}
+
+.CancelBtn {
+    background-color: transparent;
+    color: var(--primary);
+    border: none;
+    width: 100%;
+    padding-block: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: 0.3s all;
+}
+
+.CancelBtn:hover {
+    background-color: rgb(224, 224, 224);
+    color: var(--primary);
+    border: none;
+    width: 100%;
+    padding-block: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+
+
+
+.ValueTypeWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 8px;
+}
+
+.ValueTypeBlock {
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    display: flex;
+    background-color: var(--gray-0);
+    padding-block: 8px;
+    border-radius: 4px;
+    color: var(--gray-100);
+    cursor: pointer;
+    transition: 0.3s all;
+}
+
+.ValueTypeBlockSelect {
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    display: flex;
+    background-color: #1F58EA14;
+    padding-block: 8px;
+    border-radius: 4px;
+    color: var(--blue-50);
+    cursor: pointer;
+    transition: 0.3s all;
+}
+
+.ValueTypeBlock:hover {
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    display: flex;
+    background-color: #1F58EA14;
+    padding-block: 8px;
+    border-radius: 4px;
+    color: var(--blue-50);
+    cursor: pointer;
+}
+
+.InputDesign {
+    background-color: #1F58EA14;
+    padding: 10px;
+    color: var(--primary);
+}
+
+.FInputDesign {
+    background-color: var(--gray-10);
+    padding: 10px;
+    color: var(--primary);
+}
+
+.InputDesign {
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    padding-block: 5px;
+}
+
+.InputDesign p {
+    margin-right: 5px;
+    color: var(--primary);
+}
+
+.FInputDesign {
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    padding-block: 5px;
+}
+
+.FInputDesign p {
+    margin-right: 5px;
+    color: var(--gray-70);
+}
+
+.AreYouSure {
+    font-size: 18px;
+}
+
+.AreYouSurePara {
+    font-size: 16px;
+    margin-top: 10px;
+    color: var(--gray-100);
+}
+
+.BackMainBtn {
+    background-color: transparent;
+    color: var(--gray-100);
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
 }

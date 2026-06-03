@@ -50,7 +50,7 @@ const handleUnauthorized = () => {
 };
 
 
-export const GetAlerts = (worksiteId, page, query, priority) => async (dispatch, getState) => {
+export const GetAlerts = (worksiteId, page, query, params2, setIsNext) => async (dispatch, getState) => {
     dispatch({ type: TASK_LOAD_TEAM_COMPLETE, loading: false, payload: [] });
     dispatch({ type: TASK_GET_ARCHIVED_ALERTS_COMPLETE, loading: true, payload: [] });
 
@@ -60,31 +60,104 @@ export const GetAlerts = (worksiteId, page, query, priority) => async (dispatch,
     dispatch({ type: TASK_GET_PROJECT_COMPLETE, loading: false, payload: [] });
     dispatch({ type: TASK_LOAD_ASSIGEND_TO_ME_COMPLETE, loading: false, payload: [] });
 
-    const hasQuery = query?.trim().length > 0;
-    const hasPriority = priority?.length > 0;
+    const hasQuery = query?.trim()?.length > 0;
 
-    if (hasQuery || hasPriority) {
-        dispatch({
-            type: TASK_GET_ALERTS_COMPLETE,
-            loading: false,
-            payload: [],
-        });
-    }
+    const hasThreatFilter =
+        params2?.threatFilter?.length > 0;
 
+    const hasAlertLevelFilter =
+        params2?.alertLevelFilter?.length > 0;
+
+    const hasPolygonType =
+        params2?.polygonType?.length > 0;
+
+    const hasExtraField =
+        !!params2?.extraData?.name ||
+        !!params2?.extraData?.type;
+
+    const hasLocationFilter =
+        params2?.location?.lat !== undefined ||
+        params2?.location?.lng !== undefined ||
+        params2?.location?.radius !== undefined;
+
+    const hasAnyFilter =
+        hasQuery ||
+        hasThreatFilter ||
+        hasAlertLevelFilter ||
+        hasPolygonType ||
+        hasExtraField ||
+        hasLocationFilter;
+
+
+    // if (hasAnyFilter) {
+    //     dispatch({
+    //         type: TASK_GET_ALERTS_COMPLETE,
+    //         loading: false,
+    //         payload: [],
+    //     });
+    // }
 
 
     const params = new URLSearchParams({
         worksiteId,
         page,
-        title: query,
-        sortBy: 'newest',
+        title: query || "",
+        sortBy: params2?.sortBy || "newest",
     });
 
-    if (priority?.length > 0) {
-        priority.forEach(element => {
-            params.append('threatLevels[]', element);
+    if (params2?.threatFilter?.length > 0) {
+        params2.threatFilter.forEach((item) => {
+            params.append("threatLevels[]", item);
         });
     }
+
+
+    if (params2?.alertLevelFilter?.length > 0) {
+        params2.alertLevelFilter.forEach((item) => {
+            params.append("alertTypes[]", item);
+        });
+    }
+
+
+    if (params2?.polygonType?.length > 0) {
+        params2.polygonType.forEach((item) => {
+            params.append("polygon_type[]", item);
+        });
+    }
+
+    if (params2?.extraData?.name) {
+        params.append(
+            "extraFieldName",
+            params2.extraData.name
+        );
+    }
+    if (params2?.extraData?.type) {
+        params.append(
+            "extraFieldType",
+            params2.extraData.type
+        );
+    }
+
+    if (params2?.location?.lat !== undefined) {
+        params.append(
+            "lat",
+            params2.location.lat
+        );
+    }
+
+    if (params2?.location?.lng !== undefined) {
+        params.append(
+            "long",
+            params2.location.lng
+        );
+    }
+    if (params2?.location?.radius !== undefined) {
+        params.append(
+            "radius",
+            params2.location.radius
+        );
+    }
+
 
     const url = `/alerts?${params.toString()}`;
 
@@ -111,7 +184,8 @@ export const GetAlerts = (worksiteId, page, query, priority) => async (dispatch,
             const filteredRes = res.filter(item => !existingIds.has(item._id));
             localStorage.removeItem('expireUser')
             dispatch({ type: TASK_GET_ALERTS_COMPLETE, loading: false, payload: [...alertData, ...filteredRes] });
-            return res?.length || 0
+            setIsNext(filteredRes?.length <= 1 ? false : true);
+            return filteredRes?.length || 0
         } else if (response.status === 403) {
             if ("roleUpdated" in res) {
                 handleUnauthorized();
@@ -136,33 +210,105 @@ export const GetAlerts = (worksiteId, page, query, priority) => async (dispatch,
 };
 
 
-export const GetArchivedGetAlerts = (worksiteId, page, query,priority) => async (dispatch, getState) => {
+export const GetArchivedGetAlerts = (worksiteId, page, query, params2, setIsNext) => async (dispatch, getState) => {
     dispatch({ type: TASK_GET_ALERTS_COMPLETE, loading: true, payload: [] });
 
-    const hasQuery = query?.trim().length > 0;
-    const hasPriority = priority?.length > 0;
+    const hasQuery = query?.trim()?.length > 0;
 
-    if (hasQuery || hasPriority) {
-        dispatch({
-            type: TASK_GET_ARCHIVED_ALERTS_COMPLETE,
-            loading: false,
-            payload: [],
-        });
-    }
+    const hasThreatFilter =
+        params2?.threatFilter?.length > 0;
 
+    const hasAlertLevelFilter =
+        params2?.alertLevelFilter?.length > 0;
+
+    const hasPolygonType =
+        params2?.polygonType?.length > 0;
+
+    const hasExtraField =
+        !!params2?.extraData?.name ||
+        !!params2?.extraData?.type;
+
+    const hasLocationFilter =
+        params2?.location?.lat !== undefined ||
+        params2?.location?.lng !== undefined ||
+        params2?.location?.radius !== undefined;
+
+    const hasAnyFilter =
+        hasQuery ||
+        hasThreatFilter ||
+        hasAlertLevelFilter ||
+        hasPolygonType ||
+        hasExtraField ||
+        hasLocationFilter;
+
+
+    // if (hasAnyFilter) {
+    //     dispatch({
+    //         type: TASK_GET_ARCHIVED_ALERTS_COMPLETE,
+    //         loading: false,
+    //         payload: [],
+    //     });
+    // }
 
 
     const params = new URLSearchParams({
         worksiteId,
         page,
-        title: query,
-        sortBy: 'newest',
+        title: query || "",
+        sortBy: params2?.sortBy || "newest",
     });
 
-    if (priority?.length > 0) {
-        priority.forEach(element => {
-            params.append('threatLevels[]', element);
+    if (params2?.threatFilter?.length > 0) {
+        params2.threatFilter.forEach((item) => {
+            params.append("threatLevels[]", item);
         });
+    }
+
+
+    if (params2?.alertLevelFilter?.length > 0) {
+        params2.alertLevelFilter.forEach((item) => {
+            params.append("alertTypes[]", item);
+        });
+    }
+
+
+    if (params2?.polygonType?.length > 0) {
+        params2.polygonType.forEach((item) => {
+            params.append("polygon_type[]", item);
+        });
+    }
+
+    if (params2?.extraData?.name) {
+        params.append(
+            "extraFieldName",
+            params2.extraData.name
+        );
+    }
+    if (params2?.extraData?.type) {
+        params.append(
+            "extraFieldType",
+            params2.extraData.type
+        );
+    }
+
+    if (params2?.location?.lat !== undefined) {
+        params.append(
+            "lat",
+            params2.location.lat
+        );
+    }
+
+    if (params2?.location?.lng !== undefined) {
+        params.append(
+            "long",
+            params2.location.lng
+        );
+    }
+    if (params2?.location?.radius !== undefined) {
+        params.append(
+            "radius",
+            params2.location.radius
+        );
     }
 
     const url = `/alerts/archived?${params.toString()}`;
@@ -196,7 +342,8 @@ export const GetArchivedGetAlerts = (worksiteId, page, query,priority) => async 
             const filteredRes = res.filter(item => !existingIds.has(item._id));
             localStorage.removeItem('expireUser')
             dispatch({ type: TASK_GET_ARCHIVED_ALERTS_COMPLETE, loading: false, payload: [...archivedalertData, ...filteredRes] });
-            return res?.length || 0
+            setIsNext(filteredRes?.length <= 1 ? false : true)
+            return filteredRes?.length || 0
         } else if (response.status === 403) {
             if ("roleUpdated" in res) {
                 handleUnauthorized();

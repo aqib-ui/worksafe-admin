@@ -15,7 +15,7 @@ import { TASK_CLEAR_EXPIRED, TASK_GET_ALERTS_COMPLETE, TASK_GET_ARCHIVED_ALERTS_
 
 function MyWorksite({ WorksiteReducer, GetWorkSite }) {
     const [messageApi, contextHolder] = message.useMessage();
-    
+
     useEffect(() => {
         GetWorkSite()
     }, [])
@@ -86,6 +86,17 @@ function MyWorksite({ WorksiteReducer, GetWorkSite }) {
             ),
         },
         {
+            title: "Updated At",
+            key: "updatedAt",
+            width: 200,
+            ellipsis: true,
+            render: (users) => (
+                <Space direction="vertical">
+                    <ReactTimeAgo date={users?.updatedAt} locale="en-US" />
+                </Space>
+            ),
+        },
+        {
             title: "Action",
             key: "action",
             className: " space-x-2",
@@ -122,13 +133,13 @@ function MyWorksite({ WorksiteReducer, GetWorkSite }) {
         },
     ];
 
-    const sortedData = [...WorksiteReducer?.worksite].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    // const sortedData = [...WorksiteReducer?.worksite].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     return (
         <>
             {contextHolder}
             <div className={Style.TableSection}>
-                <Table tableLayout="fixed" pagination={false} loading={WorksiteReducer?.worksiteLoading} scroll={{ x: 'max-content' }} rowKey={(record) => record._id} sticky={{ offsetHeader: 0 }} columns={columns} dataSource={sortedData} />
+                <Table tableLayout="fixed" pagination={false} loading={WorksiteReducer?.worksiteLoading} scroll={{ x: 'max-content' }} rowKey={(record) => record._id} sticky={{ offsetHeader: 0 }} columns={columns} dataSource={WorksiteReducer?.worksite} />
             </div>
         </>
     )

@@ -135,7 +135,7 @@
 //             radius: b,
 //             strokeColor: '#fe541e',
 //             strokeOpacity: 0.8,
-//             strokeWeight: 2,
+//             strokeWeight: 0,
 //             fillColor: '#fe541e',
 //             fillOpacity: 0.35,
 //             draggable: true,
@@ -147,7 +147,7 @@
 //             radius: b + c,
 //             strokeColor: '#1e88e5',
 //             strokeOpacity: 0.7,
-//             strokeWeight: 2,
+//             strokeWeight: 0,
 //             fillColor: '#90caf9',
 //             fillOpacity: 0.3,
 //             clickable: false,
@@ -418,7 +418,7 @@
 //             radius: parentRadius,
 //             strokeColor: '#fe541e',
 //             strokeOpacity: 0.8,
-//             strokeWeight: 2,
+//             strokeWeight: 0,
 //             fillColor: '#fe541e',
 //             fillOpacity: 0.35,
 //             draggable: true,
@@ -430,7 +430,7 @@
 //             radius: parentRadius + safetyOffset,
 //             strokeColor: '#1e88e5',
 //             strokeOpacity: 0.7,
-//             strokeWeight: 2,
+//             strokeWeight: 0,
 //             fillColor: '#90caf9',
 //             fillOpacity: 0.3,
 //             clickable: false,
@@ -1439,7 +1439,7 @@
 //     const handleRecenter = () => {
 //         if (mapRef.current) {
 //             mapRef.current.panTo(new window.google.maps.LatLng(locationCurrent?.lat, locationCurrent?.lng));
-//             mapRef.current.setZoom(14.5);
+//             mapRef.current.setZoom(18);
 //         }
 //     };
 
@@ -1495,7 +1495,7 @@
 //             radius: radius,
 //             strokeColor: '#050c1f',
 //             strokeOpacity: 0.8,
-//             strokeWeight: 2,
+//             strokeWeight: 0,
 //             fillColor: '#0d1e4b',
 //             fillOpacity: 0.35,
 //             draggable: false,
@@ -2271,7 +2271,8 @@ import { IoChevronDownOutline } from "react-icons/io5";
 import { MdOutlineChevronRight } from "react-icons/md";
 
 import { FiInfo } from "react-icons/fi";
-
+import { useDispatch } from 'react-redux';
+import { TASK_GET_ARCHIVED_ALERTS_COMPLETE, TASK_WORKORDER_LINK_FOR_POI_COMPLETE } from '../../../../store/actions/types';
 import { createStyles } from 'antd-style';
 import ExtraData from '../../../component/extraData';
 import { deleteWarrantyFile, getWarrantyFiles, saveWarrantyFile } from '../../../component/indexDB';
@@ -2292,6 +2293,7 @@ const AlertScreenCreate = ({ GetAllWorkOrderFilterLink, GetAlertsByID, AlertsRed
     const rawDrafts = localStorage.getItem(localStoreKey);
     const fineRawDrafts = JSON.parse(rawDrafts)
     const editId = queryParams.get('editId');
+    const dispatch = useDispatch()
 
 
     useEffect(() => {
@@ -2323,6 +2325,7 @@ const AlertScreenCreate = ({ GetAllWorkOrderFilterLink, GetAlertsByID, AlertsRed
     })
 
     useEffect(() => {
+        dispatch({ type: TASK_WORKORDER_LINK_FOR_POI_COMPLETE, loading: true, payload: [] });
         if (editId) {
             localStorage.removeItem(localStoreKey);
             GetAlertsByID(editId)
@@ -2370,7 +2373,7 @@ const AlertScreenCreate = ({ GetAllWorkOrderFilterLink, GetAlertsByID, AlertsRed
         if (stepOneData) {
             setAllFormData(prev => ({ ...prev, ...stepOneData }));
             StepChange(1)
-            setCounter(prev => prev + 1)
+            setCounter(1)
         }
         else {
             return
@@ -2455,7 +2458,7 @@ const AlertScreenCreate = ({ GetAllWorkOrderFilterLink, GetAlertsByID, AlertsRed
                             value:
                                 item.value.type === "date"
                                     ? dayjs(item.value.value).format("YYYY-MM-DD")
-                                    : item.value.type === "color"
+                                    : item.value.type === "Color"
                                         ? rgbaStringToPipe(item.value.value)
                                         : item.value.value,
                             type: item.value.type,
@@ -2816,7 +2819,7 @@ const BasicInformation = forwardRef(({ PoiReducer, counter, basicInfoSectionRef,
     // polyline
     const [pointsPolyLine, setPointsPolyLine] = useState([]);
     const [bandPolygon, setBandPolygon] = useState([]);
-    const [polylineWidth, setPolylineWidth] = useState(1)
+    const [polylineWidth, setPolylineWidth] = useState(50)
     const [polylineSafety, setPolylineSafety] = useState(0)
     const [polylineElevation, setPolylineElevation] = useState(0)
     const [safetyZonePolyLine, setSafetyZonePolyLine] = useState([]);
@@ -2827,7 +2830,7 @@ const BasicInformation = forwardRef(({ PoiReducer, counter, basicInfoSectionRef,
 
 
     // circle
-    const [circleRadius, setCircleRadius] = useState(100)
+    const [circleRadius, setCircleRadius] = useState(250)
     const [circleSafety, setCircleSafety] = useState(0)
     const [circleElevation, setCircleElevation] = useState(0)
     const circleRef = useRef(null);
@@ -3155,7 +3158,7 @@ const BasicInformation = forwardRef(({ PoiReducer, counter, basicInfoSectionRef,
     const resetController = (slide) => {
         if (slide === 1) {
             setSelectShape(1)
-            setCircleRadius(100)
+            setCircleRadius(250)
             setCircleSafety(0)
             setCircleElevation(0)
             setCircleCenter(null)
@@ -3170,7 +3173,7 @@ const BasicInformation = forwardRef(({ PoiReducer, counter, basicInfoSectionRef,
             setSelectShape(2)
             setPointsPolyLine([])
             setBandPolygon([])
-            setPolylineWidth(0)
+            setPolylineWidth(50)
             setPolylineSafety(0)
             setPolylineElevation(0)
             setSafetyZonePolyLine([])
@@ -3181,11 +3184,11 @@ const BasicInformation = forwardRef(({ PoiReducer, counter, basicInfoSectionRef,
             setSelectShape(3)
             setPointsPolyLine([])
             setBandPolygon([])
-            setPolylineWidth(0)
+            setPolylineWidth(50)
             setPolylineSafety(0)
             setPolylineElevation(0)
             setSafetyZonePolyLine([])
-            setCircleRadius(100)
+            setCircleRadius(250)
             setCircleSafety(0)
             setCircleElevation(0)
             setCircleCenter(null)
@@ -3780,6 +3783,7 @@ const BasicInformation = forwardRef(({ PoiReducer, counter, basicInfoSectionRef,
                                     className: "NewSearchInputMap",
                                     placeholder: 'Search Location',
                                     onChange: locationDataFunc,
+                                    isClearable: true,
                                 }}
                                 debounce={400}
                                 minLengthAutocomplete={2}
@@ -3929,18 +3933,27 @@ const POICustomization = forwardRef(({ fineEdit, setIsDraft, isDraft, alertDetai
                 typeof word === "string" && word.length > 0
                     ? word[0].toUpperCase() + word.slice(1)
                     : "";
-            const formattedData = workOrderGetByIDData?.extraFields.map(item => ({
-                name: item.name || '',
-                description: item.description ?? null,
-                type: capitalizeWord(item.type) || 'Input',
-                id: generateRandomId(),
-                value: {
-                    type: item.type || '',
-                    value: item.value || ''
+            const transformedArray = workOrderGetByIDData?.extraFields?.map(item => {
+                const { type, value, ...rest } = item;
+                let rgbaString = '';
+                if (capitalizeWord(type) == "Color") {
+                    const [r, g, b, a] = value?.split('|').map(Number);
+                    rgbaString = `rgba(${r}, ${g}, ${b}, ${a})`;
                 }
-            }));
+                const newValue = capitalizeWord(type) === "Color" ? rgbaString : value;
+                return {
+                    name: item.name || '',
+                    description: item.description ?? null,
+                    type: capitalizeWord(item.type) || 'Input',
+                    id: generateRandomId(),
+                    value: {
+                        type: capitalizeWord(item.type) || 'Input',
+                        value: newValue
+                    }
+                };
+            });
             setExtraDataList(() => {
-                const updatedList = [...formattedData];
+                const updatedList = [...transformedArray];
                 const prevJsonData = JSON.parse(
                     localStorage.getItem(localStoreKey) || "{}"
                 );

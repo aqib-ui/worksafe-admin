@@ -136,6 +136,56 @@
     transition: 0.3s all;
 }
 
+
+
+
+
+
+
+
+.SideIconLineSkeleton {
+    height: 50px;
+    margin-top: 16px;
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+    background-color:rgba(0,0,0,0.06);
+}
+
+/* tilted shimmer */
+.SideIconLineSkeleton::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150%;
+    height: 100%;
+    width: 200%;
+
+    background: linear-gradient(
+        120deg, /* 🔥 tilt angle */
+        transparent 30%,
+        rgba(196, 196, 196, 0.6) 50%,
+        transparent 70%
+    );
+
+    animation: shimmerTilt 1.3s infinite;
+}
+
+@keyframes shimmerTilt {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+
+
+
+
+
+
 .SideIconLine img {
     height: 24px;
     width: 24px;

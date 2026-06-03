@@ -186,26 +186,28 @@ import { FaRegFilePdf } from "react-icons/fa6";
 import { useNavigate, useOutletContext } from 'react-router';
 import { TASK_CLEAR_EXPIRED, TASK_GET_ARCHIVED_ASSETS_COMPLETE, TASK_GET_ASSETS_COMPLETE } from '../../../../store/actions/types';
 import ListInputSearch from '../../../component/ListInputSearch';
-import blueDoc from '../../../assets/boxListing.png'
+import blueDoc from '../../../assets/dashboard-5.png'
 import blueDocSearch from '../../../assets/search-normal-blue.png'
+import AssetFilter from './assetFilter';
 
-function ArchivedAssets({ AssetsReducer, GetAssets, ArchiveAssets, GetArchivedAssets }) {
+function ArchivedAssets({ getDepartment, getModel, getAssetType, AssetsReducer, GetAssets, ArchiveAssets, GetArchivedAssets }) {
     const [messageApi, contextHolder] = message.useMessage();
     const [page, setPage] = useState(1)
     const workSite = localStorage.getItem("+AOQ^%^f0Gn4frTqztZadLrKg==")
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const [searchQuery, setSearchQuery] = useState("")
+    const [paramsNew, setParamsNew] = useState(null)
 
 
 
     const [isNext, setIsNext] = useState(true)
     useEffect(() => {
         const init = async () => {
-            const totalLegngth = await GetArchivedAssets(workSite, page, searchQuery)
-            if (totalLegngth < 30) {
-                setIsNext(false)
-            }
+            getDepartment(workSite)
+            getModel()
+            getAssetType()
+            const totalLegngth = await GetArchivedAssets(workSite, page, searchQuery, paramsNew && paramsNew,setIsNext)
         }
         init()
     }, [page, searchQuery])
@@ -248,7 +250,7 @@ function ArchivedAssets({ AssetsReducer, GetAssets, ArchiveAssets, GetArchivedAs
             });
             dispatch({ type: TASK_GET_ARCHIVED_ASSETS_COMPLETE, loading: true, payload: [] });
             dispatch({ type: TASK_GET_ASSETS_COMPLETE, loading: true, payload: [] });
-            GetAssets(workSite, page, searchQuery)
+            runAgain()
         }
     }, [
         AssetsReducer.networkError,
@@ -257,6 +259,11 @@ function ArchivedAssets({ AssetsReducer, GetAssets, ArchiveAssets, GetArchivedAs
         AssetsReducer.AssetsDeleteLoading,
         messageApi,
     ]);
+
+
+    const runAgain = async () => {
+        const totalLegngth = await GetArchivedAssets(workSite, page, searchQuery, paramsNew && paramsNew,setIsNext)
+    }
 
 
     const viewWorkOrder = (eId) => {
@@ -363,7 +370,18 @@ function ArchivedAssets({ AssetsReducer, GetAssets, ArchiveAssets, GetArchivedAs
             ellipsis: true,
             render: (users) => (
                 <Space direction="vertical">
-                    <p>{users?.createdAt?.split("T")[0] ?? "0"}</p>
+                    <ReactTimeAgo date={users?.createdAt} locale="en-US" />
+                </Space>
+            ),
+        },
+        {
+            title: "Updated At",
+            key: "updatedAt",
+            width: 200,
+            ellipsis: true,
+            render: (users) => (
+                <Space direction="vertical">
+                    <ReactTimeAgo date={users?.updatedAt} locale="en-US" />
                 </Space>
             ),
         },
@@ -405,7 +423,7 @@ function ArchivedAssets({ AssetsReducer, GetAssets, ArchiveAssets, GetArchivedAs
 
 
 
-      const threatLevelOption = [
+    const threatLevelOption = [
         { label: "Below Ground", value: "Below Ground" },
         { label: "Ground Level", value: "Ground Level" },
         { label: "Overhead", value: "Overhead" },
@@ -413,38 +431,9 @@ function ArchivedAssets({ AssetsReducer, GetAssets, ArchiveAssets, GetArchivedAs
     return (
         <>
             {contextHolder}
-            {/* <div className={Style.TableSection}>
-                <Table footer={() => (
-                    <>
-                        {AssetsReducer?.AssetsData.length > 0 && !AssetsReducer?.archivedAssetsLoading &&
-                            <>
-                                {isNext &&
-                                    <div style={{ textAlign: "center", padding: "0 0" }}>
-                                        <button
-                                            onClick={() => setPage(prev => prev + 1)}
-                                            disabled={AssetsReducer?.archivedAssetsLoading}
-                                            style={{
-                                                border: "1px solid #1890ff",
-                                                background: "#1890ff",
-                                                color: "white",
-                                                padding: "6px 16px",
-                                                borderRadius: "4px",
-                                                cursor: AssetsReducer?.archivedAssetsLoading ? "not-allowed" : "pointer",
-                                            }}
-                                        >
-                                            {AssetsReducer?.archivedAssetsLoading ? "Loading..." : "Load More"}
-                                        </button>
-                                    </div>
-                                }
-                            </>
-                        }
-                    </>
-                )} pagination={false} loading={AssetsReducer?.archivedAssetsLoading} scroll={{ x: 'max-content' }} rowKey={(record) => record._id} sticky={{ offsetHeader: 0 }} columns={columns} dataSource={sortedData} />
-            </div> */}
-
             <div className={Style.filterSection}>
                 <Row gutter={gutter} align="middle" justify="space-between">
-                    <Col xxl={20} xl={20} lg={20} md={24} sm={24} xs={24}>
+                    <Col xxl={22} xl={22} lg={22} md={22} sm={22} xs={22}>
                         <div className={Style.Splitter}>
                             <div className={Style.layersInput}>
                                 <ListInputSearch onChange={(e) => setSearchQuery(e)} placeholder="Search Assets" />
@@ -452,17 +441,9 @@ function ArchivedAssets({ AssetsReducer, GetAssets, ArchiveAssets, GetArchivedAs
                         </div>
                     </Col>
 
-                    <Col xxl={4} xl={4} lg={4} md={24} sm={24} xs={24}>
-                        <Select
-                            getPopupContainer={(node) => node.parentElement}
-                            placeholder="All Risk Level"
-                            style={{ width: '100%' }}
-                            options={threatLevelOption}
-                            mode='multiple'
-                            onChange={(e) => setPriority(e)}
-                        />
+                    <Col xxl={2} xl={2} lg={2} md={2} sm={2} xs={2}>
+                        <AssetFilter setPage={setPage} setIsNext={setIsNext} setParamsNew={setParamsNew} AssetsReducer={AssetsReducer} loading={AssetsReducer?.archivedAssetsLoading} GetPOI={GetArchivedAssets} workSite={workSite} page={page} searchQuery={searchQuery} />
                     </Col>
-
                 </Row>
             </div>
             <div className={Style.TableSection}>
@@ -499,9 +480,9 @@ function ArchivedAssets({ AssetsReducer, GetAssets, ArchiveAssets, GetArchivedAs
                     locale={{
                         emptyText: (
                             <div className={Style.EmptyTextTable}>
-                                <img src={searchQuery !== "" ? blueDocSearch : blueDoc} alt="blue-doc" />
-                                <h4>{searchQuery !== "" ? "No Search Result Found" : "No Assets Archived Yet"}</h4>
-                                {searchQuery !== "" ?
+                                <img src={searchQuery !== "" || paramsNew !== null ? blueDocSearch : blueDoc} alt="blue-doc" />
+                                <h4>{searchQuery !== "" || paramsNew !== null ? "No Search Result Found" : "No Assets Archived Yet"}</h4>
+                                {searchQuery !== "" || paramsNew !== null ?
                                     <p>Try adjusting your search or use different keywords to find Assets<br /> within your worksite.</p>
                                     :
                                     <p>Start by Archiving your Assets to mark critical zones, assign safety<br /> tasks, and track risk areas within your worksite.</p>

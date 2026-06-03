@@ -27,6 +27,8 @@ import evacuationIcon from '../../../assets/evacuation.png'
 const MusterStationCreateScreen = ({ GetWorkSiteByID, GetWorkSite, GetRoles, WorksiteReducer, GetManagerInWorksite, GetTeamInWorksite, TeamReducer, AlertsReducer, PoiReducer, GetAllWorkOrderUnLink, InserTeamUserV2 }) => {
     dayjs.extend(customParseFormat);
     dayjs.extend(utc);
+    const [ismoveAblePoly, setIsmoveAblePoly] = useState(false)
+
     const [messageApi, contextHolder] = message.useMessage();
     const navigate = useNavigate();
 
@@ -268,7 +270,7 @@ const MusterStationCreateScreen = ({ GetWorkSiteByID, GetWorkSite, GetRoles, Wor
             radius: b,
             strokeColor: '#115638',
             strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#548F1C',
             fillOpacity: 0.35,
             zIndex: 999,
@@ -364,24 +366,11 @@ const MusterStationCreateScreen = ({ GetWorkSiteByID, GetWorkSite, GetRoles, Wor
             map: mapRef.current,
             center: loc,
             radius: radius,
-            strokeColor: '#050c1f',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#0d1e4b',
-            fillOpacity: 0.35,
+            fillOpacity: 0.4,
             draggable: false,
             editable: false,
-        });
-        const child = new window.google.maps.Circle({
-            map: mapRef.current,
-            center: loc,
-            radius: radius + safetyZone,
-            strokeColor: '#050c1f',
-            strokeOpacity: 0.7,
-            strokeWeight: 2,
-            fillColor: '#050c1f',
-            fillOpacity: 0.3,
-            clickable: false,
         });
         worksiteParent.addListener('click', (e) => {
             if (selectedTabRef.current === 2) {
@@ -724,7 +713,7 @@ const MusterStationCreateScreen = ({ GetWorkSiteByID, GetWorkSite, GetRoles, Wor
             radius: b,
             strokeColor: '#115638',
             strokeOpacity: 1,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#548F1C',
             fillOpacity: 0.4,
             draggable: readId === "true" ? false : true,
@@ -892,7 +881,7 @@ const MusterStationCreateScreen = ({ GetWorkSiteByID, GetWorkSite, GetRoles, Wor
             strokeColor: '#115638',
             zIndex: 999,
             strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#548F1C',
             fillOpacity: 0.35,
             draggable: readId === "true" ? false : true,
@@ -964,20 +953,45 @@ const MusterStationCreateScreen = ({ GetWorkSiteByID, GetWorkSite, GetRoles, Wor
             lng: center.lng + dLng * scale,
         };
     };
+
+    const getCenter = (points) => {
+        const lat =
+            points.reduce((sum, p) => sum + p.lat, 0) / points.length;
+        const lng =
+            points.reduce((sum, p) => sum + p.lng, 0) / points.length;
+        return { lat, lng };
+    };
+
+    const movePolygonToCenter = (points, newCenter) => {
+        const currentCenter = getCenter(points);
+        const latDiff = newCenter.lat - currentCenter.lat;
+        const lngDiff = newCenter.lng - currentCenter.lng;
+        return points.map((p) => ({
+            lat: p.lat + latDiff,
+            lng: p.lng + lngDiff,
+        }));
+    };
+
+
     const handleMapClick = useCallback((e) => {
-        // if (points.length < 3) {
         const newPoint = {
             lat: e.latLng.lat(),
             lng: e.latLng.lng(),
         };
-        setPoints((prev) => [...prev, newPoint]);
-        // }
-    }, [points]);
+        if (ismoveAblePoly) {
+            const updated = movePolygonToCenter(points, newPoint);
+            setPoints(updated);
+        }
+        else {
+            setPoints((prev) => [...prev, newPoint]);
+        }
+    }, [points, ismoveAblePoly]);
 
     const removeIconCustomArea = (indexRemover) => {
         setPoints(prev => prev?.filter((_, index) => index !== indexRemover));
     }
     const drawCustomArea = () => {
+        setIsmoveAblePoly(false)
         setPadding(0)
         setSelectedTab(2)
         setPointsMore([])
@@ -1001,6 +1015,7 @@ const MusterStationCreateScreen = ({ GetWorkSiteByID, GetWorkSite, GetRoles, Wor
     // PolyLine
     const [offsetPolygon, setOffsetPolygon] = useState([]);
     const drawPolyLine = () => {
+        setIsmoveAblePoly(false)
         setSafetyOffsetMore(0)
         setSelectedTab(3)
         setPoints([])
@@ -1009,14 +1024,37 @@ const MusterStationCreateScreen = ({ GetWorkSiteByID, GetWorkSite, GetRoles, Wor
         childCircleRef.current.setMap(null);
         childCircleRef.current = null;
     }
+    const getCenter2 = (points) => {
+        const lat =
+            points.reduce((sum, p) => sum + p.lat, 0) / points.length;
+        const lng =
+            points.reduce((sum, p) => sum + p.lng, 0) / points.length;
+        return { lat, lng };
+    };
+    const movePolyLineToCenter = (points, newCenter) => {
+        const currentCenter = getCenter2(points);
+        const latDiff = newCenter.lat - currentCenter.lat;
+        const lngDiff = newCenter.lng - currentCenter.lng;
+        return points.map((p) => ({
+            lat: p.lat + latDiff,
+            lng: p.lng + lngDiff,
+        }));
+    };
     const handleMapClickMore = useCallback((e) => {
         setPoints([])
         const newPoint = {
             lat: e.latLng.lat(),
             lng: e.latLng.lng(),
         };
-        setPointsMore((prev) => [...prev, newPoint]);
-    }, []);
+        if (ismoveAblePoly) {
+            const updated = movePolyLineToCenter(pointsMore, newPoint);
+            setPointsMore(updated);
+        }
+        else {
+            setPointsMore((prev) => [...prev, newPoint]);
+        }
+    }, [ismoveAblePoly]);
+
     function computeOffsetPolyline(points, offsetDistance) {
         const offsetLeftPoints = [];
         const offsetRightPoints = [];
@@ -1195,6 +1233,25 @@ const MusterStationCreateScreen = ({ GetWorkSiteByID, GetWorkSite, GetRoles, Wor
                             body: JSON.stringify(payload),
                             signal: controller.signal,
                         });
+                        if (response.status == 403) {
+                            const res = await response.json();
+                            if ("roleUpdated" in res) {
+                                localStorage.clear()
+                                window.location.reload();
+                            }
+                            else {
+                                clearTimeout(timeoutRequest);
+                                setCreateLoading(false)
+                                messageApi.open({
+                                    type: "info",
+                                    content: "Payment expired",
+                                });
+                            }
+                        }
+                        if (response.status == 401) {
+                            localStorage.clear()
+                            window.location.reload();
+                        }
                         if (response.status === 200 || response.status === 201) {
                             clearTimeout(timeoutRequest);
                             window.location.href = '/worksite/edit'
@@ -1226,6 +1283,25 @@ const MusterStationCreateScreen = ({ GetWorkSiteByID, GetWorkSite, GetRoles, Wor
                             body: JSON.stringify(payload),
                             signal: controller.signal,
                         });
+                        if (response.status == 403) {
+                            const res = await response.json();
+                            if ("roleUpdated" in res) {
+                                localStorage.clear()
+                                window.location.reload();
+                            }
+                            else {
+                                clearTimeout(timeout);
+                                setCreateLoading(false)
+                                messageApi.open({
+                                    type: "info",
+                                    content: "Payment expired",
+                                });
+                            }
+                        }
+                        if (response.status == 401) {
+                            localStorage.clear()
+                            window.location.reload();
+                        }
                         if (response.status === 200 || response.status === 201) {
                             clearTimeout(timeoutRequest);
                             window.location.href = '/worksite/read'
@@ -1353,7 +1429,7 @@ const MusterStationCreateScreen = ({ GetWorkSiteByID, GetWorkSite, GetRoles, Wor
     const handleRecenter = () => {
         if (mapRef.current) {
             mapRef.current.panTo(new window.google.maps.LatLng(locationCurrent?.lat, locationCurrent?.lng));
-            mapRef.current.setZoom(14.5);
+            mapRef.current.setZoom(18);
         }
     };
 
@@ -1451,6 +1527,8 @@ const MusterStationCreateScreen = ({ GetWorkSiteByID, GetWorkSite, GetRoles, Wor
                             <>
                                 {readId === "true" ?
                                     <GoogleMapCreate
+                                        setIsmoveAblePoly={setIsmoveAblePoly}
+                                        ismoveAblePoly={ismoveAblePoly}
                                         locationCurrent={locationCurrent}
                                         center={location}
                                         onMapLoad={onMapLoad}
@@ -1477,20 +1555,16 @@ const MusterStationCreateScreen = ({ GetWorkSiteByID, GetWorkSite, GetRoles, Wor
                                         locationToggle={true}
                                         readMap={true}
                                         isMusterMap={true}
-
-
-                                        // Muster Station
-                                        // polygon
                                         paddingM={paddingMAll}
                                         pointsM={pointsMAll}
                                         getSafetyZonePathM={getSafetyZonePathM}
                                         polyGoneNameM={polyGoneNameMAll}
                                         polyGoneMCenter={polyGoneMCenterAll}
-                                    // polygon
-                                    // Muster Station
                                     />
                                     :
                                     <GoogleMapCreate
+                                        setIsmoveAblePoly={setIsmoveAblePoly}
+                                        ismoveAblePoly={ismoveAblePoly}
                                         locationCurrent={locationCurrent}
                                         center={location}
                                         onMapLoad={onMapLoad}

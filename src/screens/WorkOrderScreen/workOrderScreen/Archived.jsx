@@ -297,11 +297,12 @@ import { useDownloadNotification } from '../../../provider/downloadProvider';
 import { useOutletContext } from 'react-router';
 import { UploadOutlined } from '@ant-design/icons';
 import ListInputSearch from '../../../component/ListInputSearch';
-import blueDoc from '../../../assets/blue-Doc.png'
+import blueDoc from '../../../assets/dashboard-2.png'
 import { MdChevronRight } from "react-icons/md";
 import clockYellow from "../../../assets/clock-yellow.png"
 import tickCircle from "../../../assets/tick-circle.png"
 import closeCircle from "../../../assets/close-circle.png"
+import WorkOrderFilter from './workOrderFilter';
 
 dayjs.extend(utc);
 
@@ -330,20 +331,18 @@ function ArchivedMeWorkOrder({ GetMyArchivedWorkOrder, PermissionReducer, WorkOr
     const [isNext, setIsNext] = useState(true)
 
     const [searchQuery, setSearchQuery] = useState("")
-    const [priority, setPriority] = useState([])
-    const [cpc, setCpc] = useState([])
+   
+
+    const [paramsNew, setParamsNew] = useState(null)
 
 
 
     useEffect(() => {
         const init = async () => {
-            const totalLegngth = await GetMyArchivedWorkOrder(workSite, page, searchQuery, priority, cpc)
-            if (totalLegngth < 30) {
-                setIsNext(false)
-            }
+            const totalLegngth = await GetMyArchivedWorkOrder(workSite, page, searchQuery, paramsNew && paramsNew, setIsNext)
         }
         init()
-    }, [priority, cpc, page, searchQuery])
+    }, [page, searchQuery])
 
     // useEffect(() => {
     //     const init = async () => {
@@ -454,7 +453,7 @@ function ArchivedMeWorkOrder({ GetMyArchivedWorkOrder, PermissionReducer, WorkOr
                 type: "success",
                 content: "Work order complete",
             });
-            GetMyAssignedWorkOrder(workSite, page, searchQuery)
+            runAgain()
             setCurrectWorkOrder()
             setDeleteSafetyH()
             setJsaRequired(false)
@@ -465,6 +464,11 @@ function ArchivedMeWorkOrder({ GetMyArchivedWorkOrder, PermissionReducer, WorkOr
         WorkOrderReducer.workOrderExpiredError,
         messageApi,
     ]);
+
+
+    const runAgain = async () => {
+        const totalLegngth = await GetMyArchivedWorkOrder(workSite, page, searchQuery, paramsNew && paramsNew, setIsNext)
+    }
 
     const viewWorkOrder = (eId) => {
         localStorage.setItem("Xy9#qLT7pw!5kD+M3/=8&v==", eId)
@@ -547,8 +551,22 @@ function ArchivedMeWorkOrder({ GetMyArchivedWorkOrder, PermissionReducer, WorkOr
             width: 200,
             ellipsis: true,
             render: (users) => (
+                // <Space direction="vertical">
+                //     <p>{users?.createdAt.split("T")[0] ?? "0"}</p>
+                // </Space>
                 <Space direction="vertical">
-                    <p>{users?.createdAt.split("T")[0] ?? "0"}</p>
+                    <ReactTimeAgo date={users?.createdAt} locale="en-US" />
+                </Space>
+            ),
+        },
+        {
+            title: "Updated At",
+            key: "updatedAt",
+            width: 200,
+            ellipsis: true,
+            render: (users) => (
+                <Space direction="vertical">
+                    <ReactTimeAgo date={users?.updatedAt} locale="en-US" />
                 </Space>
             ),
         },
@@ -561,7 +579,7 @@ function ArchivedMeWorkOrder({ GetMyArchivedWorkOrder, PermissionReducer, WorkOr
             render: (record) => {
                 return (
                     <>
-                        <div style={{padding:'10px',height:'40px',width:'40px',cursor:'pointer'}} onClick={() => viewWorkOrder(record?._id)} >
+                        <div style={{ padding: '10px', height: '40px', width: '40px', cursor: 'pointer' }} onClick={() => viewWorkOrder(record?._id)} >
                             <MdChevronRight size={24} />
                         </div>
                     </>
@@ -609,7 +627,7 @@ function ArchivedMeWorkOrder({ GetMyArchivedWorkOrder, PermissionReducer, WorkOr
         CompleteWorkOrder(formData);
     };
 
-    const sortedData = [...WorkOrderReducer?.archivedWorkOrderData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    // const sortedData = [...WorkOrderReducer?.archivedWorkOrderData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
 
 
@@ -664,7 +682,7 @@ function ArchivedMeWorkOrder({ GetMyArchivedWorkOrder, PermissionReducer, WorkOr
         <>
             {contextHolder}
             <div className={Style.filterSection}>
-                <Row gutter={gutter} align="middle" justify="space-between">
+                {/* <Row gutter={gutter} align="middle" justify="space-between">
                     <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
                         <div className={Style.Splitter}>
                             <div className={Style.layersInput}>
@@ -693,6 +711,21 @@ function ArchivedMeWorkOrder({ GetMyArchivedWorkOrder, PermissionReducer, WorkOr
                             mode='multiple'
                             onChange={(e) => setCpc(e)}
                         />
+                    </Col>
+                </Row> */}
+
+
+                <Row gutter={gutter} align="middle" justify="space-between">
+                    <Col xxl={22} xl={22} lg={22} md={22} sm={22} xs={22}>
+                        <div className={Style.Splitter}>
+                            <div className={Style.layersInput}>
+                                <ListInputSearch onChange={(e) => setSearchQuery(e)} placeholder="Search Work order" />
+                            </div>
+                        </div>
+                    </Col>
+
+                    <Col xxl={2} xl={2} lg={2} md={2} sm={2} xs={2}>
+                        <WorkOrderFilter setPage={setPage} setIsNext={setIsNext} loading={WorkOrderReducer?.workOrderLoading} GetMyAssignedWorkOrder={GetMyArchivedWorkOrder} workSite={workSite} page={page} searchQuery={searchQuery} setParamsNew={setParamsNew}/>
                     </Col>
                 </Row>
             </div>
@@ -737,7 +770,7 @@ function ArchivedMeWorkOrder({ GetMyArchivedWorkOrder, PermissionReducer, WorkOr
                             </div>
                         )
                     }}
-                    pagination={false} loading={WorkOrderReducer?.workOrderLoading} scroll={{ x: 'max-content' }} rowKey={(record) => record._id} sticky={{ offsetHeader: 0 }} columns={columns} dataSource={sortedData} />
+                    pagination={false} loading={WorkOrderReducer?.workOrderLoading} scroll={{ x: 'max-content' }} rowKey={(record) => record._id} sticky={{ offsetHeader: 0 }} columns={columns} dataSource={WorkOrderReducer?.archivedWorkOrderData} />
             </div>
             <Drawer
                 maskClosable={false}

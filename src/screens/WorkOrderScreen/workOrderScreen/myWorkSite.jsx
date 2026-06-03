@@ -1,412 +1,3 @@
-// import { useEffect, useState } from 'react'
-// import Style from './workOrderScreen.module.css'
-// import { Dropdown, message, notification, Progress, Space, Spin, Table, Tag } from 'antd'
-// import * as WorkOrderAction from '../../../../store/actions/WorkOrder/index';
-// import { connect, useDispatch } from 'react-redux';
-// import { MdOutlineSettings } from 'react-icons/md';
-// import { RiDeleteBin7Line } from "react-icons/ri";
-// import { MdOutlineModeEditOutline } from "react-icons/md";
-// import ReactTimeAgo from 'react-time-ago';
-// import { IoCheckmark, IoClose, IoEyeOutline } from "react-icons/io5";
-// import { FaCheck } from "react-icons/fa6";
-// import { IoMdClose } from "react-icons/io";
-// import { useNavigate, useOutletContext } from 'react-router';
-// import { TASK_CLEAR_EXPIRED, TASK_LOAD_ARCHIVED_COMPLETE, TASK_LOAD_ASSIGEND_TO_ME_COMPLETE, TASK_LOAD_MY_WORK_ORDER_COMPLETE } from '../../../../store/actions/types';
-// import { FaRegFilePdf } from "react-icons/fa6";
-// import { FaRegFileExcel } from "react-icons/fa";
-// import { baseUrl } from '../../../../store/config.json'
-// import { useDownloadNotification } from '../../../provider/downloadProvider';
-
-
-// function MyWorkSite({ PermissionReducer, WorkOrderReducer, GetMyWorkOrder, ApproveWorkOrder, DeclineWorkOrder, ArchiveWorkOrder }) {
-//     const { downloadWorkOrderFile, fileLoader } = useDownloadNotification();
-//     const [messageApi, contextHolder] = message.useMessage();
-//     const { searchQuery } = useOutletContext();
-//     const workSite = localStorage.getItem("+AOQ^%^f0Gn4frTqztZadLrKg==")
-//     const navigate = useNavigate();
-//     const dispatch = useDispatch()
-//     const AllContentPermission = PermissionReducer?.allPermission?.data?.role_id?.permissions || []
-//     const [page, setPage] = useState(1)
-
-
-
-//     const viewWorkOrder = (eId) => {
-//         localStorage.setItem("Xy9#qLT7pw!5kD+M3/=8&v==", eId)
-//         window.location.reload()
-//         window.location.href = '/workorder/read';
-//     }
-//     const editWorkOrder = (eId) => {
-//         localStorage.setItem("Xy9#qLT7pw!5kD+M3/=8&v==", eId)
-//         window.location.reload()
-//         window.location.href = `/workorder/create?editId=${eId}`;
-
-//     }
-
-//     const [isNext, setIsNext] = useState(true)
-//     useEffect(() => {
-//         const init = async () => {
-//             const totalLegngth = await GetMyWorkOrder(workSite, page, searchQuery)
-//             if (totalLegngth < 30) {
-//                 setIsNext(false)
-//             }
-//         }
-//         init()
-//     }, [page, searchQuery])
-
-
-//     useEffect(() => {
-//         if (!messageApi) return;
-//         if (WorkOrderReducer.networkError) {
-//             messageApi.destroy();
-//             messageApi.open({
-//                 type: "error",
-//                 content: "Something went wrong, please try again",
-//             });
-//         }
-//         if (WorkOrderReducer.workOrderOprationLoading) {
-//             messageApi.destroy();
-//             messageApi.open({
-//                 type: "loading",
-//                 content: "Loading...",
-//             });
-//         }
-//         if (WorkOrderReducer.workOrderArchiveLoading) {
-//             messageApi.destroy();
-//             messageApi.open({
-//                 type: "loading",
-//                 content: "Loading...",
-//             });
-//         }
-//         if (WorkOrderReducer.workOrderIsArchived) {
-//             messageApi.destroy();
-//             messageApi.open({
-//                 type: "success",
-//                 content: "Work order archived",
-//             });
-//             dispatch({ type: TASK_LOAD_MY_WORK_ORDER_COMPLETE, loading: true, payload: [] });
-//             dispatch({ type: TASK_LOAD_ASSIGEND_TO_ME_COMPLETE, loading: true, payload: [] });
-//             dispatch({ type: TASK_LOAD_ARCHIVED_COMPLETE, loading: true, payload: [] });
-//             GetMyWorkOrder(workSite, page, searchQuery)
-//         }
-//         if (WorkOrderReducer.workOrderIsApproved) {
-//             messageApi.destroy();
-//             messageApi.open({
-//                 type: "success",
-//                 content: "Work order approved",
-//             });
-//             GetMyWorkOrder(workSite, page, searchQuery)
-//         }
-//         if (WorkOrderReducer.workOrderIsDecline) {
-//             messageApi.destroy();
-//             messageApi.open({
-//                 type: "success",
-//                 content: "Work order decline",
-//             });
-//             GetMyWorkOrder(workSite, page, searchQuery)
-//         }
-//         if (WorkOrderReducer.workOrderExpiredError) {
-//             messageApi.destroy();
-//             messageApi.open({
-//                 type: "info",
-//                 content: "Payment Expired",
-//             });
-//             const timeoutNavigate = setTimeout(() => {
-//                 navigate('/')
-//             }, 1000);
-//             return () => {
-//                 dispatch({ type: TASK_CLEAR_EXPIRED });
-//                 clearTimeout(timeoutNavigate)
-//             }
-//         }
-//     }, [
-//         WorkOrderReducer.networkError,
-//         WorkOrderReducer.workOrderIsApproved,
-//         WorkOrderReducer.workOrderIsDecline,
-//         WorkOrderReducer.workOrderOprationLoading,
-//         WorkOrderReducer.workOrderArchiveLoading,
-//         WorkOrderReducer.workOrderIsArchived,
-//         WorkOrderReducer.workOrderExpiredError,
-//         messageApi,
-//     ]);
-
-
-//     const DeleteMessage = (_id) => {
-//         messageApi.open({
-//             type: 'warning',
-//             content: (
-//                 <div style={{ display: 'flex', alignItems: 'center' }}>
-//                     Are you sure you want to archive this work order
-//                     <div style={{ display: 'flex', alignItems: 'center' }}>
-//                         <button className={Style.CloseBtn} onClick={() => messageApi.destroy()}><IoClose size={20} color='white' /></button>
-//                         <button className={Style.CheckBtn} onClick={() => ArchiveWorkOrder(_id)} ><IoCheckmark size={20} color='white' /></button>
-//                     </div>
-//                 </div>
-//             ),
-//         });
-//     };
-
-//     const columns = [
-//         {
-//             title: "Work Order Title",
-//             dataIndex: "title",
-//             key: "title",
-//             ellipsis: true,
-//             width: 200,
-//             render: (text, record) => {
-//                 return (
-//                     <div onClick={() => viewWorkOrder(record?._id)} style={{
-//                         cursor: 'pointer',
-//                         whiteSpace: 'nowrap',
-//                         overflow: 'hidden',
-//                         textOverflow: 'ellipsis',
-//                         width: 200
-//                     }}>{text}</div>
-//                 )
-//             },
-//         },
-//         {
-//             title: "Status",
-//             dataIndex: "status",
-//             key: "status",
-//             width: 100,
-//             ellipsis: true,
-//             render: (text, record) => {
-//                 return (
-//                     <Tag color={text == "declined" ? "red" : text == "completed" ? "green" : text == "pending" ? 'blue' : text == "approved" ? 'orange' : null}>
-//                         {text}
-//                     </Tag>
-//                 )
-//             },
-
-//         },
-//         {
-//             title: "Priority",
-//             dataIndex: "priority",
-//             key: "priority",
-//             width: 100,
-//             ellipsis: true,
-//             render: (text, record) => {
-//                 return (
-//                     <Tag color={text == "Immediate" ? "red" : text == "Standard" ? "green" : text == "High" ? 'blue' : null}>
-//                         {text}
-//                     </Tag>
-//                 )
-//             },
-//         },
-
-//         {
-//             title: "Created At",
-//             key: "createAt",
-//             width: 200,
-//             ellipsis: true,
-//             render: (users) => (
-//                 <Space direction="vertical">
-//                     <ReactTimeAgo date={users?.createdAt} locale="en-US" />
-//                 </Space>
-//             ),
-//         },
-//         {
-//             title: "Action",
-//             key: "action",
-//             className: " space-x-2",
-//             ellipsis: true,
-//             width: 100,
-//             render: (record) => {
-//                 return (
-//                     <>
-//                         <Dropdown trigger={['click']} disabled={WorkOrderReducer.workOrderOprationLoading || WorkOrderReducer.workOrderArchiveLoading || fileLoader} menu={{
-//                             items: record?.status == "completed" ? [
-//                                 {
-//                                     key: '1',
-//                                     label: (
-//                                         <div onClick={() => ApproveWorkOrder(record?._id)} style={{ color: "green", display: 'flex', alignItems: 'center' }}>
-//                                             <FaCheck color='green' size={18} style={{ marginRight: 5 }} /> Approve Work Order
-//                                         </div>
-//                                     ),
-//                                 },
-//                                 {
-//                                     key: '2',
-//                                     label: (
-//                                         <div onClick={() => DeclineWorkOrder(record?._id)} style={{ display: 'flex', alignItems: 'center' }}>
-//                                             <IoMdClose size={18} style={{ marginRight: 5 }} /> Decline Work Order
-//                                         </div>
-//                                     ),
-//                                 },
-//                                 {
-//                                     key: '3',
-//                                     label: (
-//                                         <div onClick={() => AllContentPermission?.find(data => data?.module == "WORKORDERS")?.permissions?.delete ? DeleteMessage(record?._id) : null} style={{ color: "red", display: 'flex', alignItems: 'center' }}>
-//                                             <RiDeleteBin7Line color='red' size={18} style={{ marginRight: 5 }} /> Archive Work Order
-//                                         </div>
-//                                     ),
-//                                     disabled: !AllContentPermission?.find(data => data?.module == "WORKORDERS")?.permissions?.delete
-//                                 },
-//                                 {
-//                                     key: '4',
-//                                     label: (
-//                                         <div onClick={() => viewWorkOrder(record?._id)} style={{ display: 'flex', alignItems: 'center' }}>
-//                                             <IoEyeOutline size={18} style={{ marginRight: 5 }} /> View Work Order
-//                                         </div>
-//                                     ),
-//                                 },
-//                                 {
-//                                     key: '8',
-//                                     label: (
-//                                         <div onClick={() => downloadWorkOrderFile(`/workorder/download-documents/${record?._id}?format=pdf`, 'GET', 'pdf')} style={{ display: 'flex', alignItems: 'center' }}>
-//                                             <FaRegFilePdf size={18} style={{ marginRight: 5 }} /> Download Pdf File
-//                                         </div>
-//                                     ),
-//                                 },
-//                                 {
-//                                     key: '9',
-//                                     label: (
-//                                         <div onClick={() => downloadWorkOrderFile(`/workorder/download-documents/${record?._id}?format=excel`, 'GET', 'excel')} style={{ display: 'flex', alignItems: 'center' }}>
-//                                             <FaRegFileExcel size={18} style={{ marginRight: 5 }} /> Download Excel File
-//                                         </div>
-//                                     ),
-//                                 },
-//                             ] : record?.status == "approved" ? [
-//                                 {
-//                                     key: '3',
-//                                     label: (
-//                                         <div onClick={() => AllContentPermission?.find(data => data?.module == "WORKORDERS")?.permissions?.delete ? DeleteMessage(record?._id) : null} style={{ color: "red", display: 'flex', alignItems: 'center' }}>
-//                                             <RiDeleteBin7Line color='red' size={18} style={{ marginRight: 5 }} /> Archive Work Order
-//                                         </div>
-//                                     ),
-//                                     disabled: !AllContentPermission?.find(data => data?.module == "WORKORDERS")?.permissions?.delete
-//                                 },
-//                                 {
-//                                     key: '4',
-//                                     label: (
-//                                         <div onClick={() => viewWorkOrder(record?._id)} style={{ display: 'flex', alignItems: 'center' }}>
-//                                             <IoEyeOutline size={18} style={{ marginRight: 5 }} /> View Work Order
-//                                         </div>
-//                                     ),
-//                                 },
-//                                 {
-//                                     key: '8',
-//                                     label: (
-//                                         <div onClick={() => downloadWorkOrderFile(`/workorder/download-documents/${record?._id}?format=pdf`, 'GET', 'pdf')} style={{ display: 'flex', alignItems: 'center' }}>
-//                                             <FaRegFilePdf size={18} style={{ marginRight: 5 }} /> Download Pdf File
-//                                         </div>
-//                                     ),
-//                                 },
-//                                 {
-//                                     key: '9',
-//                                     label: (
-//                                         <div onClick={() => downloadWorkOrderFile(`/workorder/download-documents/${record?._id}?format=excel`, 'GET', 'excel')} style={{ display: 'flex', alignItems: 'center' }}>
-//                                             <FaRegFileExcel size={18} style={{ marginRight: 5 }} /> Download Excel File
-//                                         </div>
-//                                     ),
-//                                 },
-//                             ] : [
-//                                 {
-//                                     key: '1',
-//                                     label: (
-//                                         <div onClick={() => AllContentPermission?.find(data => data?.module == "WORKORDERS")?.permissions?.delete ? DeleteMessage(record?._id) : null} style={{ color: "red", display: 'flex', alignItems: 'center' }}>
-//                                             <RiDeleteBin7Line color='red' size={18} style={{ marginRight: 5 }} /> Archive Work Order
-//                                         </div>
-//                                     ),
-//                                     disabled: !AllContentPermission?.find(data => data?.module == "WORKORDERS")?.permissions?.delete
-
-//                                 },
-//                                 {
-//                                     key: '2',
-//                                     label: (
-//                                         <div onClick={() => AllContentPermission?.find(data => data?.module == "WORKORDERS")?.permissions?.update ? editWorkOrder(record?._id) : null} style={{ display: 'flex', alignItems: 'center' }}>
-//                                             <MdOutlineModeEditOutline size={18} style={{ marginRight: 5 }} /> Edit Work Order
-//                                         </div>
-//                                     ),
-//                                     disabled: !AllContentPermission?.find(data => data?.module == "WORKORDERS")?.permissions?.update
-//                                 },
-//                                 {
-//                                     key: '3',
-//                                     label: (
-//                                         <div onClick={() => viewWorkOrder(record?._id)} style={{ display: 'flex', alignItems: 'center' }}>
-//                                             <IoEyeOutline size={18} style={{ marginRight: 5 }} /> View Work Order
-//                                         </div>
-//                                     ),
-//                                 },
-//                                 {
-//                                     key: '8',
-//                                     label: (
-//                                         <div onClick={() => downloadWorkOrderFile(`/workorder/download-documents/${record?._id}?format=pdf`, 'GET', 'pdf')} style={{ display: 'flex', alignItems: 'center' }}>
-//                                             <FaRegFilePdf size={18} style={{ marginRight: 5 }} /> Download Pdf File
-//                                         </div>
-//                                     ),
-//                                 },
-//                                 {
-//                                     key: '9',
-//                                     label: (
-//                                         <div onClick={() => downloadWorkOrderFile(`/workorder/download-documents/${record?._id}?format=excel`, 'GET', 'excel')} style={{ display: 'flex', alignItems: 'center' }}>
-//                                             <FaRegFileExcel size={18} style={{ marginRight: 5 }} /> Download Excel File
-//                                         </div>
-//                                     ),
-//                                 },
-//                             ]
-//                         }}>
-//                             <MdOutlineSettings style={{ opacity: !WorkOrderReducer.workOrderOprationLoading && !WorkOrderReducer.workOrderArchiveLoading && !fileLoader ? 1 : 0.3, cursor: WorkOrderReducer.workOrderOprationLoading && WorkOrderReducer.workOrderArchiveLoading && fileLoader ? "no-drop" : 'pointer' }} size={24} />
-//                         </Dropdown>
-//                     </>
-//                 )
-//             },
-//         },
-//     ];
-//     const sortedData = [...WorkOrderReducer?.myWorkOrderData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-
-//     return (
-//         <>
-//             {contextHolder}
-//             <div className={Style.TableSection}>
-//                 <Table footer={() => (
-//                     <>
-//                         {WorkOrderReducer?.myWorkOrderData.length > 0 && !WorkOrderReducer?.workOrderLoading &&
-//                             <>
-//                                 {isNext &&
-//                                     <div style={{ textAlign: "center", padding: "0 0" }}>
-//                                         <button
-//                                             onClick={() => setPage(prev => prev + 1)}
-//                                             disabled={WorkOrderReducer?.workOrderLoading}
-//                                             style={{
-//                                                 border: "1px solid #1890ff",
-//                                                 background: "#1890ff",
-//                                                 color: "white",
-//                                                 padding: "6px 16px",
-//                                                 borderRadius: "4px",
-//                                                 cursor: WorkOrderReducer?.workOrderLoading ? "not-allowed" : "pointer",
-//                                             }}
-//                                         >
-//                                             {WorkOrderReducer?.workOrderLoading ? "Loading..." : "Load More"}
-//                                         </button>
-//                                     </div>
-//                                 }
-//                             </>
-//                         }
-//                     </>
-//                 )} pagination={false} loading={WorkOrderReducer?.workOrderLoading} scroll={{ x: 'max-content' }} rowKey={(record) => record._id} sticky={{ offsetHeader: 0 }} columns={columns} dataSource={sortedData} />
-//             </div>
-//         </>
-//     )
-// }
-
-// function mapStateToProps({ WorkOrderReducer, PermissionReducer }) {
-//     return { WorkOrderReducer, PermissionReducer };
-// }
-// export default connect(mapStateToProps, WorkOrderAction)(MyWorkSite);
-
-
-
-
-
-
-
-
-
-
-
-
-
 import { useCallback, useEffect, useState } from 'react'
 import Style from './workOrderScreen.module.css'
 import { Button, DatePicker, Drawer, Dropdown, Input, message, Select, Space, Spin, Switch, Table, Tag, TimePicker, Tooltip, Upload, Col, Row, Grid, Empty } from 'antd'
@@ -433,11 +24,12 @@ import { useDownloadNotification } from '../../../provider/downloadProvider';
 import { useOutletContext } from 'react-router';
 import { UploadOutlined } from '@ant-design/icons';
 import ListInputSearch from '../../../component/ListInputSearch';
-import blueDoc from '../../../assets/blue-Doc.png'
+import blueDoc from '../../../assets/dashboard-2.png'
 import { MdChevronRight } from "react-icons/md";
 import clockYellow from "../../../assets/clock-yellow.png"
 import tickCircle from "../../../assets/tick-circle.png"
 import closeCircle from "../../../assets/close-circle.png"
+import WorkOrderFilter from './workOrderFilter';
 
 dayjs.extend(utc);
 
@@ -445,7 +37,6 @@ dayjs.extend(utc);
 
 function MyWorkSite({ GetMyWorkOrder, PermissionReducer, WorkOrderReducer, GetMyAssignedWorkOrder, CompleteWorkOrder }) {
     const { downloadWorkOrderFile, fileLoader } = useDownloadNotification();
-    // const { searchQuery } = useOutletContext();
     const dateFormat = 'YYYY-MM-DD hh:mm A';
     const [messageApi, contextHolder] = message.useMessage();
     const [completeWODrawer, setCompleteWODrawer] = useState(false);
@@ -466,34 +57,16 @@ function MyWorkSite({ GetMyWorkOrder, PermissionReducer, WorkOrderReducer, GetMy
     const [isNext, setIsNext] = useState(true)
 
     const [searchQuery, setSearchQuery] = useState("")
-    const [priority, setPriority] = useState([])
-    const [cpc, setCpc] = useState([])
 
+    const [paramsNew, setParamsNew] = useState(null)
 
 
     useEffect(() => {
         const init = async () => {
-            const totalLegngth = await GetMyWorkOrder(workSite, page, searchQuery, priority, cpc)
-            if (totalLegngth < 30) {
-                setIsNext(false)
-            }
+            const totalLegngth = await GetMyWorkOrder(workSite, page, searchQuery, paramsNew && paramsNew, setIsNext)
         }
         init()
-    }, [priority, cpc, page, searchQuery])
-
-    // useEffect(() => {
-    //     const init = async () => {
-    //         const totalLegngth = await GetMyWorkOrder(workSite, page, searchQuery)
-    //         if (totalLegngth < 30) {
-    //             setIsNext(false)
-    //         }
-    //     }
-    //     init()
-    // }, [page, searchQuery])
-
-
-
-
+    }, [page, searchQuery])
 
 
 
@@ -590,7 +163,7 @@ function MyWorkSite({ GetMyWorkOrder, PermissionReducer, WorkOrderReducer, GetMy
                 type: "success",
                 content: "Work order complete",
             });
-            GetMyAssignedWorkOrder(workSite, page, searchQuery)
+            runAgain()
             setCurrectWorkOrder()
             setDeleteSafetyH()
             setJsaRequired(false)
@@ -601,6 +174,12 @@ function MyWorkSite({ GetMyWorkOrder, PermissionReducer, WorkOrderReducer, GetMy
         WorkOrderReducer.workOrderExpiredError,
         messageApi,
     ]);
+
+
+
+    const runAgain = async () => {
+        const totalLegngth = await GetMyWorkOrder(workSite, page, searchQuery, paramsNew && paramsNew, setIsNext)
+    }
 
     const viewWorkOrder = (eId) => {
         localStorage.setItem("Xy9#qLT7pw!5kD+M3/=8&v==", eId)
@@ -684,7 +263,19 @@ function MyWorkSite({ GetMyWorkOrder, PermissionReducer, WorkOrderReducer, GetMy
             ellipsis: true,
             render: (users) => (
                 <Space direction="vertical">
-                    <p>{users?.createdAt.split("T")[0] ?? "0"}</p>
+                    <ReactTimeAgo date={users?.createdAt} locale="en-US" />
+                </Space>
+            ),
+        },
+        {
+            title: "Updated At",
+            key: "updatedAt",
+            width: 200,
+            ellipsis: true,
+            render: (users) => (
+                <Space direction="vertical">
+                    <ReactTimeAgo locale="en-US"
+                        timeStyle="round-minute" date={users?.updatedAt} locale="en-US" />
                 </Space>
             ),
         },
@@ -697,7 +288,7 @@ function MyWorkSite({ GetMyWorkOrder, PermissionReducer, WorkOrderReducer, GetMy
             render: (record) => {
                 return (
                     <>
-                        <div style={{padding:'10px',height:'40px',width:'40px',cursor:'pointer'}} onClick={() => viewWorkOrder(record?._id)} >
+                        <div style={{ padding: '10px', height: '40px', width: '40px', cursor: 'pointer' }} onClick={() => viewWorkOrder(record?._id)} >
                             <MdChevronRight size={24} />
                         </div>
                     </>
@@ -744,7 +335,7 @@ function MyWorkSite({ GetMyWorkOrder, PermissionReducer, WorkOrderReducer, GetMy
         CompleteWorkOrder(formData);
     };
 
-    const sortedData = [...WorkOrderReducer?.myWorkOrderData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    // const sortedData = [...WorkOrderReducer?.myWorkOrderData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
 
 
@@ -799,7 +390,7 @@ function MyWorkSite({ GetMyWorkOrder, PermissionReducer, WorkOrderReducer, GetMy
         <>
             {contextHolder}
             <div className={Style.filterSection}>
-                <Row gutter={gutter} align="middle" justify="space-between">
+                {/* <Row gutter={gutter} align="middle" justify="space-between">
                     <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
                         <div className={Style.Splitter}>
                             <div className={Style.layersInput}>
@@ -828,6 +419,20 @@ function MyWorkSite({ GetMyWorkOrder, PermissionReducer, WorkOrderReducer, GetMy
                             mode='multiple'
                             onChange={(e) => setCpc(e)}
                         />
+                    </Col>
+                </Row> */}
+
+                <Row gutter={gutter} align="middle" justify="space-between">
+                    <Col xxl={22} xl={22} lg={22} md={22} sm={22} xs={22}>
+                        <div className={Style.Splitter}>
+                            <div className={Style.layersInput}>
+                                <ListInputSearch onChange={(e) => setSearchQuery(e)} placeholder="Search Work order" />
+                            </div>
+                        </div>
+                    </Col>
+
+                    <Col xxl={2} xl={2} lg={2} md={2} sm={2} xs={2}>
+                        <WorkOrderFilter setPage={setPage} setIsNext={setIsNext} setParamsNew={setParamsNew} loading={WorkOrderReducer?.workOrderLoading} GetMyAssignedWorkOrder={GetMyWorkOrder} workSite={workSite} page={page} searchQuery={searchQuery} />
                     </Col>
                 </Row>
             </div>
@@ -872,7 +477,7 @@ function MyWorkSite({ GetMyWorkOrder, PermissionReducer, WorkOrderReducer, GetMy
                             </div>
                         )
                     }}
-                    pagination={false} loading={WorkOrderReducer?.workOrderLoading} scroll={{ x: 'max-content' }} rowKey={(record) => record._id} sticky={{ offsetHeader: 0 }} columns={columns} dataSource={sortedData} />
+                    pagination={false} loading={WorkOrderReducer?.workOrderLoading} scroll={{ x: 'max-content' }} rowKey={(record) => record._id} sticky={{ offsetHeader: 0 }} columns={columns} dataSource={WorkOrderReducer?.myWorkOrderData} />
             </div>
             <Drawer
                 maskClosable={false}
@@ -958,16 +563,6 @@ function MyWorkSite({ GetMyWorkOrder, PermissionReducer, WorkOrderReducer, GetMy
                     <label style={{ fontWeight: 'bold', fontSize: 17 }}>Work order assigned by</label>
                     <p>{localStorage.getItem('Lp3@vBN9tw69gV*R2/+1?w==')}</p>
                 </div>
-
-                {/* <div style={{ display: 'flex', flexDirection: 'column' , marginTop: 10 }}>
-                    <label style={{ marginBottom: 10 }}>Confined Space Paperwork <span style={{ fontSize: 12, color: jsaRequired ? 'red' : '#a1a1a1' }}>{jsaRequired ? `(Required)` : `(optional)`}</span></label>
-                    <Upload onRemove={(e) => setJSA1(prev =>
-                        prev.filter(file => file.uid !== e.uid)
-                    )} accept={".pdf,.docx,.doc"} multiple={true} disabled={WorkOrderReducer.workOrderCompleteLoading} beforeUpload={createBeforeUploadHandler('JSA1')}>
-                        <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                    </Upload>
-                </div> */}
-
                 {jsaRequired ?
                     <div className={Style.FeildColRight} style={{ paddingInline: 0 }}>
                         <div style={{ display: 'flex', flexDirection: 'column', marginTop: 10 }}>
@@ -1017,16 +612,6 @@ function MyWorkSite({ GetMyWorkOrder, PermissionReducer, WorkOrderReducer, GetMy
                                                 <a target='_blank' href={data?.url} style={{ marginLeft: 5, marginRight: 5, width: '100%', fontSize: 14, textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}>
                                                     {data?.fileName}
                                                 </a>
-                                                {/* <div onClick={() => setDeleteSafetyH(prev => {
-                                                    const id = data?._id;
-                                                    const exists = prev.some(item => item._id === id);
-
-                                                    return exists
-                                                        ? prev.filter(item => item._id !== id)
-                                                        : [...prev, data];
-                                                })} style={{ cursor: 'pointer' }}>
-                                                    <AiOutlineDelete size={22} color='red' />
-                                                </div> */}
                                             </div>
                                         )
                                     }) : ""}

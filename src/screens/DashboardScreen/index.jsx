@@ -27,10 +27,10 @@ import blueIcon3 from '../../assets/mapBlue.png'
 import Stacked2Image from '../../assets/Stacked2.png'
 
 
-import AlertBlue from '../../assets/alertBlue.png'
-import CategoryBlue from '../../assets/categoryBlue.png'
-import ElevationBlue from '../../assets/elevationBlue.png'
-import MapBlue from '../../assets/mapBlue.png'
+import AlertBlue from '../../assets/icons/mapIcon/ALERT.svg'
+import PoiBlue from '../../assets/icons/mapIcon/POI.svg'
+import AssetBlue from '../../assets/icons/mapIcon/ASSET.svg'
+import ProjectBlue from '../../assets/icons/mapIcon/PROJECT.svg'
 
 
 import Dashboard1 from '../../assets/dashboard-1.png'
@@ -41,6 +41,24 @@ import Dashboard5 from '../../assets/dashboard-5.png'
 import Dashboard6 from '../../assets/dashboard-6.png'
 import Dashboard7 from '../../assets/dashboard-7.png'
 import Dashboard8 from '../../assets/dashboard-8.png'
+
+
+
+
+
+
+import DashboardIcon1 from '../../assets/icons/mapIcon/map1.png'
+import DashboardIcon2 from '../../assets/icons/mapIcon/map2.png'
+import DashboardIcon3 from '../../assets/icons/mapIcon/map3.png'
+import DashboardIcon4 from '../../assets/icons/mapIcon/map4.png'
+import DashboardIcon5 from '../../assets/icons/mapIcon/map5.png'
+import DashboardIcon6 from '../../assets/icons/mapIcon/map6.png'
+import DashboardIcon7 from '../../assets/icons/mapIcon/map7.png'
+import DashboardIcon8 from '../../assets/icons/mapIcon/map8.png'
+import DashboardIcon9 from '../../assets/icons/mapIcon/map9.png'
+
+
+
 import { GoArrowRight } from "react-icons/go";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, layouts } from 'chart.js';
 import {
@@ -66,7 +84,7 @@ ChartJS.register(
 
 
 
-function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap, GetAlertsByIDMap, GetAssetsByIDMap, WorkOrderGetByIdMap, GetProjectByIDMap, WorkOrderReducer, AlertsReducer, PoiReducer, AssetsReducer, ProjectReducer, GetAssets, GetProjects, GetAlerts, GetPOI, GetMyWorkOrder }) {
+function DashboardScreen({ MusterByIdMap, WorkSiteGetByIdMap, getDepartment, getModel, getAssetType, GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap, GetAlertsByIDMap, GetAssetsByIDMap, WorkOrderGetByIdMap, GetProjectByIDMap, WorkOrderReducer, AlertsReducer, PoiReducer, AssetsReducer, ProjectReducer, GetAssets, GetProjects, GetAlerts, GetPOI, GetMyWorkOrder }) {
     const [messageApi, contextHolder] = message.useMessage();
     const workSite = localStorage.getItem("+AOQ^%^f0Gn4frTqztZadLrKg==")
     const { alertData, alertLoading } = AlertsReducer
@@ -75,12 +93,13 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
     const { projectData, projectLoading } = ProjectReducer
     const { myWorkOrderData, workOrderLoading } = WorkOrderReducer
 
-    // const isLoadingData =
-    //     alertLoading ||
-    //     poiLoading ||
-    //     AssetsLoading ||
-    //     projectLoading ||
-    //     workOrderLoading;
+    useEffect(() => {
+        localStorage.removeItem("Q9#vL2@X!mT8_Pz7&KcR*w==")
+        localStorage.removeItem("Q9#M@xA!K7P_2LZ+vR8d*t==")
+        localStorage.removeItem("A7@M!xK9P_2#RZ+vL8dQ*t==")
+        localStorage.removeItem("Q8@L!zM7B_1xP#t+6R9Dg*v==")
+    }, [])
+
 
     const navigate = useNavigate();
     const dispatch = useDispatch()
@@ -91,23 +110,25 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
 
 
 
+
+    const [isNext, setIsNext] = useState(true)
     const loadEssentialData = async () => {
         setIsLoadingData(true)
         setProgress(5);
         try {
-            await GetAssets(workSite, 1, "");
+            await GetAssets(workSite, 1, "", null, setIsNext);
             setProgress(30);
 
-            await GetProjects(workSite, 1, "");
+            await GetProjects(workSite, 1, "", null, setIsNext);
             setProgress(55);
 
-            await GetAlerts(workSite, 1, "");
+            await GetAlerts(workSite, 1, "", null, setIsNext);
             setProgress(70);
 
-            await GetPOI(workSite, 1, "");
+            await GetPOI(workSite, 1, "", null, setIsNext);
             setProgress(85);
 
-            await GetMyWorkOrder(workSite, 1, "");
+            await GetMyWorkOrder(workSite, 1, "", null, setIsNext);
             setProgress(100);
 
             setTimeout(() => {
@@ -115,24 +136,18 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                 setProgress(0)
             }, 800);
         } catch (error) {
-            console.error("Something went wrong");
+            console.error(error, "Something went wrong");
             setProgress(0);
         }
     };
 
 
 
-
-
-
-
-
     useEffect(() => {
         if (workSite !== null) {
-            loadEssentialData()
+            // loadEssentialData()
             LoadMapData()
         }
-
         if (PoiReducer.poiExpiredError) {
             messageApi.destroy();
             messageApi.open({
@@ -216,27 +231,74 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
         window.location.reload()
         window.location.href = '/project/read';
     }
-
     const viewWorkOrder = (eId) => {
         localStorage.setItem("Xy9#qLT7pw!5kD+M3/=8&v==", eId)
         window.location.reload()
         window.location.href = '/workorder/read';
     }
-    const [wholeMapData, setWholeMapData] = useState()
 
-    const LoadMapData = async () => {
-        const token = localStorage.getItem("aX7@qB*9tw!1zV+T2/&1^x==");
-        const options = {
-            method: 'GET',
-            headers: {
-                "Content-Type": "application/json",
-                "authorization": `Bearer ${token}`,
-            },
-        };
-        const response = await fetch(`${baseUrl}/polygons/worksite/${workSite}`, options);
-        const res = await response.json();
-        if (response.status === 200 || response.status === 201) {
-            setWholeMapData(res)
+    const viewMuster = (eId) => {
+        localStorage.setItem("Xy9#qLT7pw!5kD+M3/=8&v==", eId)
+        window.location.reload()
+        window.location.href = `/worksite/muster-station?id=${eId}&isRead=true`;
+    }
+
+    const viewWorkSite = () => {
+        localStorage.setItem("Bm_8Xr#Q+21fGt!zY@Hj6Lp", workSite)
+        window.location.reload()
+        window.location.href = '/worksite/read';
+    }
+
+    const [wholeMapData, setWholeMapData] = useState()
+    const [wholeMapDataLoader, setWholeMapDataLoader] = useState(false)
+
+
+
+    const LoadMapData = async (data = "", onCloseAssetsDrawer) => {
+        setIsLoadingData(true)
+        setProgress(5);
+        setWholeMapDataLoader(true)
+
+        const progressTimer = setInterval(() => {
+            setProgress((prevProgress) => {
+                if (prevProgress >= 90) return prevProgress;
+                return prevProgress + 10;
+            });
+        }, 400);
+
+        try {
+            const token = localStorage.getItem("aX7@qB*9tw!1zV+T2/&1^x==");
+            const options = {
+                method: 'GET',
+                headers: {
+                    "Content-Type": "application/json",
+                    "authorization": `Bearer ${token}`,
+                },
+            };
+            const queryString = data ? `?${data}` : "";
+            const response = await fetch(`${baseUrl}/polygons/worksite/${workSite}${queryString}`, options);
+            const res = await response.json();
+
+            if (response.status === 200 || response.status === 201) {
+                setWholeMapData(res)
+                setProgress(100);
+                onCloseAssetsDrawer?.();
+
+                setTimeout(() => {
+                    setIsLoadingData(false)
+                    setProgress(0)
+                }, 800);
+            } else {
+                setIsLoadingData(false)
+                setProgress(0);
+            }
+        } catch (error) {
+            console.error(error, "Something went wrong");
+            setIsLoadingData(false)
+            setProgress(0);
+        } finally {
+            clearInterval(progressTimer);
+            setWholeMapDataLoader(false)
         }
     }
 
@@ -286,23 +348,25 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
     const [wholeDashboardDataApi, setWholeDashboardDataApi] = useState()
     const [wholeDashboardDataApiLoader, setWholeDashboardDataApiLoader] = useState()
     const [filterSectionState, setFilterSectionState] = useState({
-        statsFilter: "yearly",
-        workOrderFilter: "yearly",
-        threatFilter: "yearly",
-        assetFilter: "yearly",
-        projectFilter: "yearly",
-        alertTypeFilter: "yearly",
+        statsFilter: "",
+        workOrderFilter: "",
+        threatFilter: "",
+        assetFilter: "",
+        projectFilter: "",
+        alertTypeFilter: "",
         createdByMe: true,
         requestedByMe: false,
     });
 
+
     useEffect(() => {
         if (workSite !== null) {
             LoadDashboardData()
+            LoadDashboardData2()
         }
     }, [filterSectionState])
 
-    const LoadDashboardData = async () => {
+    const LoadDashboardData = async (data) => {
         setWholeDashboardDataApiLoader(true)
         const token = localStorage.getItem("aX7@qB*9tw!1zV+T2/&1^x==");
         const options = {
@@ -316,7 +380,7 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                 ...filterSectionState
             })
         };
-        const response = await fetch(`${baseUrl}/global-search/dashboard`, options);
+        const response = await fetch(`${baseUrl}/global-search/dashboard?${data}`, options);
         const res = await response.json();
         if (response.status === 200 || response.status === 201) {
             setWholeDashboardDataApi(res)
@@ -325,15 +389,46 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
         setWholeDashboardDataApiLoader(false)
     }
 
+
+
+
+    const [wholeDashboardDataApi2, setWholeDashboardDataApi2] = useState()
+    const [wholeDashboardDataApiLoader2, setWholeDashboardDataApiLoader2] = useState()
+
+    const LoadDashboardData2 = async () => {
+        setWholeDashboardDataApiLoader2(true)
+        const token = localStorage.getItem("aX7@qB*9tw!1zV+T2/&1^x==");
+        const options = {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                worksiteId: workSite,
+                ...filterSectionState
+            })
+        };
+        const response = await fetch(`${baseUrl}/global-search/map-dashboard`, options);
+        const res = await response.json();
+        if (response.status === 200 || response.status === 201) {
+            setWholeDashboardDataApi2(res)
+            setWholeDashboardDataApiLoader2(false)
+        }
+        setWholeDashboardDataApiLoader2(false)
+    }
+
+
     const threatLevelOptionSelect = [
         { label: "Last 7 Days", value: "weekly" },
         { label: "Last Month", value: "monthly" },
         { label: "Last Year", value: "yearly" },
+        { label: "All", value: "" },
     ]
 
     const AssignSelectOption = [
         { label: "Created by Me", value: true },
-        { label: "Requested by Me", value: false }
+        { label: "Assigned to Me", value: false }
     ];
 
 
@@ -404,15 +499,34 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
     };
 
     const yearLabels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    const sevenDaysLabels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     const lastWeekLabels = ['First Week', 'Second Week', 'Third Week', 'Fourth Week'];
 
+    const workOrderDist = wholeDashboardDataApi?.graphs?.workOrderDistribution ?? {};
+    const weeklyLabels = (wholeDashboardDataApi?.graphs?.workOrderDistributionOrder ?? Object.keys(workOrderDist)).slice().reverse();
+    const weeklyApproved = weeklyLabels.map(key => workOrderDist[key]?.approved ?? 0);
+    const weeklyPending = weeklyLabels.map(key => workOrderDist[key]?.pending ?? 0);
+    const weeklyDeclined = weeklyLabels.map(key => workOrderDist[key]?.declined ?? 0);
+    const weeklyCompleted = weeklyLabels.map(key => workOrderDist[key]?.completed ?? 0);
+
     const data = {
-        labels: filterSectionState?.workOrderFilter == "yearly" ? yearLabels : filterSectionState?.workOrderFilter == "monthly" ? lastWeekLabels : filterSectionState?.workOrderFilter == "weekly" ? sevenDaysLabels : "",
+        labels: filterSectionState?.workOrderFilter == "" ? yearLabels : filterSectionState?.workOrderFilter == "yearly" ? yearLabels : filterSectionState?.workOrderFilter == "monthly" ? lastWeekLabels : filterSectionState?.workOrderFilter == "weekly" ? weeklyLabels : "",
         datasets: [
             {
                 label: 'Approved',
-                data: filterSectionState?.workOrderFilter == "yearly" ? [
+                data: filterSectionState?.workOrderFilter == "" ? [
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[1]?.approved ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[2]?.approved ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[3]?.approved ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[4]?.approved ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[5]?.approved ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[6]?.approved ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[7]?.approved ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[8]?.approved ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[9]?.approved ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[10]?.approved ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[11]?.approved ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[12]?.approved ?? 0,
+                ] : filterSectionState?.workOrderFilter == "yearly" ? [
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[1]?.approved ?? 0,
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[2]?.approved ?? 0,
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[3]?.approved ?? 0,
@@ -430,15 +544,7 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[2]?.approved ?? 0,
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[3]?.approved ?? 0,
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[4]?.approved ?? 0,
-                ] : filterSectionState?.workOrderFilter == "weekly" ? [
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[1]?.approved ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[2]?.approved ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[3]?.approved ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[4]?.approved ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[5]?.approved ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[6]?.approved ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[7]?.approved ?? 0,
-                ] : [],
+                ] : filterSectionState?.workOrderFilter == "weekly" ? weeklyApproved : [],
                 backgroundColor: '#214CBC',
                 categoryPercentage: 0.4,
                 barPercentage: 0.8,
@@ -446,7 +552,20 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
             },
             {
                 label: 'Pending',
-                data: filterSectionState?.workOrderFilter == "yearly" ? [
+                data: filterSectionState?.workOrderFilter == "" ? [
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[1]?.pending ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[2]?.pending ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[3]?.pending ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[4]?.pending ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[5]?.pending ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[6]?.pending ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[7]?.pending ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[8]?.pending ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[9]?.pending ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[10]?.pending ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[11]?.pending ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[12]?.pending ?? 0,
+                ] : filterSectionState?.workOrderFilter == "yearly" ? [
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[1]?.pending ?? 0,
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[2]?.pending ?? 0,
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[3]?.pending ?? 0,
@@ -464,15 +583,7 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[2]?.pending ?? 0,
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[3]?.pending ?? 0,
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[4]?.pending ?? 0,
-                ] : filterSectionState?.workOrderFilter == "weekly" ? [
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[1]?.pending ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[2]?.pending ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[3]?.pending ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[4]?.pending ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[5]?.pending ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[6]?.pending ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[7]?.pending ?? 0,
-                ] : [],
+                ] : filterSectionState?.workOrderFilter == "weekly" ? weeklyPending : [],
                 backgroundColor: '#F1C34D',
                 categoryPercentage: 0.4,
                 barPercentage: 0.8,
@@ -480,7 +591,20 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
             },
             {
                 label: 'Declined',
-                data: filterSectionState?.workOrderFilter == "yearly" ? [
+                data: filterSectionState?.workOrderFilter == "" ? [
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[1]?.declined ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[2]?.declined ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[3]?.declined ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[4]?.declined ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[5]?.declined ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[6]?.declined ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[7]?.declined ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[8]?.declined ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[9]?.declined ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[10]?.declined ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[11]?.declined ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[12]?.declined ?? 0,
+                ] : filterSectionState?.workOrderFilter == "yearly" ? [
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[1]?.declined ?? 0,
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[2]?.declined ?? 0,
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[3]?.declined ?? 0,
@@ -498,15 +622,7 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[2]?.declined ?? 0,
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[3]?.declined ?? 0,
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[4]?.declined ?? 0,
-                ] : filterSectionState?.workOrderFilter == "weekly" ? [
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[1]?.declined ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[2]?.declined ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[3]?.declined ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[4]?.declined ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[5]?.declined ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[6]?.declined ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[7]?.declined ?? 0,
-                ] : [],
+                ] : filterSectionState?.workOrderFilter == "weekly" ? weeklyDeclined : [],
                 backgroundColor: '#F14D4D',
                 categoryPercentage: 0.4,
                 barPercentage: 0.8,
@@ -514,7 +630,20 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
             },
             {
                 label: 'Completed',
-                data: filterSectionState?.workOrderFilter == "yearly" ? [
+                data: filterSectionState?.workOrderFilter == "" ? [
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[1]?.completed ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[2]?.completed ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[3]?.completed ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[4]?.completed ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[5]?.completed ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[6]?.completed ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[7]?.completed ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[8]?.completed ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[9]?.completed ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[10]?.completed ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[11]?.completed ?? 0,
+                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[12]?.completed ?? 0,
+                ] : filterSectionState?.workOrderFilter == "yearly" ? [
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[1]?.completed ?? 0,
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[2]?.completed ?? 0,
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[3]?.completed ?? 0,
@@ -532,15 +661,7 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[2]?.completed ?? 0,
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[3]?.completed ?? 0,
                     wholeDashboardDataApi?.graphs?.workOrderDistribution?.[4]?.completed ?? 0,
-                ] : filterSectionState?.workOrderFilter == "weekly" ? [
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[1]?.completed ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[2]?.completed ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[3]?.completed ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[4]?.completed ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[5]?.completed ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[6]?.completed ?? 0,
-                    wholeDashboardDataApi?.graphs?.workOrderDistribution?.[7]?.completed ?? 0,
-                ] : [],
+                ] : filterSectionState?.workOrderFilter == "weekly" ? weeklyCompleted : [],
                 backgroundColor: '#21AB70',
                 categoryPercentage: 0.4,
                 barPercentage: 0.8,
@@ -567,9 +688,9 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                 ],
                 backgroundColor: [
                     'rgba(28, 143, 93, 1)',
-                    'rgba(98, 109, 111, 1)',
+                    '#626D6F',
                     'rgba(241, 195, 77, 1)',
-                    'rgba(121, 39, 39, 1)',
+                    'rgb(96, 4, 4)',
                     'rgba(241, 77, 77, 1)',
                 ],
                 borderColor: [
@@ -611,7 +732,7 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                     label: (context) => {
                         const label = context.label || '';
                         const value = context.raw;
-                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                        const total = context.dataset.data?.reduce((a, b) => a + b, 0);
                         const percentage = ((value / total) * 100).toFixed(0);
                         return `${label}: ${value} (${percentage}%)`;
                     },
@@ -619,12 +740,14 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
             },
         },
     };
-    const threatLevelTotalSum = wholeDashboardDataApi?.graphs?.threatLevels.reduce((sum, item) => sum + item.total, 0);
+    const threatLevelTotalSum = wholeDashboardDataApi?.graphs?.threatLevels?.reduce((sum, item) => sum + item.total, 0);
 
-    const threatLevelUpdatedData = wholeDashboardDataApi?.graphs?.threatLevels.map(item => ({
+    const threatLevelUpdatedData = wholeDashboardDataApi?.graphs?.threatLevels?.map(item => ({
         ...item,
         percentage: Number(((item.total / threatLevelTotalSum) * 100).toFixed(1))
     }));
+    const threatLevelUpdatedDataCenter = threatLevelUpdatedData?.reduce((sum, item) => sum + item.total, 0)
+
     const centerTextPlugin1 = {
         id: 'centerText',
         afterDraw(chart) {
@@ -644,10 +767,11 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
             ctx.font = 'bold 42px Inter, system-ui, sans-serif';
             ctx.fillStyle = '#1a1e2b';
             ctx.textBaseline = 'top';
-            ctx.fillText(wholeDashboardDataApi?.stats?.pois?.total?.toString(), centerX, centerY + 4);
+            ctx.fillText(threatLevelUpdatedDataCenter, centerX, centerY + 4);
             ctx.restore();
         },
     };
+
     // POIs by Threat Level
 
 
@@ -658,10 +782,6 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
         datasets: [
             {
                 data: [
-                    // wholeDashboardDataApi?.graphs?.alertTypes?.find(data => data?._id == "WEATHER")?.total ?? 0,
-                    // wholeDashboardDataApi?.graphs?.alertTypes?.find(data => data?._id == "HAZARD")?.total ?? 0,
-                    // wholeDashboardDataApi?.graphs?.alertTypes?.find(data => data?._id == "SECURITY")?.total ?? 0,
-                    // wholeDashboardDataApi?.graphs?.alertTypes?.find(data => data?._id == "COMMUNICATION")?.total ?? 0,
                     wholeDashboardDataApi?.graphs?.alertTypes?.find(data => data?._id == "Lowest")?.total ?? 0,
                     wholeDashboardDataApi?.graphs?.alertTypes?.find(data => data?._id == "No Threat")?.total ?? 0,
                     wholeDashboardDataApi?.graphs?.alertTypes?.find(data => data?._id == "Moderate")?.total ?? 0,
@@ -670,9 +790,10 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                 ],
                 backgroundColor: [
                     'rgba(28, 143, 93, 1)',
-                    'rgba(241, 77, 77, 1)',
-                    'rgba(4, 79, 96, 1)',
+                    '#626D6F',
                     'rgba(241, 195, 77, 1)',
+                    'rgb(96, 4, 4)',
+                    'rgba(241, 77, 77, 1)',
                 ],
                 borderColor: [
                     'white',
@@ -720,11 +841,12 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
             },
         },
     };
-    const alertTypesTotalSum = wholeDashboardDataApi?.graphs?.alertTypes.reduce((sum, item) => sum + item.total, 0);
-    const alertTypesUpdatedData = wholeDashboardDataApi?.graphs?.alertTypes.map(item => ({
+    const alertTypesTotalSum = wholeDashboardDataApi?.graphs?.alertTypes?.reduce((sum, item) => sum + item.total, 0);
+    const alertTypesUpdatedData = wholeDashboardDataApi?.graphs?.alertTypes?.map(item => ({
         ...item,
         percentage: Number(((item.total / alertTypesTotalSum) * 100).toFixed(1))
     }));
+    const threatalertTypesUpdatedData = alertTypesUpdatedData?.reduce((sum, item) => sum + item.total, 0)
     const centerTextPlugin2 = {
         id: 'centerText',
         afterDraw(chart) {
@@ -744,7 +866,7 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
             ctx.font = 'bold 42px Inter, system-ui, sans-serif';
             ctx.fillStyle = '#1a1e2b';
             ctx.textBaseline = 'top';
-            ctx.fillText(wholeDashboardDataApi?.stats?.alerts?.total?.toString(), centerX, centerY + 4);
+            ctx.fillText(threatalertTypesUpdatedData, centerX, centerY + 4);
             ctx.restore();
         },
     };
@@ -757,17 +879,39 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
 
     // Assets by Elevation Level
     const filterTypes = ["Below Ground", "Ground Level", "Overhead"];
+    const assetElevation = wholeDashboardDataApi?.graphs?.assetElevation || [];
+
+    const count1 = assetElevation.reduce((sum, item) => {
+        if (Array.isArray(item._id)) {
+            return sum + (item._id.includes("Below Ground") ? item.total : 0);
+        }
+        return sum + (item._id === "Below Ground" ? item.total : 0);
+    }, 0);
+    const count2 = assetElevation.reduce((sum, item) => {
+        if (Array.isArray(item._id)) {
+            return sum + (item._id.includes("Ground Level") ? item.total : 0);
+        }
+        return sum + (item._id === "Ground Level" ? item.total : 0);
+    }, 0);
+    const count3 = assetElevation.reduce((sum, item) => {
+        if (Array.isArray(item._id)) {
+            return sum + (item._id.includes("Overhead") ? item.total : 0);
+        }
+        return sum + (item._id === "Overhead" ? item.total : 0);
+    }, 0);
+    const elevationCounts = [
+        { name: "Below Ground", count: count1 },
+        { name: "Ground Level", count: count2 },
+        { name: "Overhead", count: count3 },
+    ];
     const assetElevationData = {
         labels: filterTypes,
         datasets: [
             {
                 data: [
-                    wholeDashboardDataApi?.graphs?.assetElevation
-                        ?.find(data => data?._id?.includes("Below Ground"))?.total ?? 0,
-                    wholeDashboardDataApi?.graphs?.assetElevation
-                        ?.find(data => data?._id?.includes("Ground Level"))?.total ?? 0,
-                    wholeDashboardDataApi?.graphs?.assetElevation
-                        ?.find(data => data?._id?.includes("Overhead"))?.total ?? 0,
+                    count1 ?? 0,
+                    count2 ?? 0,
+                    count3 ?? 0,
                 ],
                 backgroundColor: [
                     'rgba(241, 77, 77, 1)',
@@ -812,7 +956,7 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                     label: (context) => {
                         const label = context.label || '';
                         const value = context.raw;
-                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                        const total = context.dataset.data?.reduce((a, b) => a + b, 0);
                         const percentage = ((value / total) * 100).toFixed(0);
                         return `${label}: ${value} (${percentage}%)`;
                     },
@@ -820,27 +964,21 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
             },
         },
     };
-    const resultWithTotalsAssets = filterTypes.map(type => ({
+    const resultWithTotalsAssets = elevationCounts?.map(type => ({
         type,
-        total: wholeDashboardDataApi?.graphs?.assetElevation.reduce((sum, item) => {
-            return item._id.includes(type) ? sum + item.total : sum;
-        }, 0)
+        total: type?.count
     }));
-    const grandTotalAssets = resultWithTotalsAssets.reduce(
-        (sum, item) => sum + item.total,
-        0
-    );
-    const finalResultAssets = resultWithTotalsAssets.map(item => ({
+    const grandTotalAssets = resultWithTotalsAssets?.reduce((sum, item) => sum + item.total, 0);
+    const finalResultAssets = resultWithTotalsAssets?.map(item => ({
         ...item,
-        percentage: grandTotalAssets === 0
-            ? 0
-            : Number(((item.total / grandTotalAssets) * 100).toFixed(1))
+        percentage: grandTotalAssets === 0 ? 0 : Number(((item.total / grandTotalAssets) * 100).toFixed(1))
     }));
+    const finalResulDate = finalResultAssets?.reduce((sum, item) => sum + item.total, 0)
     const centerTextPlugin3 = {
         id: 'centerText',
         afterDraw(chart) {
             const { ctx, chartArea, data } = chart;
-            const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
+            const total = data.datasets[0].data?.reduce((a, b) => a + b, 0);
             ctx.save();
             const centerX = (chartArea.left + chartArea.right) / 2;
             const centerY = (chartArea.top + chartArea.bottom) / 2;
@@ -849,13 +987,10 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
             ctx.textAlign = 'center';
             ctx.textBaseline = 'bottom';
             ctx.fillText('Total Assets', centerX, centerY - 8);
-
-
-
             ctx.font = 'bold 42px Inter, system-ui, sans-serif';
             ctx.fillStyle = '#1a1e2b';
             ctx.textBaseline = 'top';
-            ctx.fillText(wholeDashboardDataApi?.stats?.assets?.total?.toString(), centerX, centerY + 4);
+            ctx.fillText(finalResulDate, centerX, centerY + 4);
             ctx.restore();
         },
     };
@@ -869,18 +1004,38 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
 
 
 
+
+
+
+
     // Project by Elevation Level
+    const Pcount1 = (wholeDashboardDataApi?.graphs?.projectElevation || []).reduce((sum, item) => {
+        const ids = Array.isArray(item._id) ? item._id : [item._id];
+        return sum + (ids.includes("Below Ground") ? item.total : 0);
+    }, 0);
+
+    const Pcount2 = (wholeDashboardDataApi?.graphs?.projectElevation || []).reduce((sum, item) => {
+        const ids = Array.isArray(item._id) ? item._id : [item._id];
+        return sum + (ids.includes("Ground Level") ? item.total : 0);
+    }, 0);
+
+    const Pcount3 = (wholeDashboardDataApi?.graphs?.projectElevation || []).reduce((sum, item) => {
+        const ids = Array.isArray(item._id) ? item._id : [item._id];
+        return sum + (ids.includes("Overhead") ? item.total : 0);
+    }, 0);
+    const PelevationCounts = [
+        { name: "Below Ground", count: Pcount1 },
+        { name: "Ground Level", count: Pcount2 },
+        { name: "Overhead", count: Pcount3 },
+    ];
     const projectElevationData = {
         labels: filterTypes,
         datasets: [
             {
                 data: [
-                    wholeDashboardDataApi?.graphs?.projectElevation
-                        ?.find(data => data?._id?.includes("Below Ground"))?.total ?? 0,
-                    wholeDashboardDataApi?.graphs?.projectElevation
-                        ?.find(data => data?._id?.includes("Ground Level"))?.total ?? 0,
-                    wholeDashboardDataApi?.graphs?.projectElevation
-                        ?.find(data => data?._id?.includes("Overhead"))?.total ?? 0,
+                    Pcount1 ?? 0,
+                    Pcount2 ?? 0,
+                    Pcount3 ?? 0,
                 ],
                 backgroundColor: [
                     'rgba(241, 77, 77, 1)',
@@ -933,27 +1088,26 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
             },
         },
     };
-    const resultWithTotals = filterTypes.map(type => ({
+    const resultWithTotals = PelevationCounts?.map(type => ({
         type,
-        total: wholeDashboardDataApi?.graphs?.projectElevation.reduce((sum, item) => {
-            return item._id.includes(type) ? sum + item.total : sum;
-        }, 0)
+        total: type?.count
     }));
-    const grandTotalProject = resultWithTotals.reduce(
+    const grandTotalProject = resultWithTotals?.reduce(
         (sum, item) => sum + item.total,
         0
     );
-    const finalResultProject = resultWithTotals.map(item => ({
+    const finalResultProject = resultWithTotals?.map(item => ({
         ...item,
         percentage: grandTotalProject === 0
             ? 0
             : Number(((item.total / grandTotalProject) * 100).toFixed(1))
     }));
+    const countFinalResultProject = finalResultProject?.reduce((sum, item) => sum + item.total, 0)
     const centerTextPlugin4 = {
         id: 'centerText',
         afterDraw(chart) {
             const { ctx, chartArea, data } = chart;
-            const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
+            const total = data.datasets[0].data?.reduce((a, b) => a + b, 0);
             ctx.save();
             const centerX = (chartArea.left + chartArea.right) / 2;
             const centerY = (chartArea.top + chartArea.bottom) / 2;
@@ -968,7 +1122,7 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
             ctx.font = 'bold 42px Inter, system-ui, sans-serif';
             ctx.fillStyle = '#1a1e2b';
             ctx.textBaseline = 'top';
-            ctx.fillText(wholeDashboardDataApi?.stats?.projects?.total?.toString(), centerX, centerY + 4);
+            ctx.fillText(countFinalResultProject, centerX, centerY + 4);
             ctx.restore();
         },
     };
@@ -976,6 +1130,17 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
 
 
 
+
+
+
+    const [fullScreen, setFullScreen] = useState(false)
+    useEffect(() => {
+        if (workSite) {
+            getDepartment(workSite)
+            getModel()
+            getAssetType()
+        }
+    }, [])
 
 
     return (
@@ -993,7 +1158,7 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                         </h1>
                     </div>
 
-                    <Select
+                    {/* <Select
                         getPopupContainer={(triggerNode) => triggerNode.parentElement}
                         style={{ height: 42, width: 200 }}
                         placeholder="Select Duration"
@@ -1001,7 +1166,7 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                         options={threatLevelOptionSelect}
                         disabled={!workSite}
                         onChange={(e) => setFilterSectionState(prev => ({ ...prev, statsFilter: e }))}
-                    />
+                    /> */}
                 </div>
 
                 <div className={Style.DashBoardBody}>
@@ -1018,9 +1183,9 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                                             <img src={Dashboard1} />
                                         </div>
 
-                                        <div className={Style.GoArrowRightSection}>
+                                        {/* <div className={Style.GoArrowRightSection}>
                                             {renderPercentage(wholeDashboardDataApi?.stats?.teams?.percentage)}
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div className={Style.mainContentBody}>
                                         <h1>{wholeDashboardDataApi?.stats?.teams?.total ?? 0}</h1>
@@ -1041,12 +1206,12 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                                             <img src={Dashboard2} />
                                         </div>
 
-                                        <div className={Style.GoArrowRightSection}>
+                                        {/* <div className={Style.GoArrowRightSection}>
                                             {renderPercentage(wholeDashboardDataApi?.stats?.workorders?.percentage)}
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div className={Style.mainContentBody}>
-                                        <h1>{wholeDashboardDataApi?.stats?.workorders?.total ?? 0}</h1>
+                                        <h1>{wholeMapData?.workordersPolygons?.length ?? 0}</h1>
                                         <h2>No of Work Orders</h2>
                                     </div>
                                 </div>
@@ -1065,12 +1230,12 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                                         </div>
 
 
-                                        <div className={Style.GoArrowRightSection}>
+                                        {/* <div className={Style.GoArrowRightSection}>
                                             {renderPercentage(wholeDashboardDataApi?.stats?.pois?.percentage)}
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div className={Style.mainContentBody}>
-                                        <h1>{wholeDashboardDataApi?.stats?.pois?.total ?? 0}</h1>
+                                        <h1>{wholeMapData?.reportsPolygons?.length ?? 0}</h1>
                                         <h2>No of POIs</h2>
                                     </div>
                                 </div>
@@ -1089,12 +1254,12 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                                         </div>
 
 
-                                        <div className={Style.GoArrowRightSection}>
+                                        {/* <div className={Style.GoArrowRightSection}>
                                             {renderPercentage(wholeDashboardDataApi?.stats?.alerts?.percentage)}
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div className={Style.mainContentBody}>
-                                        <h1>{wholeDashboardDataApi?.stats?.alerts?.total ?? 0}</h1>
+                                        <h1>{wholeMapData?.alertsPolygons?.length ?? 0}</h1>
                                         <h2>No of Alerts</h2>
                                     </div>
                                 </div>
@@ -1113,12 +1278,12 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                                         </div>
 
 
-                                        <div className={Style.GoArrowRightSection}>
+                                        {/* <div className={Style.GoArrowRightSection}>
                                             {renderPercentage(wholeDashboardDataApi?.stats?.assets?.percentage)}
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div className={Style.mainContentBody}>
-                                        <h1>{wholeDashboardDataApi?.stats?.assets?.total ?? 0}</h1>
+                                        <h1>{wholeMapData?.assetsPolygons?.length ?? 0}</h1>
                                         <h2>No of Assets</h2>
                                     </div>
                                 </div>
@@ -1137,12 +1302,12 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                                         </div>
 
 
-                                        <div className={Style.GoArrowRightSection}>
+                                        {/* <div className={Style.GoArrowRightSection}>
                                             {renderPercentage(wholeDashboardDataApi?.stats?.projects?.percentage)}
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div className={Style.mainContentBody}>
-                                        <h1>{wholeDashboardDataApi?.stats?.projects?.total ?? 0}</h1>
+                                        <h1>{wholeMapData?.projectPolygons?.length ?? 0}</h1>
                                         <h2>No of Projects</h2>
                                     </div>
                                 </div>
@@ -1161,9 +1326,9 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                                         </div>
 
 
-                                        <div className={Style.GoArrowRightSection}>
+                                        {/* <div className={Style.GoArrowRightSection}>
                                             {renderPercentage(wholeDashboardDataApi?.stats?.users?.percentage)}
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div className={Style.mainContentBody}>
                                         <h1>{wholeDashboardDataApi?.stats?.users?.total ?? 0}</h1>
@@ -1172,11 +1337,11 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                                 </div>
                             }
                         </Col>
-
                         <Col className="gutter-row" lg={24} md={24} sm={24} xs={24}>
-                            <DashboardMap progress={progress} loadingPara={"Please wait while we securely load map information. This may take a moment."} loadingTitle={"Fetching Worksite Data."} isLoadingData={isLoadingData} GetMusterStation={GetMusterStation} WorksiteReducer={WorksiteReducer} WorkOrderReducer={WorkOrderReducer} AlertsReducer={AlertsReducer} AssetsReducer={AssetsReducer} ProjectReducer={ProjectReducer} WorkPOIGetByIdMap={WorkPOIGetByIdMap} GetAlertsByIDMap={GetAlertsByIDMap} GetAssetsByIDMap={GetAssetsByIDMap} WorkOrderGetByIdMap={WorkOrderGetByIdMap} GetProjectByIDMap={GetProjectByIDMap} alertData={alertData} poiData={poiData} AssetsData={AssetsData} projectData={projectData} myWorkOrderData={myWorkOrderData} messageApi={messageApi} viewWorkOrder={viewWorkOrder} viewAlerts={viewAlerts} viewPOIs={viewPOIs} viewAssets={viewAssets} viewProject={viewProject} MapData={wholeMapData} PoiReducer={PoiReducer} />
+                            <div className={fullScreen && Style.FullScreenWrapper}>
+                                <DashboardMap LoadMapData={LoadMapData} setWholeMapDataLoader={setWholeMapDataLoader} wholeMapDataLoader={wholeMapDataLoader} MusterByIdMap={MusterByIdMap} WorkSiteGetByIdMap={WorkSiteGetByIdMap} AssetsReducer={AssetsReducer} viewMuster={viewMuster} viewWorkSite={viewWorkSite} fullScreen={fullScreen} setFullScreen={setFullScreen} progress={progress} loadingPara={"Please wait while we securely load map information. This may take a moment."} loadingTitle={"Fetching Worksite Data."} isLoadingData={isLoadingData} GetMusterStation={GetMusterStation} WorksiteReducer={WorksiteReducer} WorkOrderReducer={WorkOrderReducer} AlertsReducer={AlertsReducer} AssetsReducer={AssetsReducer} ProjectReducer={ProjectReducer} WorkPOIGetByIdMap={WorkPOIGetByIdMap} GetAlertsByIDMap={GetAlertsByIDMap} GetAssetsByIDMap={GetAssetsByIDMap} WorkOrderGetByIdMap={WorkOrderGetByIdMap} GetProjectByIDMap={GetProjectByIDMap} alertData={alertData} poiData={poiData} AssetsData={AssetsData} projectData={projectData} myWorkOrderData={myWorkOrderData} messageApi={messageApi} viewWorkOrder={viewWorkOrder} viewAlerts={viewAlerts} viewPOIs={viewPOIs} viewAssets={viewAssets} viewProject={viewProject} MapData={wholeMapData} PoiReducer={PoiReducer} />
+                            </div>
                         </Col>
-
                         <Col className="gutter-row" lg={24} md={24} sm={24} xs={24}>
                             <div className={Style.BarStyleChart}>
                                 <div className={Style.BarFilterSide}>
@@ -1213,15 +1378,6 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                                 <Bar options={options} data={data} />
                             </div>
                         </Col>
-
-
-
-
-
-
-
-
-
                         <Col className="gutter-row" lg={12} md={12} sm={24} xs={24}>
                             <div className={Style.BarStyleChart21}>
                                 <div className={Style.BarFilterSide}>
@@ -1246,13 +1402,14 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                                     wholeDashboardDataApi?.graphs?.threatLevels?.find(data => data?._id == "High")?.total ?? 0,
                                 ]?.every(value => value === 0) ?
                                     <div className={Style.DoughnutWrapLoad}>
-                                        <img src={MapBlue} />
+                                        <img src={PoiBlue} />
                                         <h4>Add your first Point of Interest to monitor zones and assess safety threat levels.</h4>
                                     </div>
                                     :
                                     <div className={Style.DoughnutWrap}>
                                         <div style={{ height: "300px" }}>
                                             <Doughnut
+                                                key={JSON.stringify(threatLevelUpdatedData)}
                                                 data={threatLevelData}
                                                 options={threatLevelOption}
                                                 plugins={[centerTextPlugin1]}
@@ -1262,7 +1419,7 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                                             {threatLevelUpdatedData?.map((data, index) =>
                                                 <div style={{ padding: index == 0 && 0 }} className={Style.rowNewMap}>
                                                     <div className={Style.rowFlex}>
-                                                        <div style={{ background: data._id == "Lowest" ? "rgba(28, 143, 93, 1)" : data._id == "No Threat" ? "rgba(98, 109, 111, 1)" : data._id == "Moderate" ? "rgba(241, 195, 77, 1)" : data._id == "Extreme" ? "rgba(121, 39, 39, 1)" : data._id == "High" ? "rgba(241, 77, 77, 1)" : "" }} className={Style.ColoredIcon}></div>
+                                                        <div style={{ background: data._id == "Lowest" ? "rgba(28, 143, 93, 1)" : data._id == "No Threat" ? "#626D6F" : data._id == "Moderate" ? "rgba(241, 195, 77, 1)" : data._id == "Extreme" ? "rgb(65, 1, 1)" : data._id == "High" ? "rgba(241, 77, 77, 1)" : "" }} className={Style.ColoredIcon}></div>
                                                         <p>{data._id == "Lowest" ? "Lowest Risk" : data._id == "No Threat" ? "No Risk" : data._id == "Moderate" ? "Moderate Risk" : data._id == "Extreme" ? "Extreme Risk" : data._id == "High" ? "High Risk" : ""}</p>
                                                     </div>
                                                     <p>{data?.total}({data.percentage}%)</p>
@@ -1273,7 +1430,6 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                                 }
                             </div>
                         </Col>
-
                         <Col className="gutter-row" lg={12} md={12} sm={24} xs={24}>
                             <div className={Style.BarStyleChart21}>
                                 <div className={Style.BarFilterSide}>
@@ -1305,6 +1461,7 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                                     <div className={Style.DoughnutWrap}>
                                         <div style={{ height: "300px" }}>
                                             <Doughnut
+                                                key={JSON.stringify(threatalertTypesUpdatedData)}
                                                 data={typeData}
                                                 options={typeOption}
                                                 plugins={[centerTextPlugin2]}
@@ -1314,7 +1471,7 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                                             {alertTypesUpdatedData?.map((data, index) =>
                                                 <div style={{ padding: index == 0 && 0 }} className={Style.rowNewMap}>
                                                     <div className={Style.rowFlex}>
-                                                        <div style={{ background: data._id == "Lowest" ? "rgba(28, 143, 93, 1)" : data._id == "No Threat" ? "rgba(98, 109, 111, 1)" : data._id == "Moderate" ? "rgba(241, 195, 77, 1)" : data._id == "Extreme" ? "rgba(121, 39, 39, 1)" : data._id == "High" ? "rgba(241, 77, 77, 1)" : "" }} className={Style.ColoredIcon}></div>
+                                                        <div style={{ background: data._id == "Lowest" ? "rgba(28, 143, 93, 1)" : data._id == "No Threat" ? "#626D6F" : data._id == "Moderate" ? "rgba(241, 195, 77, 1)" : data._id == "Extreme" ? "rgb(65, 1, 1)" : data._id == "High" ? "rgba(241, 77, 77, 1)" : "" }} className={Style.ColoredIcon}></div>
                                                         <p>{data._id == "Lowest" ? "Lowest Risk" : data._id == "No Threat" ? "No Risk" : data._id == "Moderate" ? "Moderate Risk" : data._id == "Extreme" ? "Extreme Risk" : data._id == "High" ? "High Risk" : ""}</p>
                                                     </div>
                                                     <p>{data?.total}({data.percentage}%)</p>
@@ -1325,7 +1482,6 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                                 }
                             </div>
                         </Col>
-
                         <Col className="gutter-row" lg={12} md={12} sm={24} xs={24}>
                             <div className={Style.BarStyleChart21}>
                                 <div className={Style.BarFilterSide}>
@@ -1351,13 +1507,14 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                                         ?.find(data => data?._id?.includes("Overhead"))?.total ?? 0,
                                 ]?.every(value => value === 0) ?
                                     <div className={Style.DoughnutWrapLoad}>
-                                        <img src={ElevationBlue} />
+                                        <img src={AssetBlue} />
                                         <h4>Add assets to track their elevation level and manage safety measures accordingly.</h4>
                                     </div>
                                     :
                                     <div className={Style.DoughnutWrap}>
                                         <div style={{ height: "300px" }}>
                                             <Doughnut
+                                                key={JSON.stringify(finalResulDate)}
                                                 data={assetElevationData}
                                                 options={assetElevationOption}
                                                 plugins={[centerTextPlugin3]}
@@ -1367,8 +1524,8 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                                             {finalResultAssets?.map((data, index) =>
                                                 <div style={{ padding: index == 0 && 0 }} className={Style.rowNewMap}>
                                                     <div className={Style.rowFlex}>
-                                                        <div style={{ background: data.type == "Below Ground" ? "rgba(241, 77, 77, 1)" : data.type == "Ground Level" ? "rgba(28, 143, 93, 1)" : data.type == "Overhead" ? "rgba(241, 195, 77, 1)" : "" }} className={Style.ColoredIcon}></div>
-                                                        <p>{data.type == "Below Ground" ? "Below Ground" : data.type == "Ground Level" ? "Ground Level" : data.type == "Overhead" ? "Overhead" : ""}</p>
+                                                        <div style={{ background: data.type?.name == "Below Ground" ? "rgba(241, 77, 77, 1)" : data.type?.name == "Ground Level" ? "rgba(28, 143, 93, 1)" : data.type?.name == "Overhead" ? "rgba(241, 195, 77, 1)" : "" }} className={Style.ColoredIcon}></div>
+                                                        <p>{data.type?.name == "Below Ground" ? "Below Ground" : data.type?.name == "Ground Level" ? "Ground Level" : data.type?.name == "Overhead" ? "Overhead" : ""}</p>
                                                     </div>
                                                     <p>{data?.total}({data.percentage}%)</p>
                                                 </div>
@@ -1378,7 +1535,6 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                                 }
                             </div>
                         </Col>
-
                         <Col className="gutter-row" lg={12} md={12} sm={24} xs={24}>
                             <div className={Style.BarStyleChart21}>
                                 <div className={Style.BarFilterSide}>
@@ -1404,13 +1560,14 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                                         ?.find(data => data?._id?.includes("Overhead"))?.total ?? 0,
                                 ]?.every(value => value === 0) ?
                                     <div className={Style.DoughnutWrapLoad}>
-                                        <img src={CategoryBlue} />
-                                        <h4>Start tracking your projects by elevation to improve site planning and visibility.</h4>
+                                        <img src={ProjectBlue} />
+                                        <h4>Add project to track their elevation level and manage safety measures accordingly.</h4>
                                     </div>
                                     :
                                     <div className={Style.DoughnutWrap}>
                                         <div style={{ height: "300px" }}>
                                             <Doughnut
+                                                key={JSON.stringify(finalResultProject)}
                                                 data={projectElevationData}
                                                 options={projectElevationOption}
                                                 plugins={[centerTextPlugin4]}
@@ -1420,8 +1577,8 @@ function DashboardScreen({ GetMusterStation, WorksiteReducer, WorkPOIGetByIdMap,
                                             {finalResultProject?.map((data, index) =>
                                                 <div style={{ padding: index == 0 && 0 }} className={Style.rowNewMap}>
                                                     <div className={Style.rowFlex}>
-                                                        <div style={{ background: data.type == "Below Ground" ? "rgba(241, 77, 77, 1)" : data.type == "Ground Level" ? "rgba(28, 143, 93, 1)" : data.type == "Overhead" ? "rgba(241, 195, 77, 1)" : "" }} className={Style.ColoredIcon}></div>
-                                                        <p>{data.type == "Below Ground" ? "Below Ground" : data.type == "Ground Level" ? "Ground Level" : data.type == "Overhead" ? "Overhead" : ""}</p>
+                                                        <div style={{ background: data.type?.name == "Below Ground" ? "rgba(241, 77, 77, 1)" : data.type?.name == "Ground Level" ? "rgba(28, 143, 93, 1)" : data.type?.name == "Overhead" ? "rgba(241, 195, 77, 1)" : "" }} className={Style.ColoredIcon}></div>
+                                                        <p>{data.type?.name == "Below Ground" ? "Below Ground" : data.type?.name == "Ground Level" ? "Ground Level" : data.type?.name == "Overhead" ? "Overhead" : ""}</p>
                                                     </div>
                                                     <p>{data?.total}({data.percentage}%)</p>
                                                 </div>

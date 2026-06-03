@@ -465,3 +465,240 @@
 .EmptyTextTable img{
     height: 72px;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Filter Section */
+
+
+.filterMainBtn{
+    background-color: var(--blue-50);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 46px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+
+
+
+
+.ValueTypeWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 8px;
+}
+
+.ValueTypeBlock {
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    display: flex;
+    background-color: var(--gray-0);
+    padding-block: 8px;
+    border-radius: 4px;
+    color: var(--gray-100);
+    cursor: pointer;
+    transition: 0.3s all;
+}
+
+.ValueTypeBlockSelect {
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    display: flex;
+    background-color: #1F58EA14;
+    padding-block: 8px;
+    border-radius: 4px;
+    color: var(--blue-50);
+    cursor: pointer;
+    transition: 0.3s all;
+}
+
+.ValueTypeBlock:hover {
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    display: flex;
+    background-color: #1F58EA14;
+    padding-block: 8px;
+    border-radius: 4px;
+    color: var(--blue-50);
+    cursor: pointer;
+}
+
+.InputDesign {
+    background-color: #1F58EA14;
+    padding: 10px;
+    color: var(--primary);
+}
+
+.FInputDesign {
+    background-color: var(--gray-10);
+    padding: 10px;
+    color: var(--primary);
+}
+
+.InputDesign {
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    padding-block: 5px;
+}
+
+.InputDesign p {
+    margin-right: 5px;
+    color: var(--primary);
+}
+
+.FInputDesign {
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    padding-block: 5px;
+}
+
+
+
+
+.FeildCol {
+    margin-top: 10px;
+    width: 100%;
+}
+
+.ResetterIcon {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.FeildCol label {
+    margin-bottom: 5px !important;
+}
+
+.ResetButton {
+    color: red;
+    cursor: pointer;
+}
+
+
+
+
+.ApplyBtn {
+    background-color: var(--primary);
+    color: var(--white);
+    border: none;
+    width: 100%;
+    padding-block: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s all;
+}
+
+.ApplyBtn:hover {
+    background-color: rgb(16, 52, 145);
+    color: var(--white);
+    border: none;
+    width: 100%;
+    padding-block: 10px;
+    border-radius: 8px;
+}
+
+.CancelBtn {
+    background-color: transparent;
+    color: var(--primary);
+    border: none;
+    width: 100%;
+    padding-block: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: 0.3s all;
+}
+
+.CancelBtn:hover {
+    background-color: rgb(224, 224, 224);
+    color: var(--primary);
+    border: none;
+    width: 100%;
+    padding-block: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.LabelFilter{
+    font-weight: 600;
+    font-size: 16px;
+}
+

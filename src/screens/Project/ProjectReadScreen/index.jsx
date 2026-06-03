@@ -72,7 +72,7 @@ const ProjectScreenRead = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer, P
                     "Content-Type": "application/json",
                     "authorization": `Bearer ${token}`,
                 },
-                body: JSON.stringify({keys:body}),
+                body: JSON.stringify({ keys: body }),
                 signal: controller.signal,
             };
             const response = await fetch(`${baseUrl}${url}`, options);
@@ -213,7 +213,7 @@ const ProjectScreenRead = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer, P
 
 
 
-    console.log(projectDetail,'ADS((((((&^')
+    console.log(projectDetail, 'ADS((((((&^')
 
 
 
@@ -337,11 +337,9 @@ const ProjectScreenRead = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer, P
             map: mapRef.current,
             center: a,
             radius: b,
-            strokeColor: '#fe541e',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#fe541e',
-            fillOpacity: 0.35,
+            fillOpacity: 0.2,
             draggable: false,
             editable: false,
             clickable: false
@@ -350,11 +348,9 @@ const ProjectScreenRead = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer, P
             map: mapRef.current,
             center: a,
             radius: b + c,
-            strokeColor: '#1e88e5',
-            strokeOpacity: 0.7,
-            strokeWeight: 2,
-            fillColor: '#90caf9',
-            fillOpacity: 0.3,
+            strokeWeight: 0,
+            fillColor: '#fe541e',
+            fillOpacity: 0.2,
             editable: false,
             draggable: false,
             clickable: false
@@ -379,18 +375,23 @@ const ProjectScreenRead = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer, P
 
 
     useEffect(() => {
-        getDepartment(currentWorkSite)
-        GetAllWorkOrderUnLink(currentWorkSite)
+        if (currentWorkSite) {
+            getDepartment(currentWorkSite)
+            GetAllWorkOrderUnLink(currentWorkSite)
+            GetAllWorkOrderFilterLink(currentProject, "Project", currentWorkSite)
+
+        }
         getContractorId(currentProject)
         GetCompanyUser()
         GetProjectByID(currentProject)
         LoadDailyProject(currentProject, 1, "")
-        GetAllWorkOrderFilterLink(currentProject, "Project", currentWorkSite)
     }, [])
 
     useEffect(() => {
         if (ProjectReducer?.createDepartmentComplete) {
-            getDepartment(currentWorkSite)
+            if (currentWorkSite) {
+                getDepartment(currentWorkSite)
+            }
             setGetSearch("")
         }
     }, [ProjectReducer?.createDepartmentComplete])
@@ -529,7 +530,7 @@ const ProjectScreenRead = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer, P
         },
     });
 
-  
+
     const WorkOrderData = PoiReducer?.workOrderData?.map(data => {
         return { value: data._id, label: data?.title }
     })
@@ -649,11 +650,9 @@ const ProjectScreenRead = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer, P
             map: mapRef.current,
             center: location,
             radius: parentRadius,
-            strokeColor: '#fe541e',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#fe541e',
-            fillOpacity: 0.35,
+            fillOpacity: 0.2,
             draggable: false,
             editable: false,
         });
@@ -661,11 +660,9 @@ const ProjectScreenRead = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer, P
             map: mapRef.current,
             center: location,
             radius: parentRadius + safetyOffset,
-            strokeColor: '#1e88e5',
-            strokeOpacity: 0.7,
-            strokeWeight: 2,
-            fillColor: '#90caf9',
-            fillOpacity: 0.3,
+            strokeWeight: 0,
+            fillColor: '#fe541e',
+            fillOpacity: 0.2,
             clickable: false,
         });
         parent.addListener('center_changed', () => {
@@ -942,7 +939,7 @@ const ProjectScreenRead = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer, P
     const handleRecenter = () => {
         if (mapRef.current) {
             mapRef.current.panTo(new window.google.maps.LatLng(locationCurrent?.lat, locationCurrent?.lng));
-            mapRef.current.setZoom(14.5);
+            mapRef.current.setZoom(18);
         }
     };
 
@@ -990,11 +987,9 @@ const ProjectScreenRead = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer, P
             map: mapRef.current,
             center: loc,
             radius: radius,
-            strokeColor: '#050c1f',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#0d1e4b',
-            fillOpacity: 0.35,
+            fillOpacity: 0.4,
             draggable: false,
             editable: false,
         });
@@ -1094,7 +1089,7 @@ const ProjectScreenRead = ({ GetCompanyUser, WorkOrderReducer, ProjectReducer, P
 
 
     const fileNameMap = new Map(
-        [...(projectDetail?.photosOrVideos ?? []),...(projectDetail?.documents ?? []),...(projectDetail?.safetyDocumentation ?? []), ...(projectDetail?.warrantyDocumentation ?? []), ...(projectDetail?.trainingDocuments ?? []), ...(projectDetail?.uploadpermits ?? []), ...(projectDetail?.otherDocumentation ?? []), ...(projectDetail?.jsaDocumentation ?? [])]?.map(file => [
+        [...(projectDetail?.photosOrVideos ?? []), ...(projectDetail?.documents ?? []), ...(projectDetail?.safetyDocumentation ?? []), ...(projectDetail?.warrantyDocumentation ?? []), ...(projectDetail?.trainingDocuments ?? []), ...(projectDetail?.uploadpermits ?? []), ...(projectDetail?.otherDocumentation ?? []), ...(projectDetail?.jsaDocumentation ?? [])]?.map(file => [
             file.fileName,
             file,
         ]) || []

@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
 import Style from './ProjectScreen.module.css'
-import { Dropdown, message, Space, Table, Tag, } from 'antd'
+import { Dropdown, message, Space, Table, Tag, Tooltip, } from 'antd'
 import * as ProjectAction from '../../../../store/actions/Project/index';
 import { connect, useDispatch } from 'react-redux';
 import { MdOutlineSettings } from 'react-icons/md';
 import ReactTimeAgo from 'react-time-ago';
 import { IoEyeOutline } from 'react-icons/io5';
 import { useNavigate, useOutletContext } from 'react-router';
+import ListInputSearch from '../../../component/ListInputSearch';
+import { FiPlus } from 'react-icons/fi';
+import ProjectFilter from './ProjectFilter';
 
 
 
@@ -14,20 +17,22 @@ function ArchivedProject({ ProjectReducer, GetArchivedProjects }) {
     const [messageApi, contextHolder] = message.useMessage();
     const [page, setPage] = useState(1)
     const workSite = localStorage.getItem("+AOQ^%^f0Gn4frTqztZadLrKg==")
-    const { searchQuery } = useOutletContext();
+    // const { query } = useOutletContext();
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const [query, setQuery] = useState('')
+
+    const [paramsNew, setParamsNew] = useState(null)
+
+
 
     const [isNext, setIsNext] = useState(true)
     useEffect(() => {
         const init = async () => {
-            const totalLegngth = await GetArchivedProjects(workSite, page, searchQuery)
-            if (totalLegngth < 30) {
-                setIsNext(false)
-            }
+            const totalLegngth = await GetArchivedProjects(workSite, page, query,paramsNew && paramsNew,setIsNext)
         }
         init()
-    }, [page, searchQuery])
+    }, [page, query])
 
     useEffect(() => {
         if (!messageApi) return;
@@ -103,6 +108,17 @@ function ArchivedProject({ ProjectReducer, GetArchivedProjects }) {
             ),
         },
         {
+            title: "Updated At",
+            key: "updatedAt",
+            width: 200,
+            ellipsis: true,
+            render: (users) => (
+                <Space direction="vertical">
+                    <ReactTimeAgo date={users?.updatedAt} locale="en-US" />
+                </Space>
+            ),
+        },
+        {
             title: "Action",
             key: "action",
             className: " space-x-2",
@@ -132,11 +148,32 @@ function ArchivedProject({ ProjectReducer, GetArchivedProjects }) {
     ];
 
 
-    const sortedData = [...ProjectReducer?.archivedProjectData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    // const sortedData = [...ProjectReducer?.archivedProjectData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    const removeTemp = () => {
+        localStorage.removeItem('Wm8^pLC7ux$5kJ~E2-/3zq==')
+        localStorage.removeItem('Rd9!tMQ4vz#1gN*B6_+7@x==')
+    }
 
     return (
         <>
             {contextHolder}
+            <div className={Style.TabHeader}>
+                <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <button style={location.pathname == "/project/my-project" ? { border: '1px solid #214CBC', color: "#214CBC" } : null} onClick={() => navigate('/project/my-project')}>Projects</button>
+                    <button style={location.pathname == "/project/archived" ? { border: '1px solid #214CBC', color: "#214CBC" } : null} onClick={() => navigate('/project/archived')}>Archived</button>
+                    <Tooltip title={"Create Project"}>
+                        <button onClick={() => {
+                            removeTemp()
+                            navigate('/project/create')
+                        }} style={location.pathname == "/project/create" ? { border: '1px solid #214CBC', color: "#214CBC" } : null}><FiPlus color='#214CBC' size={22} /></button>
+                    </Tooltip>
+                </div>
+                <div style={{display:"flex",alignItems:'center'}}>
+                    <ListInputSearch onChange={setQuery} value={query} placeholder="Search Projects" debounceTime={500}/>
+                    <ProjectFilter setPage={setPage} setIsNext={setIsNext} setParamsNew={setParamsNew} loading={ProjectReducer?.archivedProjectLoading} GetPOI={GetArchivedProjects} workSite={workSite} page={page} searchQuery={query} />
+                </div>
+            </div>
             <div className={Style.TableSection}>
                 <Table footer={() => (
                     <>
@@ -163,7 +200,7 @@ function ArchivedProject({ ProjectReducer, GetArchivedProjects }) {
                             </>
                         }
                     </>
-                )} pagination={false} loading={ProjectReducer?.archivedProjectLoading} scroll={{ x: 'max-content' }} rowKey={(record) => record._id} sticky={{ offsetHeader: 0 }} columns={columns} dataSource={sortedData} />
+                )} pagination={false} loading={ProjectReducer?.archivedProjectLoading} scroll={{ x: 'max-content' }} rowKey={(record) => record._id} sticky={{ offsetHeader: 0 }} columns={columns} dataSource={ProjectReducer?.archivedProjectData} />
             </div>
         </>
     )

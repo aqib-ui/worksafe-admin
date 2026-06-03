@@ -241,7 +241,7 @@ const AlertScreenEdit = ({ GetCompanyUser, WorkOrderReducer, AlertsReducer, PoiR
             radius: b,
             strokeColor: '#fe541e',
             strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#fe541e',
             fillOpacity: 0.35,
             draggable: true,
@@ -253,7 +253,7 @@ const AlertScreenEdit = ({ GetCompanyUser, WorkOrderReducer, AlertsReducer, PoiR
             radius: b + c,
             strokeColor: '#1e88e5',
             strokeOpacity: 0.7,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#90caf9',
             fillOpacity: 0.3,
             clickable: false,
@@ -520,7 +520,7 @@ const AlertScreenEdit = ({ GetCompanyUser, WorkOrderReducer, AlertsReducer, PoiR
             radius: parentRadius,
             strokeColor: '#fe541e',
             strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#fe541e',
             fillOpacity: 0.35,
             draggable: true,
@@ -532,7 +532,7 @@ const AlertScreenEdit = ({ GetCompanyUser, WorkOrderReducer, AlertsReducer, PoiR
             radius: parentRadius + safetyOffset,
             strokeColor: '#1e88e5',
             strokeOpacity: 0.7,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#90caf9',
             fillOpacity: 0.3,
             clickable: false,
@@ -1140,7 +1140,7 @@ const AlertScreenEdit = ({ GetCompanyUser, WorkOrderReducer, AlertsReducer, PoiR
                             value:
                                 item.value.type === "date"
                                     ? dayjs(item.value.value).format("YYYY-MM-DD")
-                                    : item.value.type === "color"
+                                    : item.value.type === "Color"
                                         ? rgbaStringToPipe(item.value.value)
                                         : item.value.value,
                             type: item.value.type,
@@ -1319,7 +1319,7 @@ const AlertScreenEdit = ({ GetCompanyUser, WorkOrderReducer, AlertsReducer, PoiR
     const handleRecenter = () => {
         if (mapRef.current) {
             mapRef.current.panTo(new window.google.maps.LatLng(locationCurrent?.lat, locationCurrent?.lng));
-            mapRef.current.setZoom(14.5);
+            mapRef.current.setZoom(18);
         }
     };
 
@@ -1373,11 +1373,9 @@ const AlertScreenEdit = ({ GetCompanyUser, WorkOrderReducer, AlertsReducer, PoiR
             map: mapRef.current,
             center: loc,
             radius: radius,
-            strokeColor: '#050c1f',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#0d1e4b',
-            fillOpacity: 0.35,
+            fillOpacity: 0.4,
             draggable: false,
             editable: false,
         });

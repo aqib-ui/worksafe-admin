@@ -281,6 +281,17 @@ function TeamScreen({ TeamReducer, GetTeam, RemoveTeamUser, GetRoles, InserTeamU
             ),
         },
         {
+            title: "Updated At",
+            key: "updatedAt",
+            width: 200,
+            ellipsis: true,
+            render: (users) => (
+                <Space direction="vertical">
+                    <ReactTimeAgo date={users?.updatedAt} locale="en-US" />
+                </Space>
+            ),
+        },
+        {
             title: "Action",
             key: "action",
             ellipsis: true,
@@ -457,6 +468,7 @@ function TeamScreen({ TeamReducer, GetTeam, RemoveTeamUser, GetRoles, InserTeamU
 
 
     // const sortedData = [...TeamReducer?.data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    console.log(TeamReducer?.data, "team reducer data")
     return (
         <>
             {contextHolder}

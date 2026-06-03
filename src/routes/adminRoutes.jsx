@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Layout from "../layout.jsx";
-import TeamScreen from "../screens/teamScreen";
+import TeamScreen from "../screens/TeamScreen";
 import UserScreen from "../screens/userScreen/index.jsx";
 import PaymentScreen from "../screens/paymentScreen/index.jsx";
 import EnterpriseScreen from "../screens/enterpriseScreen/index.jsx";

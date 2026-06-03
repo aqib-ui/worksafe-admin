@@ -42,6 +42,7 @@ import evacuationIcon from '../../../assets/evacuation.png'
 const WorksiteEditScreen = ({ GetMusterStation, GetWorkSite, InserTeamUserV2, GetAlerts, GetPOIWorksite, PoiReducer, GetWorkSiteByID, GetManagerInWorksite, GetTeamInWorksite, GetRoles, TeamReducer, WorksiteReducer, AlertsReducer }) => {
     dayjs.extend(customParseFormat);
     dayjs.extend(utc);
+    const [ismoveAblePoly, setIsmoveAblePoly] = useState(false)
     const dateFormat2 = 'YYYY-MM-DD';
     const now = new Date(Date.now());
     const year = now.getFullYear();
@@ -276,7 +277,7 @@ const WorksiteEditScreen = ({ GetMusterStation, GetWorkSite, InserTeamUserV2, Ge
             radius: b,
             strokeColor: '#115638',
             strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#548F1C',
             fillOpacity: 0.35,
             draggable: false,
@@ -591,11 +592,9 @@ const WorksiteEditScreen = ({ GetMusterStation, GetWorkSite, InserTeamUserV2, Ge
             map: mapRef.current,
             center: a,
             radius: b,
-            strokeColor: '#050c1f',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#0d1e4b',
-            fillOpacity: 0.35,
+            fillOpacity: 0.4,
             draggable: true,
             editable: true,
         });
@@ -843,24 +842,11 @@ const WorksiteEditScreen = ({ GetMusterStation, GetWorkSite, InserTeamUserV2, Ge
             map: mapRef.current,
             center: location,
             radius: parentRadius,
-            strokeColor: '#050c1f',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#0d1e4b',
-            fillOpacity: 0.35,
+            fillOpacity: 0.4,
             draggable: true,
             editable: true,
-        });
-        const child = new window.google.maps.Circle({
-            map: mapRef.current,
-            center: location,
-            radius: parentRadius + safetyOffset,
-            strokeColor: '#050c1f',
-            strokeOpacity: 0.7,
-            strokeWeight: 2,
-            fillColor: '#050c1f',
-            fillOpacity: 0.3,
-            clickable: false,
         });
         mapRef.current.addListener("click", (e) => {
             const newCenter = {
@@ -871,16 +857,13 @@ const WorksiteEditScreen = ({ GetMusterStation, GetWorkSite, InserTeamUserV2, Ge
             if (circleRef.current) {
                 circleRef.current.setCenter(newCenter);
             }
-            if (childCircleRef.current) {
-                childCircleRef.current.setCenter(newCenter);
-            }
+
         });
         parent.addListener('radius_changed', () => {
             const newRadius = parent.getRadius();
             setParentRadius(newRadius);
         });
         circleRef.current = parent;
-        childCircleRef.current = child;
     };
     const handlePolygonClick = (e) => {
         const newCenter = {
@@ -922,20 +905,45 @@ const WorksiteEditScreen = ({ GetMusterStation, GetWorkSite, InserTeamUserV2, Ge
             lng: center.lng + dLng * scale,
         };
     };
+
+
+
+    const getCenter = (points) => {
+        const lat =
+            points.reduce((sum, p) => sum + p.lat, 0) / points.length;
+        const lng =
+            points.reduce((sum, p) => sum + p.lng, 0) / points.length;
+        return { lat, lng };
+    };
+
+    const movePolygonToCenter = (points, newCenter) => {
+        const currentCenter = getCenter(points);
+        const latDiff = newCenter.lat - currentCenter.lat;
+        const lngDiff = newCenter.lng - currentCenter.lng;
+        return points.map((p) => ({
+            lat: p.lat + latDiff,
+            lng: p.lng + lngDiff,
+        }));
+    };
     const handleMapClick = useCallback((e) => {
-        // if (points.length < 3) {
         const newPoint = {
             lat: e.latLng.lat(),
             lng: e.latLng.lng(),
         };
-        setPoints((prev) => [...prev, newPoint]);
-        // }
-    }, [points]);
+        if (ismoveAblePoly) {
+            const updated = movePolygonToCenter(points, newPoint);
+            setPoints(updated);
+        }
+        else {
+            setPoints((prev) => [...prev, newPoint]);
+        }
+    }, [points, ismoveAblePoly]);
 
     const removeIconCustomArea = (indexRemover) => {
         setPoints(prev => prev?.filter((_, index) => index !== indexRemover));
     }
     const drawCustomArea = () => {
+        setIsmoveAblePoly(false)
         setActualCenter()
         setSelectedTab(2)
         setPointsMore([])
@@ -960,6 +968,7 @@ const WorksiteEditScreen = ({ GetMusterStation, GetWorkSite, InserTeamUserV2, Ge
     const [safetyOffsetMore, setSafetyOffsetMore] = useState(0);
     const [offsetPolygon, setOffsetPolygon] = useState([]);
     const drawPolyLine = () => {
+        setIsmoveAblePoly(false)
         setActualCenter()
         setSelectedTab(3)
         setPoints([])
@@ -968,14 +977,37 @@ const WorksiteEditScreen = ({ GetMusterStation, GetWorkSite, InserTeamUserV2, Ge
         childCircleRef.current.setMap(null);
         childCircleRef.current = null;
     }
+    const getCenter2 = (points) => {
+        const lat =
+            points.reduce((sum, p) => sum + p.lat, 0) / points.length;
+        const lng =
+            points.reduce((sum, p) => sum + p.lng, 0) / points.length;
+        return { lat, lng };
+    };
+    const movePolyLineToCenter = (points, newCenter) => {
+        const currentCenter = getCenter2(points);
+        const latDiff = newCenter.lat - currentCenter.lat;
+        const lngDiff = newCenter.lng - currentCenter.lng;
+        return points.map((p) => ({
+            lat: p.lat + latDiff,
+            lng: p.lng + lngDiff,
+        }));
+    };
     const handleMapClickMore = useCallback((e) => {
         setPoints([])
         const newPoint = {
             lat: e.latLng.lat(),
             lng: e.latLng.lng(),
         };
-        setPointsMore((prev) => [...prev, newPoint]);
-    }, []);
+        if (ismoveAblePoly) {
+            const updated = movePolyLineToCenter(pointsMore, newPoint);
+            setPointsMore(updated);
+        }
+        else {
+            setPointsMore((prev) => [...prev, newPoint]);
+        }
+    }, [ismoveAblePoly]);
+
     function computeOffsetPolyline(points, offsetDistance) {
         const offsetLeftPoints = [];
         const offsetRightPoints = [];
@@ -1350,7 +1382,7 @@ const WorksiteEditScreen = ({ GetMusterStation, GetWorkSite, InserTeamUserV2, Ge
     const handleRecenter = () => {
         if (mapRef.current) {
             mapRef.current.panTo(new window.google.maps.LatLng(locationCurrent?.lat, locationCurrent?.lng));
-            mapRef.current.setZoom(14.5);
+            mapRef.current.setZoom(18);
         }
     };
 
@@ -1562,6 +1594,25 @@ const WorksiteEditScreen = ({ GetMusterStation, GetWorkSite, InserTeamUserV2, Ge
             },
             signal: controller.signal,
         });
+        if (response.status == 403) {
+            const res = await response.json();
+            if ("roleUpdated" in res) {
+                localStorage.clear()
+                window.location.reload();
+            }
+            else {
+                clearTimeout(timeoutRequest);
+                setCreateLoading(false)
+                messageApi.open({
+                    type: "info",
+                    content: "Payment expired",
+                });
+            }
+        }
+        if (response.status == 401) {
+            localStorage.clear()
+            window.location.reload();
+        }
         if (response.status === 200 || response.status === 201) {
             clearTimeout(timeoutRequest);
             GetMusterStation(currentWorksiteLoaded)
@@ -1905,17 +1956,19 @@ const WorksiteEditScreen = ({ GetMusterStation, GetWorkSite, InserTeamUserV2, Ge
                                     }}
                                     render={({ field: { onChange, value } }) => (
                                         <Input
-
                                             type="text"
                                             inputMode="decimal"
                                             value={value}
+                                            maxLength={4}
                                             placeholder="Enter speed limit"
                                             status={errors?.speedLimit?.message ? 'error' : ''}
                                             style={{ height: 45, marginTop: 3 }}
                                             onChange={(e) => {
                                                 const val = e.target.value;
                                                 if (/^(?!\.)[0-9]*\.?[0-9]*$/.test(val)) {
-                                                    onChange(val);
+                                                    if (val === '' || Number(val) <= 1000) {
+                                                        onChange(val);
+                                                    }
                                                 }
                                             }}
                                         />
@@ -2108,7 +2161,7 @@ const WorksiteEditScreen = ({ GetMusterStation, GetWorkSite, InserTeamUserV2, Ge
                                 afterOpenChange={(visible) => {
                                     document.body.style.overflow = visible ? "hidden" : "auto";
                                 }}
-                                title={"Muster Station"}
+                                title={"Muster Station2"}
                                 placement="right"
                                 onClose={closeMusterStationDrawer}
                                 open={musterStationDrawer}
@@ -2175,6 +2228,8 @@ const WorksiteEditScreen = ({ GetMusterStation, GetWorkSite, InserTeamUserV2, Ge
                         {isLoaded ? (
                             <>
                                 <GoogleMapCreate
+                                    setIsmoveAblePoly={setIsmoveAblePoly}
+                                    ismoveAblePoly={ismoveAblePoly}
                                     locationCurrent={locationCurrent}
                                     center={location}
                                     onMapLoad={onMapLoad}

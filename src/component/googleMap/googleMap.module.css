@@ -739,3 +739,22 @@
 .TootTopName {
     margin: 0;
 }
+
+
+
+
+.CenterChangeIcon2 {
+    position: absolute;
+    bottom: 60px;
+    left: 10px;
+    height: 40px;
+    width: 40px;
+    border-radius: 50px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s all;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    cursor: pointer;
+}

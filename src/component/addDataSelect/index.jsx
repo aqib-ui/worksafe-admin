@@ -4,7 +4,7 @@ import { FaChevronDown } from "react-icons/fa6";
 import { FaCheck } from "react-icons/fa6";
 import { Skeleton, Spin } from "antd";
 
-const AddDataSelect = ({ name, loading, setValue, value, optionData = [], addNewValue }) => {
+const AddDataSelect = ({ disable = false, adding = true, name, loading, setValue, value, optionData = [], addNewValue }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [valuetoAdd, setValuetoAdd] = useState("");
 
@@ -15,11 +15,12 @@ const AddDataSelect = ({ name, loading, setValue, value, optionData = [], addNew
     return (
         <div className={Style.wrapper}>
             <div
+                style={{ cursor: disable ? 'no-drop' : 'pointer', background: disable ? 'rgba(0,0,0,0.04)' : 'white', borderColor: disable ? "#d9d9d9" : "rgba(233, 237, 238, 1)" }}
                 onClick={() => setIsOpen(!isOpen)}
                 className={Style.AddDataSelectWrap}
             >
-                <p className={isOpen || value ? Style.SelectOn : Style.SelectOff}>
-                    {isOpen ? value ? value : "Select Type" : value ? value : `Select ${name}`}
+                <p style={{ color: disable ? 'rgba(0,0,0,0.25)' : "" }} className={isOpen || value ? Style.SelectOn : Style.SelectOff}>
+                    {isOpen ? value ? value : "Select Type" : value ? value : `Select ${name == "assetType" ? "asset type" : name} `}
                 </p>
 
                 <FaChevronDown
@@ -28,7 +29,7 @@ const AddDataSelect = ({ name, loading, setValue, value, optionData = [], addNew
                 />
             </div>
 
-            <div className={`${Style.ListingItem} ${isOpen ? Style.open : ""}`}>
+            <div className={`${Style.ListingItem} ${isOpen ? adding ? Style.open : Style.open2 : ""}`}>
                 {loading ?
                     <>
                         <div className={Style?.option}>
@@ -47,15 +48,17 @@ const AddDataSelect = ({ name, loading, setValue, value, optionData = [], addNew
                         ))}
                     </>
                 }
-                <div className={`${isOpen ? Style.optionAdding : ""}`}>
-                    <input onChange={(e) => setValuetoAdd(e.target.value)} value={valuetoAdd} className={Style.optionAddingInput} placeholder={`Add ${name}`} />
-                    <button onClick={() => {
-                        addNewValue(valuetoAdd)
-                        setValuetoAdd("")
-                        setValue(valuetoAdd)
-                        setIsOpen(false)
-                    }} className={Style.optionAddingButton}>Add</button>
-                </div>
+                {adding &&
+                    <div className={`${isOpen ? Style.optionAdding : ""}`}>
+                        <input maxLength={50} onChange={(e) => setValuetoAdd(e.target.value)} value={valuetoAdd} className={Style.optionAddingInput} placeholder={`Add ${name}`} />
+                        <button onClick={() => {
+                            addNewValue(valuetoAdd)
+                            setValuetoAdd("")
+                            setValue(valuetoAdd)
+                            setIsOpen(false)
+                        }} className={Style.optionAddingButton}>Add</button>
+                    </div>
+                }
             </div>
         </div>
     );

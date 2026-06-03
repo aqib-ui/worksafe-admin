@@ -464,7 +464,7 @@ const WorkorderEditScreen = ({ WorkOrderReducer, GetWorkSite, GetCompanyUser, Wo
             radius: parentRadius,
             strokeColor: '#fe541e',
             strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#fe541e',
             fillOpacity: 0.35,
             draggable: true,
@@ -476,7 +476,7 @@ const WorkorderEditScreen = ({ WorkOrderReducer, GetWorkSite, GetCompanyUser, Wo
             radius: parentRadius + safetyOffset,
             strokeColor: '#1e88e5',
             strokeOpacity: 0.7,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#90caf9',
             fillOpacity: 0.3,
             clickable: false,
@@ -1556,11 +1556,9 @@ const WorkorderEditScreen = ({ WorkOrderReducer, GetWorkSite, GetCompanyUser, Wo
             map: mapRef.current,
             center: loc,
             radius: radius,
-            strokeColor: '#050c1f',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#0d1e4b',
-            fillOpacity: 0.35,
+            fillOpacity: 0.4,
             draggable: false,
             editable: false,
         });
@@ -1662,7 +1660,7 @@ const WorkorderEditScreen = ({ WorkOrderReducer, GetWorkSite, GetCompanyUser, Wo
     const handleRecenter = () => {
         if (mapRef.current) {
             mapRef.current.panTo(new window.google.maps.LatLng(locationCurrent?.lat, locationCurrent?.lng));
-            mapRef.current.setZoom(14.5);
+            mapRef.current.setZoom(18);
         }
     };
 
@@ -2627,7 +2625,7 @@ const WorkorderEditScreen = ({ WorkOrderReducer, GetWorkSite, GetCompanyUser, Wo
                                                     fillOpacity: 0.4,
                                                     strokeColor: '#fe541e',
                                                     strokeOpacity: 1,
-                                                    strokeWeight: 2,
+                                                    strokeWeight: 0,
                                                 }}
                                             />
                                             {/* Safety zone */}
@@ -2638,7 +2636,7 @@ const WorkorderEditScreen = ({ WorkOrderReducer, GetWorkSite, GetCompanyUser, Wo
                                                     fillOpacity: 0.2,
                                                     strokeColor: '#1e88e5',
                                                     strokeOpacity: 0.7,
-                                                    strokeWeight: 2,
+                                                    strokeWeight: 0,
                                                 }}
                                             />
                                         </>
@@ -2695,7 +2693,7 @@ const WorkorderEditScreen = ({ WorkOrderReducer, GetWorkSite, GetCompanyUser, Wo
                                                     fillOpacity: 0.4,
                                                     strokeColor: '#050c1f',
                                                     strokeOpacity: 1,
-                                                    strokeWeight: 2,
+                                                    strokeWeight: 0,
                                                 }}
                                             />
                                         </>
@@ -2711,7 +2709,7 @@ const WorkorderEditScreen = ({ WorkOrderReducer, GetWorkSite, GetCompanyUser, Wo
                                             options={{
                                                 strokeColor: '#050c1f',
                                                 strokeOpacity: 1,
-                                                strokeWeight: 2,
+                                                strokeWeight: 0,
                                             }}
                                         />
                                     )}
@@ -2727,7 +2725,7 @@ const WorkorderEditScreen = ({ WorkOrderReducer, GetWorkSite, GetCompanyUser, Wo
                                             options={{
                                                 strokeColor: '#fe541e',
                                                 strokeOpacity: 1,
-                                                strokeWeight: 2,
+                                                strokeWeight: 0,
                                             }}
                                         />
                                     )}
@@ -2741,7 +2739,7 @@ const WorkorderEditScreen = ({ WorkOrderReducer, GetWorkSite, GetCompanyUser, Wo
                                                 fillOpacity: 0.3,
                                                 strokeColor: '#1e88e5',
                                                 strokeOpacity: 0.7,
-                                                strokeWeight: 2,
+                                                strokeWeight: 0,
                                             }}
                                         />
                                     )}
@@ -2910,6 +2908,7 @@ const WorkorderEditScreen = ({ WorkOrderReducer, GetWorkSite, GetCompanyUser, Wo
                                                 value1,
                                                 placeholder: "Search location...",
                                                 onChange: (e) => locationDataFunc(e),
+                                                isClearable: true,
                                             }}
                                             debounce={400}
                                             minLengthAutocomplete={2} />

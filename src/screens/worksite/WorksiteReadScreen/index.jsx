@@ -542,38 +542,21 @@ const WorksiteScreenRead = ({ GetMusterStation, GetAlerts, GetPOIWorksite, PoiRe
             map: mapRef.current,
             center: a,
             radius: b,
-            strokeColor: '#050c1f',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#0d1e4b',
-            fillOpacity: 0.35,
+            fillOpacity: 0.4,
             draggable: false,
             editable: false,
-            clickable: false
-        });
-        const child = new window.google.maps.Circle({
-            map: mapRef.current,
-            center: a,
-            radius: b + c,
-            strokeColor: '#050c1f',
-            strokeOpacity: 0.7,
-            strokeWeight: 2,
-            fillColor: '#050c1f',
-            fillOpacity: 0.3,
-            editable: false,
-            draggable: false,
             clickable: false
         });
         parent.addListener('center_changed', () => {
             const newCenter = parent.getCenter();
-            child.setCenter(newCenter);
         });
         parent.addListener('radius_changed', () => {
             const newRadius = parent.getRadius();
             setParentRadius(newRadius);
         });
         circleRef.current = parent;
-        childCircleRef.current = child;
     };
 
 
@@ -587,7 +570,7 @@ const WorksiteScreenRead = ({ GetMusterStation, GetAlerts, GetPOIWorksite, PoiRe
             radius: b,
             strokeColor: '#115638',
             strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#548F1C',
             fillOpacity: 0.35,
             zIndex: 999,
@@ -827,7 +810,7 @@ const WorksiteScreenRead = ({ GetMusterStation, GetAlerts, GetPOIWorksite, PoiRe
             radius: parentRadius,
             strokeColor: '#fe541e',
             strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#fe541e',
             fillOpacity: 0.35,
             draggable: false,
@@ -839,7 +822,7 @@ const WorksiteScreenRead = ({ GetMusterStation, GetAlerts, GetPOIWorksite, PoiRe
             radius: parentRadius + safetyOffset,
             strokeColor: '#1e88e5',
             strokeOpacity: 0.7,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#90caf9',
             fillOpacity: 0.3,
             clickable: false,
@@ -981,7 +964,7 @@ const WorksiteScreenRead = ({ GetMusterStation, GetAlerts, GetPOIWorksite, PoiRe
     const handleRecenter = () => {
         if (mapRef.current) {
             mapRef.current.panTo(new window.google.maps.LatLng(locationCurrent?.lat, locationCurrent?.lng));
-            mapRef.current.setZoom(14.5);
+            mapRef.current.setZoom(18);
         }
     };
 
@@ -1034,11 +1017,9 @@ const WorksiteScreenRead = ({ GetMusterStation, GetAlerts, GetPOIWorksite, PoiRe
             map: mapRef.current,
             center: loc,
             radius: radius,
-            strokeColor: '#050c1f',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 0,
             fillColor: '#0d1e4b',
-            fillOpacity: 0.35,
+            fillOpacity: 0.4,
             draggable: false,
             editable: false,
         });
@@ -1236,6 +1217,25 @@ const WorksiteScreenRead = ({ GetMusterStation, GetAlerts, GetPOIWorksite, PoiRe
             },
             signal: controller.signal,
         });
+        if (response.status == 403) {
+            const res = await response.json();
+            if ("roleUpdated" in res) {
+                localStorage.clear()
+                window.location.reload();
+            }
+            else {
+                clearTimeout(timeout);
+                setCreateLoading(false)
+                messageApi.open({
+                    type: "info",
+                    content: "Payment expired",
+                });
+            }
+        }
+        if (response.status == 401) {
+            localStorage.clear()
+            window.location.reload();
+        }
         if (response.status === 200 || response.status === 201) {
             clearTimeout(timeoutRequest);
             GetMusterStation(currentWorksiteLoaded)
@@ -1400,7 +1400,7 @@ const WorksiteScreenRead = ({ GetMusterStation, GetAlerts, GetPOIWorksite, PoiRe
                                                                     <div className={Style.POITagInner}>
                                                                         <div onClick={() => viewPOI(poiData?._id)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
                                                                             <p>{poiData.title}</p>
-                                                                            <Tag color={poiData?.riskLevel == "Moderate" ? "orange" : poiData?.riskLevel == "No Threat" ? "green" : poiData?.riskLevel == "High" ? 'red' : poiData?.riskLevel == "Lowest" ? 'yellow' : null}>
+                                                                            <Tag style={{ color: poiData?.riskLevel == "No Threat" ? "#666d80" : poiData?.riskLevel == "Lowest" ? "#17736E" : poiData?.riskLevel == "Moderate" ? '#926E26' : poiData?.riskLevel == "High" ? '#D32029' : poiData?.riskLevel == "Extreme" ? '#7F1319' : null }} color={poiData?.riskLevel == "No Threat" ? "rgba(102, 109, 128,0.1)" : poiData?.riskLevel == "Lowest" ? "rgba(23, 115, 110,0.1)" : poiData?.riskLevel == "Moderate" ? 'rgba(146, 110, 38,0.1)' : poiData?.riskLevel == "High" ? 'rgba(211, 32, 41,0.1)' : poiData?.riskLevel == "Extreme" ? 'rgba(127, 19, 25,0.1)' : null}>
                                                                                 {poiData?.riskLevel === "No Threat" ? "No Risk" : poiData?.riskLevel === "Lowest" ? "Lowest Risk" : poiData?.riskLevel === "Moderate" ? "Moderate Risk" : poiData?.riskLevel === "High" ? "High Risk" : poiData?.riskLevel === "Extreme" ? "Extreme Risk" : poiData?.riskLevel}
                                                                             </Tag>
                                                                         </div>
@@ -1472,7 +1472,7 @@ const WorksiteScreenRead = ({ GetMusterStation, GetAlerts, GetPOIWorksite, PoiRe
                                                                     <div className={Style.POITagInner}>
                                                                         <div onClick={() => viewPOI(poiData?._id)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
                                                                             <p>{poiData.title}</p>
-                                                                            <Tag color={poiData?.riskLevel == "Moderate" ? "orange" : poiData?.riskLevel == "No Threat" ? "green" : poiData?.riskLevel == "High" ? 'red' : poiData?.riskLevel == "Lowest" ? 'yellow' : null}>
+                                                                            <Tag style={{ color: poiData?.riskLevel == "No Threat" ? "#666d80" : poiData?.riskLevel == "Lowest" ? "#17736E" : poiData?.riskLevel == "Moderate" ? '#926E26' : poiData?.riskLevel == "High" ? '#D32029' : poiData?.riskLevel == "Extreme" ? '#7F1319' : null }} color={poiData?.riskLevel == "No Threat" ? "rgba(102, 109, 128,0.1)" : poiData?.riskLevel == "Lowest" ? "rgba(23, 115, 110,0.1)" : poiData?.riskLevel == "Moderate" ? 'rgba(146, 110, 38,0.1)' : poiData?.riskLevel == "High" ? 'rgba(211, 32, 41,0.1)' : poiData?.riskLevel == "Extreme" ? 'rgba(127, 19, 25,0.1)' : null}>
                                                                                 {poiData?.riskLevel === "No Threat" ? "No Risk" : poiData?.riskLevel === "Lowest" ? "Lowest Risk" : poiData?.riskLevel === "Moderate" ? "Moderate Risk" : poiData?.riskLevel === "High" ? "High Risk" : poiData?.riskLevel === "Extreme" ? "Extreme Risk" : poiData?.riskLevel}
                                                                             </Tag>
                                                                         </div>
@@ -1545,7 +1545,7 @@ const WorksiteScreenRead = ({ GetMusterStation, GetAlerts, GetPOIWorksite, PoiRe
                                                         <div className={Style.POITagInner}>
                                                             <div onClick={() => viewAlert(alertData?._id)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
                                                                 <p>{alertData.title}</p>
-                                                                <Tag color={alertData?.riskLevel == "Moderate" ? "orange" : alertData?.riskLevel == "No Threat" ? "green" : alertData?.riskLevel == "High" ? 'red' : alertData?.riskLevel == "Lowest" ? 'yellow' : null}>
+                                                                <Tag style={{ color: alertData?.riskLevel == "No Threat" ? "#666d80" : alertData?.riskLevel == "Lowest" ? "#17736E" : alertData?.riskLevel == "Moderate" ? '#926E26' : alertData?.riskLevel == "High" ? '#D32029' : alertData?.riskLevel == "Extreme" ? '#7F1319' : null }} color={alertData?.riskLevel == "No Threat" ? "rgba(102, 109, 128,0.1)" : alertData?.riskLevel == "Lowest" ? "rgba(23, 115, 110,0.1)" : alertData?.riskLevel == "Moderate" ? 'rgba(146, 110, 38,0.1)' : alertData?.riskLevel == "High" ? 'rgba(211, 32, 41,0.1)' : alertData?.riskLevel == "Extreme" ? 'rgba(127, 19, 25,0.1)' : null}>
                                                                     {alertData?.riskLevel === "No Threat" ? "No Risk" : alertData?.riskLevel === "Lowest" ? "Lowest Risk" : alertData?.riskLevel === "Moderate" ? "Moderate Risk" : alertData?.riskLevel === "High" ? "High Risk" : alertData?.riskLevel === "Extreme" ? "Extreme Risk" : alertData?.riskLevel}
                                                                 </Tag>
                                                             </div>
@@ -1665,6 +1665,7 @@ const WorksiteScreenRead = ({ GetMusterStation, GetAlerts, GetPOIWorksite, PoiRe
                                             type="text"
                                             inputMode="decimal"
                                             value={value}
+                                            maxLength={5}
                                             placeholder="Enter speed limit"
                                             status={errors?.speedLimit?.message ? 'error' : ''}
                                             style={{ height: 45, marginTop: 3 }}
@@ -1781,7 +1782,10 @@ const WorksiteScreenRead = ({ GetMusterStation, GetAlerts, GetPOIWorksite, PoiRe
                                     <>
                                         {Array.isArray(musterStorage) && musterStorage?.length > 0 ? musterStorage.map(data =>
                                             <div className={Style.MusterFoldCard}>
-                                                <p onClick={() => navigate(`/worksite/muster-station?id=${data?.id}&isRead=true`)}>{data?.title}</p>
+                                                <p onClick={() => {
+                                                    document.body.style.overflow = 'auto'
+                                                    navigate(`/worksite/muster-station?id=${data?.id}&isRead=true`)
+                                                }}>{data?.title}</p>
                                                 <div style={{ display: 'flex', alignItems: 'center' }}>
                                                     <button onClick={() => {
                                                         localStorage.removeItem("Gp5!zRN8wy@2bT+L4/3cK^=")

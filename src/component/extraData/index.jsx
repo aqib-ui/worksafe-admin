@@ -53,7 +53,7 @@ const { Dragger } = Upload;
 
 
 
-const ExtraDataModule = forwardRef(({ name,createLoading, extraDataList, setExtraDataList, localStoreKey, taskAndLocationRef, counter, workOrderGetByIDData, editId, messageApi }) => {
+const ExtraDataModule = forwardRef(({ name, createLoading, extraDataList, setExtraDataList, localStoreKey, taskAndLocationRef, counter, workOrderGetByIDData, editId, messageApi }) => {
     const [addExtraDrawer, setAddExtraDrawer] = useState(false);
     const now = new Date(Date.now());
     const year = now.getFullYear();
@@ -229,6 +229,12 @@ const ExtraDataModule = forwardRef(({ name,createLoading, extraDataList, setExtr
     const [showExtraToolTip, setShowExtraToolTip] = useState(false);
 
 
+    console.log(extraDataList,'asdlalskdlkasldklask')
+
+    const capitalizeWord = (word) =>
+        typeof word === "string" && word.length > 0
+            ? word[0].toUpperCase() + word.slice(1)
+            : "";
     return (
         <>
             <div className={Style.TaskFeild} style={{ marginTop: 16 }}>
@@ -341,6 +347,7 @@ const ExtraDataModule = forwardRef(({ name,createLoading, extraDataList, setExtr
 
 
                     {extraDataList?.length > 0 ? extraDataList?.map((data, index) => {
+                       
                         return (
                             <div key={index} className={Style.MainListingHourWork}>
                                 <div className={Style.HoursWorkListTop}>

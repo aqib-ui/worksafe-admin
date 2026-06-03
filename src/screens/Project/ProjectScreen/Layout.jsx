@@ -25,7 +25,7 @@ const ProjectLayout = () => {
                             <h1>Project Management</h1>
                         </div>
                     </div>
-                    <div className={Style.TabHeader}>
+                    {/* <div className={Style.TabHeader}>
                         <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
                             <button style={location.pathname == "/project/my-project" ? { border: '1px solid #214CBC', color: "#214CBC" } : null} onClick={() => navigate('/project/my-project')}>Projects</button>
                             <button style={location.pathname == "/project/archived" ? { border: '1px solid #214CBC', color: "#214CBC" } : null} onClick={() => navigate('/project/archived')}>Archived</button>
@@ -39,7 +39,7 @@ const ProjectLayout = () => {
                         <div>
                             <ListInputSearch onChange={setQuery} value={query} placeholder="Search Projects" debounceTime={500} />
                         </div>
-                    </div>
+                    </div> */}
                     <div className={Style.TableSectionLayout}>
                         <Outlet context={{ searchQuery: query }} />
                     </div>
